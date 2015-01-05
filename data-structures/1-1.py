@@ -10,7 +10,7 @@ while(analyze):
         testString =raw_input('Please provide a string to analyze: ')
         
         for x in range(len(testString)):
-            if testString[x] in testString[x:]+testString[:x+1]: 
+            if testString[x] in testString[:x]+testString[x+1:]: 
                 unique = False
             print("reviewing character: " + str(testString[x]))
             x = x+1
