@@ -34,9 +34,33 @@ def merge(A, B):
           A[indexJ] = B[x]
           indexJ += 1
      print("here is A after B is appended (unsorted): ", A)
-    ## while(!sorted):
-    ##      sorted = True
+     indexI = 0
+	
+     while(sorted == False):
+          sorted = True
+##implement bubble sort as an initial solution to "get it live"
+	  for x in range(0, len(A)-1):
+               if(A[x+1] < A[x]):
+                    tempA = A[x]
+                    A[x] = A[x+1]
+                    A[x+1] = tempA
+               if(A[x+1] is None):
+                    break ##done to prevent machien from analyizing null (None) values of the Array.
+          for x in range(0, len(A)):
+               if(A[x+1]<A[x]):
+                    sorted = False
+                    break
+               if(A[x+1] is None):
+                    break
+          print("Computing, \n")
+
+     print("Array A, after Bubble Sort, is: \n", A)
+          
+
      return
+
+##begin main script
+
 A = [4, 5, 6, 3 ,4, None,None ,None ,None ,None ,None ,None ]
 print("The contents of A are as follows: ", A)
 print("The task of the developer is to creat a function to combine a second list of similar datatypes into A while still keeping the numbers sorted. The original array 'A' may be unsorted")
