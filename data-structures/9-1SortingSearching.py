@@ -35,6 +35,13 @@ def merge(A, B):
           indexJ += 1
      print("here is A after B is appended (unsorted): ", A)
      indexI = 0
+     return
+
+def sortBubble(A):
+     sorted = False
+     indexI = 0
+     indexJ = 0
+
 	
      while(sorted == False):
           sorted = True
@@ -59,6 +66,66 @@ def merge(A, B):
 
      return
 
+def sortSelection(A):
+     indexI = 0
+     indexJ = 0
+     tempA = A[0]
+    
+     for x in range(0, len(A)):
+          tempA = A[x]
+          for y in range(x, len(A)):
+               if(A[y]<tempA):
+                    tempA = A[y]
+                    indexI = y
+          print("moving value: ", tempA)
+          print("\n")
+          A[indexI] = A[x]
+          A[x] = tempA
+          
+          print("currently computing sort at index: \n")
+          print(x)
+     return
+     
+##implements mergeSort and result is returned   
+##presumes each element is sorted
+def sortMerge(A, B):
+     sortSelection(A)
+     sortSelection(B)
+     indexA = 0
+     indexB = 0
+     indexC = 0
+     C = [None] * (len(A)+len(B))
+     isSorted = False
+     while isSorted is False:
+          if (indexA==len(A)-1):
+               for x in range(indexB,len(B)):
+                    C[indexC] = B[x]
+                    indexC +=1
+               isSorted = True
+               print("breaking here for final sort")
+               print(C)
+               break
+          if (indexB == len(B)-1):
+               for x in range(indexA, len(A)):
+                    C[indexC] = A[x]
+                    indexC += 1
+               isSorted = True
+               print("breaking here for final sort")
+               print(C)
+               break
+          if (A[indexA] < B[indexB]):
+               C[indexC] = A[indexA]
+               indexA+=1
+               indexC+=1
+          if (B[indexB] <= A[indexA]):
+               C[indexC] = B[indexB]
+               indexB+=1
+               indexC+=1
+	  if (indexC == len(C)):
+               isSorted = True
+     print("finish sorting")
+     print(C)
+     return C
 ##begin main script
 
 A = [4, 5, 6, 3 ,4, None,None ,None ,None ,None ,None ,None ]
@@ -68,7 +135,9 @@ B = [2,5,6,7]
 print("The contents of B are as follows: ", B)
 if(isMergable(A, B)):
      print("B can fit in A")
-     merge(A, B)
+     A = sortMerge(A, B)
+     
+     print(A)
 else:
      print("B can not fit in A")
      print("terminating program")
