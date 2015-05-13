@@ -1,5 +1,4 @@
 #include "cardDeck.h"
-#include<cstdlib>
 #include<cmath>
 #include<iostream>
 
@@ -7,9 +6,9 @@
 using namespace std;
 #endif
 
-double* cardDeck(){
+int * cardDeck(){
 
-     double deck[52]; //declares empty array.
+     static int deck[52]; //declares empty array.
 
      //faceCards - initial prototype ignores dual nature
      //of the "Ace"
@@ -57,7 +56,7 @@ double* cardDeck(){
      return deck; 
 }
 
-void cardDeck(double &deck){
+void cardDeck(int &deck){
 
      cout << "Function Undefined; nothing to see here";
 

@@ -1,9 +1,9 @@
 #ifndef CARDDECK_H
 #define CARDDECK_H
 
-double* cardDeck();
+int * cardDeck();
 
-void shuffle(double &deck);
+void shuffle(int &deck);
 
 
 #endif
