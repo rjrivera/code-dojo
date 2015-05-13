@@ -17,27 +17,28 @@ int main()
      double minBet;
      double maxBet;
      double handsPerHour;
+     double *deck = cardDeck();
      cout << "\nEnter your starting Bank Roll\n";
-     cin >> Bank
+     cin >> Bank;
    
-     cout << "\nEnter Number of Hours at the Table\n"
+     cout << "\nEnter Number of Hours at the Table\n";
      cin >> numHours;
      
      while(numPlayers < 5)
      {
-          cout << "\nEnter Number of Players, outside yourself\n"
+          cout << "\nEnter Number of Players, outside yourself\n";
           cin >> numPlayers;
           if(numPlayers >4){
                cout << "\nNot enough seats at the table\n";
           }
      }
      
-     cout << "\nEnter minimum bet\n"
+     cout << "\nEnter minimum bet\n";
      cin >> minBet;
 
      maxBet = minBet *100; //as per best practices. 
      //simulation will assume a reasonable dealer speed, as defined by Casino Operations Management (Jim Kilby)
-     switch ( numPlayers + 1 )
+     switch ( (int)(numPlayers + 1) )
      {
 
           case '1':
@@ -53,9 +54,17 @@ int main()
           default:
                handsPerHour = 209;
      }
-     //begin simulation here
 
+
+     //begin simulation here
+     cout << deck[0] << endl;
+    // for(int i = 0; i < 52; i++){
+    //      cout << "\nReviewing Deck\n";
+    //      cout << "\n Card Value: " << cardDeck[i] << "\n";
+    // }
      // end simulation here
+
+     
 
      cout << "\nEnd of Simulation\n" ;
 
