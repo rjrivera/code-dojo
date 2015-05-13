@@ -17,20 +17,23 @@ int main()
      double minBet;
      double maxBet;
      double handsPerHour;
-     double *deck = cardDeck();
+     double *deck;
+     deck = cardDeck();
      cout << "\nEnter your starting Bank Roll\n";
      cin >> Bank;
    
      cout << "\nEnter Number of Hours at the Table\n";
      cin >> numHours;
      
-     while(numPlayers < 5)
+
+     cout << "\nEnter Number of Players, outside yourself\n";
+     cin >> numPlayers;
+
+     while(numPlayers > 4)
      {
+          cout << "\nNot enough seats at the table\n";
           cout << "\nEnter Number of Players, outside yourself\n";
-          cin >> numPlayers;
-          if(numPlayers >4){
-               cout << "\nNot enough seats at the table\n";
-          }
+          cin >> numPlayers;          
      }
      
      cout << "\nEnter minimum bet\n";
@@ -57,18 +60,19 @@ int main()
 
 
      //begin simulation here
-     cout << deck[0] << endl;
-    // for(int i = 0; i < 52; i++){
-    //      cout << "\nReviewing Deck\n";
-    //      cout << "\n Card Value: " << cardDeck[i] << "\n";
-    // }
+    // cout << deck[0] << endl;
+     for(int i = 0; i < 52; i++){
+       
+          cout << "\nReviewing Deck\n";
+          cout << "\n Card Value: " << deck[i] << "\n";
+     }
      // end simulation here
 
      
 
      cout << "\nEnd of Simulation\n" ;
 
-     cout << "\nCurrent Bank: " << Bank;
+     cout << "\nCurrent Bank: " << Bank << "\n";
 
      return 0;
 
