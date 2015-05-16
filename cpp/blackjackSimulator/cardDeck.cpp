@@ -1,7 +1,7 @@
 #include "cardDeck.h"
 #include<cmath>
 #include<iostream>
-
+#include<cstdlib>
 #if !defined(_MSC_VER)
 using namespace std;
 #endif
@@ -55,9 +55,30 @@ int * cardDeck(){
      
      return deck; 
 }
-
-void cardDeck(int &deck){
+//should be able to shuffle any sized shoe. 
+void shuffleDeck(int *deck){
 
      cout << "Function Undefined; nothing to see here";
+     int firstCard = 0;
+     int secondCard = 0;
+     int tempCard = 0;
+     for(int i = 0; i < 100; i++){
+                  
+           //use a random value to pick two cards
+
+           firstCard = rand() % 52; //TODO replace hard number
+           secondCard = rand() % 52;
+
+           //swap cards.
+
+           tempCard = deck[firstCard];
+           deck[firstCard] = deck[secondCard];
+           deck[secondCard] = tempCard;
+     }
+     for(int i= 0; i< 52; i++){
+           cout << "\nCurrent Value: " << deck[i] << "\n";
+     //no return type needed. 
+     }
+
 
 }

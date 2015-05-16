@@ -3,7 +3,7 @@
 
 int * cardDeck();
 
-void shuffle(int &deck);
+void shuffleDeck(int *deck);
 
 
 #endif

@@ -68,11 +68,11 @@ int main()
 
     //review the deck here
     // cout << deck[0] << endl;
-     for(int i = 0; i < 52; i++){
+    // for(int i = 0; i < 52; i++){
        
-          cout << "\nReviewing Deck\n";
-          cout << "\n Card Value: " << deck[i] << "\n";
-     }
+    //      cout << "\nReviewing Deck\n";
+    //      cout << "\n Card Value: " << deck[i] << "\n";
+    // }for loop was used for verifying deck...not needed atm. 
      // end review here
 
      // begine simulation here
@@ -88,7 +88,9 @@ int main()
 
       //implement shuffle check
            if(shuffle){
-           //TODO insert shuffle method after implementation.
+ 
+          //TODO insert shuffle method after implementation.
+                shuffleDeck(deck);
                 shuffle = false;
                 currentCard = 1;
             }
@@ -105,11 +107,26 @@ int main()
           }
           //auto-decide basic strategy to stay TODO basic strat
 
-          //reveal dealer action and collect/payout
-          if(hands[0]<17 || hands[0] > 21){
-               hands[0] += deck[currentCard];
-               currentCard++;
+          for(int i = 1; i <= numPlayers; i++){
+            
+                while(hands[i] < 17){//hit logic should be method. use while loop to hit UNTIL 17. 
+ 
+                      hands[i]+=deck[currentCard];
+                      currentCard++;
+                }
+
           }
+          //dealer hits now.
+
+          while(hands[0] < 17){
+
+                hands[0] += deck[currentCard];
+                currentCard++;
+
+          }
+
+          //reveal dealer action and collect/payout
+         
 
           if(hands[1] > hands[0])//dealer bust or player win. 
           {
