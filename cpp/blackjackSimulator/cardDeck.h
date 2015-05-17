@@ -5,5 +5,4 @@ int * cardDeck();
 
 void shuffleDeck(int *deck);
 
-
 #endif

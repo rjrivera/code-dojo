@@ -6,6 +6,8 @@ requires cardDeck.cpp
 
 #include "cardDeck.h"
 #include<iostream>
+#include "playerLogic.h"
+
 using namespace std;
 
 int main()
@@ -18,6 +20,8 @@ int main()
      double maxBet;
      int handsPerHour;
      int *deck;
+     int count = 0;
+     int currentBet = 0;
      deck = cardDeck();
      
      cout << "\nEnter your starting Bank Roll\n";
@@ -25,7 +29,7 @@ int main()
    
      cout << "\nEnter Number of Hours at the Table\n";
      cin >> numHours;
-     
+          
 
      cout << "\nEnter Number of Players, outside yourself\n";
      cin >> numPlayers;
@@ -83,24 +87,34 @@ int main()
      //list<int> hands ((numPlayers+1), 0);//initiate list of ints. 
      int hands[(6)] = { }; //initialized to max hands on table
      int currentCard = 1;//accounts for initial card burn. 
+     int showingCard = 0;//card Dealer is showing. 
      while(gaming)
      {
-
+          cout << "\n *** NEW GAME ***\N Best of Luck \n";
       //implement shuffle check
-           if(shuffle){
+          if(shuffle){
  
-          //TODO insert shuffle method after implementation.
                 shuffleDeck(deck);
                 shuffle = false;
                 currentCard = 1;
+                count = 0;
             }
-
+          currentBet = max(minBet * count + minBet, minBet);
+          cout << "\ncurrent count: " << count;
+          cout << "\ncurrent Bet: " << currentBet;
       //implement gaming logic here.
 
           //deal - remember, dealer is not included in numPlayers.
           for(int i = 0; i < 2; i++){//each round of cards.
               for(int j =0; j <= numPlayers; j++){
                       hands[j]+= deck[currentCard];
+                      if(i == 0 && j == 0){
+                            showingCard = deck[currentCard];
+                            cout << "\ndealers Card: ";
+                            cout << showingCard << "\n";
+                      }
+                      updateCount(count, deck[currentCard]);
+              
                       currentCard++;
               }
 
@@ -109,10 +123,17 @@ int main()
 
           for(int i = 1; i <= numPlayers; i++){
             
-                while(hands[i] < 17){//hit logic should be method. use while loop to hit UNTIL 17. 
+                while(basicStrat(showingCard,
+                                   hands[i]))
+                {//hit logic should be method. use while loop to hit UNTIL 17. 
  
                       hands[i]+=deck[currentCard];
+                      updateCount(count, deck[currentCard]);
                       currentCard++;
+                      if (hands[i]>21)
+                      {
+                            cout << "\nBUST!";
+                      }
                 }
 
           }
@@ -121,22 +142,35 @@ int main()
           while(hands[0] < 17){
 
                 hands[0] += deck[currentCard];
+                updateCount(count, deck[currentCard]);
                 currentCard++;
 
           }
 
           //reveal dealer action and collect/payout
          
-
-          if(hands[1] > hands[0])//dealer bust or player win. 
+          
+          if( hands[1] > 21)
           {
-               Bank+=minBet;
+               Bank-=currentBet;
+               cout << "LOSE! dealer hand: " << hands[0]<<"\n";
+               cout << "     your hand: " << hands[1] << "\n";
+          }
+          else if(hands[0] > 21)
+          {
+               Bank+=currentBet;
                cout << "WIN! dealer hand: " << hands[0]<<"\n";
                cout << "     your hand: " << hands[1] << "\n";
           }
-          else if(hands[0]>hands[1])
+          else if(hands[1] > hands[0] )//dealer bust or player win. 
           {
-               Bank-=minBet;
+               Bank+=currentBet;
+               cout << "WIN! dealer hand: " << hands[0]<<"\n";
+               cout << "     your hand: " << hands[1] << "\n";
+          }
+          else if(hands[0] > hands[1])
+          {
+               Bank-=currentBet;
                cout << "LOSE! dealer hand: " << hands[0]<<"\n";
                cout << "     your hand: " << hands[1] << "\n";
           }

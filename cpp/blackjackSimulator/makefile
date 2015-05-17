@@ -1,5 +1,6 @@
 #OBJS specifies which files to compile as part of project
-OBJS = cardDeck.cpp SimulationMain.cpp
+OBJS = cardDeck.cpp SimulationMain.cpp playerLogic.cpp
+
 
 #CC specifies which compiler we're using 
 CC = g++
@@ -14,5 +15,5 @@ LINKER_FLAGS =
 OBJ_NAME = SimulationSimple
 
 all: $(OBJS)
-        $(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 

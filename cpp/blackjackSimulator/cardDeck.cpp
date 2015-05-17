@@ -1,7 +1,8 @@
 #include "cardDeck.h"
 #include<cmath>
 #include<iostream>
-#include<cstdlib>
+#include<stdlib.h>
+#include<time.h>
 #if !defined(_MSC_VER)
 using namespace std;
 #endif
@@ -16,14 +17,11 @@ int * cardDeck(){
      for(int i =0; i < 52; i++)
      {
           cout << "\nin for loop iteration: " << i << "\n";
-          if(i < 12){//facecards
+          if(i < 16){//facecards
                deck[i] = 10;
           }
-          else if(i < 16){
-               deck[i] = 11;
-          }
           else if(i < 20){
-               deck[i] = 1;
+               deck[i] = 11;
           }
           else if(i < 24){
                deck[i] = 2;
@@ -49,20 +47,21 @@ int * cardDeck(){
           else if(i < 52){
                deck[i] = 9;
           }
-          cout << "\n Card Value: ";
-          cout << deck[i] << "\n";
+    //      cout << "\n Card Value: ";
+    //      cout << deck[i] << "\n";
      }
      
      return deck; 
 }
 //should be able to shuffle any sized shoe. 
 void shuffleDeck(int *deck){
-
-     cout << "Function Undefined; nothing to see here";
+       
+     srand (time(NULL));
+     cout << "***Shuffling***\n";
      int firstCard = 0;
      int secondCard = 0;
      int tempCard = 0;
-     for(int i = 0; i < 100; i++){
+     for(int i = 0; i < rand() % 100 + 50; i++){
                   
            //use a random value to pick two cards
 
@@ -75,10 +74,10 @@ void shuffleDeck(int *deck){
            deck[firstCard] = deck[secondCard];
            deck[secondCard] = tempCard;
      }
-     for(int i= 0; i< 52; i++){
-           cout << "\nCurrent Value: " << deck[i] << "\n";
-     //no return type needed. 
-     }
+     //for(int i= 0; i< 52; i++){
+     //      cout << "\nCurrent Value: " << deck[i] << "\n";
+     
+     // }
 
 
 }
