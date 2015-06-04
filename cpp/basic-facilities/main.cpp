@@ -1,32 +1,27 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<iostream>
+#include"Node.h"
 using namespace std;
-bool accept()
-{
-    cout << "Do you want to proceed (y/n)?\n";
-
-    char answer = 0;
-    cin >> answer;
-    
-    switch(answer){
-        case 'y':
-            return true;
-        case 'n':
-            return false;
-        default:
-            cout << "I'll take that for a no.\n";
-            return false;
-    }
-}
 
 int main()
 {
-    printf("\nHellow World, \n Welcom to my first Cpp program in ooBoonToo\n\n");
-    bool answer =  accept();
-    while(answer){
-        printf("you want more, eh?");
-        answer = accept();
-    }
-    return(0);
+    cout << "Initial CPP scratch pad: meant to crudely test development\n";
+
+    cout << "Testing the Node class out. \n";
+    cout << "Input data for a few nodes...3 nodes to be exact\n";
+    int i1, i2, i3;
+
+    cin >> i1;
+    cin >> i2;
+    cin >> i3;
+
+    Node n1 = Node(i1);
+    Node n2 = Node(i2);
+    Node n3 = Node(i3);
+
+    cout << "Node 1 is as follows: \n" << n1.getData() << "\n";
+    cout << "Node 2 is as follows: \n" << n2.getData() << "\n";
+    cout << "Node 3 is as follows: \n" << n3.getData() << "\n";
 }
+
