@@ -13,5 +13,6 @@ public:
         void Push(int Data_);
         void Pop();
         int getHead(){return head.getData();}
+        void traverseList();
 }
 #endif

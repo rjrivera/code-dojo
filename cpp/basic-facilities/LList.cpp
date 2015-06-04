@@ -19,4 +19,12 @@ void LList::Pop(){
      head.setNextNode(*head.getNextNode());
 }
 
+void LList::traversList(){
+     //why am i going to copy the entire thing? TODO find canon to travers list
+     Node temp = head;
+     while((temp.getNextNode()) != NULL){
+          cout << "current data item is: \n" << temp.getData();
+          temp = *temp.getNextNode();
+     }
 
+}
