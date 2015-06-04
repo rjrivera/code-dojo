@@ -2,26 +2,30 @@
 #include<stdlib.h>
 #include<iostream>
 #include"Node.h"
+#include"LList.h"
+
 using namespace std;
 
 int main()
 {
     cout << "Initial CPP scratch pad: meant to crudely test development\n";
 
-    cout << "Testing the Node class out. \n";
-    cout << "Input data for a few nodes...3 nodes to be exact\n";
+    cout << "Testing the List class out. \n";
+    cout << "Input data for an initial list...\n";
     int i1, i2, i3;
 
     cin >> i1;
+
+    LList l1 = LList(i1);
+ 
+    cout << "Now we will add to this list, enter 2 numbers:\n";
+
     cin >> i2;
     cin >> i3;
+    
+    //l1.Push(i2);
+    //l1.Push(i3);
 
-    Node n1 = Node(i1);
-    Node n2 = Node(i2);
-    Node n3 = Node(i3);
-
-    cout << "Node 1 is as follows: \n" << n1.getData() << "\n";
-    cout << "Node 2 is as follows: \n" << n2.getData() << "\n";
-    cout << "Node 3 is as follows: \n" << n3.getData() << "\n";
+    l1.traverseList();
 }
 

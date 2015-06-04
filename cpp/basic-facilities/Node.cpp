@@ -1,12 +1,11 @@
 #include "Node.h"
+#include<cstddef>
 
-
-Node::Node(int Data_){
-          
-          setData(Data_);//define Nod data.
-          Node* p1; 
-          setNextNode(p1);//define Node Pointer.
-          
+Node::Node(){
+     data = 0;
+     nextNode = NULL;
+}
+Node::Node(int Data_): data(Data_), nextNode(NULL){
 }
 
 void Node::setData(int num){

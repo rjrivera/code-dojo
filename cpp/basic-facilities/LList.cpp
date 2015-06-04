@@ -1,30 +1,38 @@
 #include "Node.h"
 #include "LList.h"
-
+#include <cstddef>
+#include <iostream>
 LList::LList(int Data_){
-
-     head = Node(Data_);
-     tail = *head.getNextNode();
+     
+     
+     Node n1 = Node(Data_);
+     head = &n1;
+     tail = head;
+     
 
 }
 
 void LList::Push(int Data_){
-     Node n = Node(Data_);
-     tail.setNextNode(&n);
-     tail = *tail.getNextNode();
 
+     Node n1 = Node(Data_);
+     tail->nextNode = &n1;
+     tail = tail->nextNode;
 
 }
 void LList::Pop(){
-     head.setNextNode(*head.getNextNode());
+     head = head->nextNode;
 }
 
-void LList::traversList(){
+void LList::traverseList(){
      //why am i going to copy the entire thing? TODO find canon to travers list
-     Node temp = head;
-     while((temp.getNextNode()) != NULL){
-          cout << "current data item is: \n" << temp.getData();
-          temp = *temp.getNextNode();
+     Node * current = head;
+     while(current != NULL){
+        
+         
+         std::cout << "current data item is: \n" << current->data << "\n";
+         current = current->nextNode;
+         
      }
+     std::cout<< "final test bench \n";
 
 }

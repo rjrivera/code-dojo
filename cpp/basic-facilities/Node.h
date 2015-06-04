@@ -3,11 +3,14 @@
 
 class Node{
 
+     friend class LList;
+
      private:
    	     int data;
              Node * nextNode;
 
      public:
+	     Node();
              Node(int Data_);
              int getData(){ return data;}
 	     Node * getNextNode(){ return nextNode;}
