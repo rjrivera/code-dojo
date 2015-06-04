@@ -10,6 +10,7 @@ class Node{
      public:
              Node(int Data_);
              int getData(){ return data;}
+	     Node * getNextNode(){ return nextNode;}
              void setData(int num);
              void setNextNode(Node* n1);
 	     
