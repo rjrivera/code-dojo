@@ -23,8 +23,8 @@ int main()
     cin >> i2;
     cin >> i3;
     
-    //l1.Push(i2);
-    //l1.Push(i3);
+    l1.Push(i2);
+    l1.Push(i3);
 
     l1.traverseList();
 }

@@ -5,8 +5,8 @@
 LList::LList(int Data_){
      
      
-     Node n1 = Node(Data_);
-     head = &n1;
+     
+     head = new Node(Data_);
      tail = head;
      
 
@@ -14,8 +14,8 @@ LList::LList(int Data_){
 
 void LList::Push(int Data_){
 
-     Node n1 = Node(Data_);
-     tail->nextNode = &n1;
+    
+     tail->nextNode = new Node(Data_);
      tail = tail->nextNode;
 
 }
