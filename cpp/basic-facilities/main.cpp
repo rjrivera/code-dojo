@@ -1,32 +1,31 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<iostream>
-using namespace std;
-bool accept()
-{
-    cout << "Do you want to proceed (y/n)?\n";
+#include"Node.h"
+#include"LList.h"
 
-    char answer = 0;
-    cin >> answer;
-    
-    switch(answer){
-        case 'y':
-            return true;
-        case 'n':
-            return false;
-        default:
-            cout << "I'll take that for a no.\n";
-            return false;
-    }
-}
+using namespace std;
 
 int main()
 {
-    printf("\nHellow World, \n Welcom to my first Cpp program in ooBoonToo\n\n");
-    bool answer =  accept();
-    while(answer){
-        printf("you want more, eh?");
-        answer = accept();
-    }
-    return(0);
+    cout << "Initial CPP scratch pad: meant to crudely test development\n";
+
+    cout << "Testing the List class out. \n";
+    cout << "Input data for an initial list...\n";
+    int i1, i2, i3;
+
+    cin >> i1;
+
+    LList l1 = LList(i1);
+ 
+    cout << "Now we will add to this list, enter 2 numbers:\n";
+
+    cin >> i2;
+    cin >> i3;
+    
+    l1.Push(i2);
+    l1.Push(i3);
+
+    l1.traverseList();
 }
+
