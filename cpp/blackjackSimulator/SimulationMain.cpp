@@ -22,6 +22,8 @@ int main()
      int *deck;
      int count = 0;
      int currentBet = 0;
+     bool basTable[31][31];    
+     initStratTable(basTable);
      deck = cardDeck();
      
      cout << "\nEnter your starting Bank Roll\n";
@@ -88,10 +90,12 @@ int main()
      int hands[(6)] = { }; //initialized to max hands on table
      int currentCard = 1;//accounts for initial card burn. 
      int showingCard = 0;//card Dealer is showing. 
+     bool blackJack = false;
      while(gaming)
      {
-          cout << "\n *** NEW GAME ***\N Best of Luck \n";
+          cout << "\n *** NEW GAME ***\n Best of Luck \n";
       //implement shuffle check
+	  blackJack = false;
           if(shuffle){
  
                 shuffleDeck(deck);
@@ -99,6 +103,7 @@ int main()
                 currentCard = 1;
                 count = 0;
             }
+//	when negative counts arise, bet minBet,ie (max(a,b));
           currentBet = max(minBet * count + minBet, minBet);
           cout << "\ncurrent count: " << count;
           cout << "\ncurrent Bet: " << currentBet;
@@ -119,12 +124,16 @@ int main()
               }
 
           }
+	  
+          if (hands[1] == 21 && hands[0] != 21) {
+		blackJack = true;
+	  }
           //auto-decide basic strategy to stay TODO basic strat
 
           for(int i = 1; i <= numPlayers; i++){
             
                 while(basicStrat(showingCard,
-                                   hands[i]))
+                                   hands[i], basTable))
                 {//hit logic should be method. use while loop to hit UNTIL 17. 
  
                       hands[i]+=deck[currentCard];
@@ -153,13 +162,13 @@ int main()
           if( hands[1] > 21)
           {
                Bank-=currentBet;
-               cout << "LOSE! dealer hand: " << hands[0]<<"\n";
+               cout << "YOU BUST! LOSE! dealer hand: " << hands[0]<<"\n";
                cout << "     your hand: " << hands[1] << "\n";
           }
           else if(hands[0] > 21)
           {
                Bank+=currentBet;
-               cout << "WIN! dealer hand: " << hands[0]<<"\n";
+               cout << "DEALER BUST! WIN! dealer hand: " << hands[0]<<"\n";
                cout << "     your hand: " << hands[1] << "\n";
           }
           else if(hands[1] > hands[0] )//dealer bust or player win. 
@@ -180,12 +189,16 @@ int main()
                cout<< "PUSH dealer hand: " << hands[0] << "\n";
                cout << "    your hand: " << hands[1] << "\n";
           }
+	  if (blackJack) {
+		Bank += currentBet/2; 
+		cout << "YOU EARNED A BLACKJACK! BONUS AWARDED!\n";
+	  }
       cout << "\nCurrent Bank: " << Bank << "\n";
       for(int i =0 ; i < numPlayers+1; i++){
           hands[i] = 0;//clear the table. 
       }
       //implement cut-check
-      if(currentCard >32) //temporary test value for reshuffle.
+      if(currentCard >35) //temporary test value for reshuffle.
       {
      
           shuffle = true;
