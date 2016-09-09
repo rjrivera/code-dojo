@@ -1,0 +1,164 @@
+{% load analytical %}
+<!DOCTYPE ... >
+<html ng-app>
+<head>
+{% analytical_head_top %}
+{% load staticfiles%}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/Home.css' %}" title="Default"/>
+<link rel="stylesheet" href="{% static 'css/jquery.terminal-0.10.8.css' %}" />
+
+<title>Rob's Rants</title>
+<script src ="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.js"></script>
+<script src ="{% static 'js/jquery.terminal-0.10.8.js' %}"></script>
+<script src="https://fb.me/react-with-addons-15.1.0.js"></script>
+<script src="https://fb.me/react-dom-15.1.0.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+<!--script src="{% static 'js/codemirror.js' %}"></script-->
+<link rel="stylesheet" href="//codemirror.net/lib/codemirror.css">
+<link rel="stylesheet" type="text/css" href="//angular-ui.github.com/angular-ui/build/angular-ui.css">
+<script src="//codemirror.net/lib/codemirror.js"></script>
+        <script src="//codemirror.net/addon/edit/matchbrackets.js"></script>
+        <script src="//codemirror.net/mode/htmlmixed/htmlmixed.js"></script>
+        <script src="//codemirror.net/mode/xml/xml.js"></script>
+        <script src="//codemirror.net/mode/javascript/javascript.js"></script>
+        <script src="//codemirror.net/mode/css/css.js"></script>
+        <script src="//codemirror.net/mode/clike/clike.js"></script>
+        <script src="//codemirror.net/mode/php/php.js"></script>
+        <script src="//angular-ui.github.com/angular-ui/build/angular-ui.js"></script>
+	<script src="http://cdn.babylonjs.com/2-1/babylon.js"></script>
+<!--link rel="stylesheet" href="{% static 'css/codemirror.css' %" /-->
+<script src="{% static 'js/ui-codemirror.js' %}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.1.0/react-dom.js"></script>
+<!--script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script-->
+    <!--script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+<script src="{% static 'js/clike.js' %}"></script>
+<style>.CodeMirror {border: 2px inset #dee;}</style>
+
+
+{% analytical_head_bottom %}
+</head>
+<body>
+{% analytical_body_top %}
+<div id="middleContainer" class="box">
+<table>
+     <tr>
+          <td width="70%"><p>
+    <script type = "text/javascript">
+        $(function () { 
+	    
+	    
+	    var discAmt = $('#disc-amt');	    
+	    var discCode = $('#disc-code');
+	    var genCode = $('#gen-code');
+	    var minPurch = $('#min-purch');
+            var storeID = $('#store-id');
+	    var text = {};	  
+             
+	    genCode.click( function() {
+		text['amt'] = discAmt.val();
+		text['type'] = $("input[name=type]:checked").val()
+		text['minPurch'] = minPurch.val();
+		text['storeID'] = storeID.val();
+		$.ajax({
+			url: "http://www.raptorrumor.com/cgi-bin/generateCode.cgi",
+			type:"get",
+			datatype: "html",
+			data: text,
+			success: function(response) {
+				var raw = response;
+				discCode.html(response);
+				
+			}
+		});
+	   })
+	})
+    </script>
+<div id="disc-code">generated code</div>
+<div> 
+    <input id="store-id" type="text" placeholder="store id">
+</div>
+<div>
+    <input id="disc-amt" type = "text" placeholder="discount amount ($)">
+<br>
+</div>
+<div> 
+    <input id="min-purch" type="text" placeholder="minimum purchase required">
+<br>
+</div>
+<div>
+    <input type="radio" name="type" value="1">$</div>
+<div>
+    <input type="radio" name="type" value="2">%
+</div>
+<div>
+    <input id="gen-code" type="button" class="button" value="generate code"/>
+</div>
+<!--div ng-app="myApp">
+    <div ng-controller="codeCtrl">
+        <textarea ui-codemirror ng-model="code"></textarea>
+    </div>
+</div>
+
+<script type="text/javascript">
+var myApp = angular.module('myApp', ['ui']);
+
+myApp.value('ui.config', {
+    codemirror: {
+        mode: 'text/x-php',
+        lineNumbers: true,
+        matchBrackets: true
+    }
+});
+
+function codeCtrl($scope) {
+    $scope.code = '<?php echo "Hello World"; ?>';
+}
+
+</script-->
+
+ <!--type="text" placeholder="insert code here"/>
+public class helloWorld {
+        public static void main(String[] srgs) {
+                System.out.println(\"Hello World\");
+        }
+}>
+</textarea-->
+
+<!--script>
+var javaEditor = CodeMirror.fromTextArea(document.getElementById("java-code"), {
+        lineNumbers: true,
+        matchBrackets: true,
+        mode: "text/x-java"
+      });
+</script-->
+
+</td>
+          <td width="30%">
+<!--a class="twitter-timeline" href="https://twitter.com/Harbidor" data-widget-id="502530036755202048">Tweets by @Harbidor</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script-->
+          </td>
+     </tr>
+</table>
+</div>
+
+<!-- Piwik>
+<script type="text/javascript">
+  var _paq = _paq || [];
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u=(("https:" == document.location.protocol) ? "https" : "http") + "://www.raptorrumor.com/piwik/";
+    _paq.push(['setTrackerUrl', u+'piwik.php']);
+    _paq.push(['setSiteId', 1]);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0]; g.type='text/javascript';
+    g.defer=true; g.async=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<noscript><p><img src="http://www.raptorrumor.com/piwik/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<End Piwik Code -->
+{% analytical_body_bottom %}
+</body>
