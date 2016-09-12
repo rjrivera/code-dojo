@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = 1-4-2.cpp 
+OBJS = 1-4-4.cpp 
 
 
 #CC specifies which compiler we're using 
@@ -12,7 +12,7 @@ COMPILER_FLAGS = -I. -w
 LINKER_FLAGS = 
 
 #OBJ_NAME specifies the name of our executable
-OBJ_NAME = ex2
+OBJ_NAME = ex4
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)

@@ -16,19 +16,24 @@ int main() {
 	int words, lines, characters;
 	words = lines = characters = 0;
 	int input;
-	bool newWord = false;
+	bool newWord = true;
 	while((input = getchar()) != EOF) {		
-		if (!newWord && input == ' ') {
-			newWord = true;
+		//note ascii table reveals chars are in range
+		// [33, 126]
+		if (newWord && input >= 33 && input <= 126) {
+			newWord = false;
 			words++;
+			characters++;
+		}
+		else if (!newWord && input >= 33 && input <=126) {
+			characters++;
 		}
 		else if (input == '\n') {
 			lines++;
-			newWord = false;
+			newWord = true;
 		}
-		else {
-			characters++;
-			newWord = false;
+		else if (input == ' '){
+			newWord = true;
 		}
 		
 	}
