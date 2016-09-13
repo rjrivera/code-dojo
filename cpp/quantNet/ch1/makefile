@@ -1,9 +1,9 @@
 #OBJS specifies which files to compile as part of project
-OBJS = Main.c print.c 
+OBJS = 1-5-4.cpp
 
 
 #CC specifies which compiler we're using 
-CC = gcc
+CC = g++
 
 #compiler_flags SPECIFIES the additional compilation options
 COMPILER_FLAGS = -I. -w
@@ -12,7 +12,7 @@ COMPILER_FLAGS = -I. -w
 LINKER_FLAGS = 
 
 #OBJ_NAME specifies the name of our executable
-OBJ_NAME = ex4
+OBJ_NAME = ex5
 
 
 all: $(OBJS)
