@@ -9,7 +9,9 @@ class Point{
 		//constructors
 		Point();
 		Point(double x_, double y_);
-		
+		Point(const Point& sauce);
+		//destructor
+		~Point();	
 		//selectors
 		double getX();
 		double getY();
@@ -18,6 +20,10 @@ class Point{
 		//mutators
 		void setX(double x_);
 		void setY(double y_);
+
+		//calculate the distance between the instance and the origin/argument, respectively.
+		double DistanceOrigin();
+		double Distance(Point& p); 
 
 };
 #endif

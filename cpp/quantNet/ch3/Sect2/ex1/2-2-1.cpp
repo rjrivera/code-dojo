@@ -1,10 +1,18 @@
+/*
+Lvl3, Sect2, Ex1
+
+Author Rob Rivera
+Date 9-17-2016
+
+*/
+
 #include <iostream>
 #include "Point.hpp"
 
 using namespace std;
 int main() {
 	// initialize and requesnt user input. 
-	int x, y;
+	double x, y;
 	cout << "please enter integer for an 'x' coordinate" << endl;
 	cin >> x;
 	cout << "please enter an integer for a 'y' coordinate" << endl;

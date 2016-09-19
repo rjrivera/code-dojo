@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Point.hpp"
 #include <string>
+#include <cmath>
 
 
 //constructors
@@ -20,7 +21,7 @@ double Point::getX(){
 }
 
 double Point::getY(){
-	return this->y;
+	return y;
 }
 	
 std::string Point::ToString(){
@@ -33,7 +34,29 @@ void Point::setX(double x_){
 }
 	
 void Point::setY(double y_){
-	this->y = y_;
+	y = y_;
+}
+
+double Point::DistanceOrigin() {
+	double a = std::abs(x);
+	double b = std::abs(y);
+	return (std::sqrt(std::pow(a,2) + std::pow(b,2)));
+	
+}
+
+double Point::Distance(Point& p){	
+	double a, b;
+	if (p.x > x) {
+		a = p.x - x;
+	}
+	else { a = x - p.x; }
+
+	if (p.y > y) {
+		b = p.y - y;
+	}
+	else { b= y - p.y; }
+
+	return (std::sqrt(pow(a, 2) + pow(b,2)));
 }
 
 	

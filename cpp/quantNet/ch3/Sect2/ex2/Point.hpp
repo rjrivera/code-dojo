@@ -19,5 +19,9 @@ class Point{
 		void setX(double x_);
 		void setY(double y_);
 
+		//calculate the distance between the instance and the origin/argument, respectively.
+		double DistanceOrigin();
+		double Distance(Point p); 
+
 };
 #endif
