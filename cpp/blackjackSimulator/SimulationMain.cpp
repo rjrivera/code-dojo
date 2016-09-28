@@ -22,6 +22,11 @@ int main()
      int *deck;
      int count = 0;
      int currentBet = 0;
+/*
+basTable is a datastructure used to maintain TRUE | FALSE based on dealer showing card and player's card - aka basic strategy. 
+does NOT utitlize doubledown or split for simplicity of modeling and simulation. details of the strat can be found in playerLogic::initStratTable.cpp
+	 */
+
      bool basTable[31][31];    
      initStratTable(basTable);
      deck = cardDeck();
