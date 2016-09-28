@@ -1,10 +1,15 @@
 #ifndef ARRAY_HPP
 #define ARRAY_HPP
 #include "Point.hpp"
+
+namespace RobRivera {
+
+	namespace Containers {
+
 class Array{
 
 	private:
-		Point * m_data;
+		CAD::Point * m_data;
 		int m_length;
 	public:
 		//constructors and destructors. 
@@ -14,15 +19,18 @@ class Array{
 		~Array();
 		
 		// accessor methods. 
-		//Point point(int pos_) const;
+		//CAD::Point point(int pos_); obsolete - GetElement
 		int Size() const;
-		Point * arr() const;
-		Point GetElement(int index_) const;	
+		CAD::Point * arr() const;
+		CAD::Point GetElement(int index_) const;	
 		// operator overloads
 		Array& operator=(const Array& source_);
-		const Point& operator[](int index_);
+		const CAD::Point& operator[](int index_);
 
 		// setters
-		void SetElement(int index_, Point * target_);
+		void SetElement(int index_, CAD::Point * target_);
+};
+
+	};
 };
 #endif
