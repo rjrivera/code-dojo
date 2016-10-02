@@ -58,8 +58,8 @@ bool Point::operator== (const Point& p) const {
 }
 
 Point& Point::operator= (const Point& source) {
-	x = source.X();
-	y = source.Y();
+	x = source.x;
+	y = source.y;
 	return *this;	
 }
 

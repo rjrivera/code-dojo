@@ -6,13 +6,13 @@
 class Circle{
 
 	private:
-		Point * center;
+		Point center;
 		double m_radius; //radius value must be >0
 	
 
 	public:
 		Circle();
-		Circle(Point& center_, double rad_);
+		Circle(Point center_, double rad_);
 		~Circle();
 		Circle(const Circle& source);
 

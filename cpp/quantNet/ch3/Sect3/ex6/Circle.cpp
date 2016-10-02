@@ -11,7 +11,7 @@ and center at origin.
 */
 Circle::Circle() {
 	m_radius = 5;
-	center = new Point();
+	center = Point();
 }
 
 /*
@@ -19,9 +19,9 @@ Constructor
 params: Point, unsigned double
 Descriptiong: creates a circle with defined center_ and radius. 
 */
-Circle::Circle(Point& center_, double rad_) {
+Circle::Circle(Point center_, double rad_) {
 	//question: should i trust the default copy constructor to assign center the parameter outright? (center = center_;)
-	center = new Point(center_.X(), center_.Y());
+	center = center_;
 	m_radius = rad_;
 }
 
@@ -80,7 +80,7 @@ Description: returns a string representation of the circle data:
 */
 
 std::string Circle::ToString() const {
-	return center->ToString() + " \nRadius: " + 
+	return center.ToString() + " \nRadius: " + 
 			std::to_string(m_radius) + 
 			"\nArea: " + std::to_string(Area()) + 
 			"\n Circumference: " +
@@ -93,7 +93,7 @@ Params: none
 Description: returns a Point object clone of the center point indicated in the Circle object. 
 */
 Point Circle::CentrePoint() const {
-	Point newPoint = Point(center->X(), center->Y());
+	Point newPoint = center;
 	return newPoint;
 
 }
@@ -128,8 +128,7 @@ Description: modifies the center point of the Circle Object.
 */
 
 void Circle::CentrePoint(Point center_) {
-	center->X(center_.X());
-	center->Y(center_.Y());
+	center = center_;
 }
 
 /*

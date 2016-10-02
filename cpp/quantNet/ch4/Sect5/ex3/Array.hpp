@@ -16,13 +16,14 @@ class Array{
 		// accessor methods. 
 		//Point point(int pos_) const;
 		int Size() const;
-		Point * arr() const;
+		// Point * arr() const; - rm' line for hw resub. 
 		Point GetElement(int index_) const;	
 		// operator overloads
 		Array& operator=(const Array& source_);
-		const Point& operator[](int index_);
+		const Point& operator[](int index_) const; //used for access
+		Point& operator[](int index_); 
 
 		// setters
-		void SetElement(int index_, Point * target_);
+		void SetElement(int index_, Point& target_);
 };
 #endif
