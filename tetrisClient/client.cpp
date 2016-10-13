@@ -84,6 +84,12 @@ int main(int argc, char* argv[])
 	}
 	bool inGame = true;
 	bool loadLevel = true;
+	auto deltaTime = std::chrono::high_resolution_clock::now();
+	auto lastCycle = std::chrono::high_resolution_clock::now();
+	auto now = std::chrono::high_resolution_clock::now();
+	//====sanity check -
+	//std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime).count() << std::endl;
+	//====
 	// ==============================================================
 	// input paradigm, track previous inputs via a container.
 	// ==============================================================
@@ -119,6 +125,12 @@ int main(int argc, char* argv[])
 			}
 			else { std::cout << "Unable to open Arena.txt\n"; }
 		}
+		// timing for current gamecycle. 
+		lastCycle = now;
+		now = std::chrono::high_resolution_clock::now();
+		//deltaTime = now - lastCycle;	
+		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count() << std::endl;
+		// end timing capture.
 	// ==================INPUT HANDLING====================
 		//swap input states to modernize this input cycle. 
 		delete prevState; //throw away the garbage. 
