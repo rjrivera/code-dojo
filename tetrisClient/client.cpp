@@ -107,19 +107,17 @@ int main(int argc, char* argv[])
 							blockSprites.push_back(sf::Sprite());
 							blockSprites[spriteIndex].setTexture(blocks[0]);		
 							blockSprites[spriteIndex].setPosition(sf::Vector2f((float)(16*(i % (WIDTH/16))) , (float)(16*numLine))); 
-							std::cout << "pushing new sprite at column " << i << " row: " << line << std::endl;
+							//std::cout << "pushing new sprite: " << "1";
 							spriteIndex++;
 						}
 
 					}
+					std::cout << line << std::endl;
 					numLine++;
 				}
 				arena.close();
 			}
 			else { std::cout << "Unable to open Arena.txt\n"; }
-		
-
-			
 		}
 	// ==================INPUT HANDLING====================
 		//swap input states to modernize this input cycle. 
@@ -130,8 +128,7 @@ int main(int argc, char* argv[])
 	// capture all user input. 
 		// iterating through sfml keyboard enums - captures entire keyboard state. 
 		for (uint32_t curEnum = (uint32_t)sf::Keyboard::A; curEnum != sf::Keyboard::F15; curEnum++) {
-			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum)))  {
-				std::cout << "Key pressed enum value: " << curEnum << std::endl;
+			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum))) {
 				curState->push_back(curEnum);
 			}
 //			if ( (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )) { inGame = false; }
@@ -142,7 +139,28 @@ int main(int argc, char* argv[])
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Escape) != curState->end()){
 			inGame = false;
 		}	 
-	
+
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
+			std::cout << "Left key pressed" << std::endl;
+		}
+
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Right) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
+			std::cout << "Right key pressed" << std::endl;
+		}
+		
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Up) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Up) == prevState->end()){
+			std::cout << "Up key pressed" << std::endl;
+		}
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Down) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
+			std::cout << "Down key pressed" << std::endl;
+		}
+	// ====================================================
+	// end processing user input wrt game logic. 
+	// ====================================================
 	//tutorial polling for closure of the window via 'x'ing out the window. why not. 
 		sf::Event event;
 		while (window.pollEvent(event))
