@@ -6,20 +6,225 @@
 #include <stdint.h>
 #include <queue>
 #include <deque>
+#include <screen.hpp>
+#include <list>
+#include <functional>
 //#include "print.h"
 using namespace std;
 
 //static int i = 3;
 //int count[5] = {2, 4, 6, 8, 10} ;
 
+int a = 5;
+
+/*
+int& function () { };
+namespace { static int n; }
+namespace A {
+	namespace { static int n; }
+}
+*//*
+class A {
+	public:
+	A() {}
+	A(A& a) {}
+	A& operator=(const A& a)
+	{ return(*this); }
+	
+};
+*/
+class sc 	{
+	int x;
+	public: 
+	sc(int xx) : x(xx) {}
+};
+
+template<typename T> class DynA{
+	T * contents;
+	int size;
+	public:
+		explicit DynA(int initial_size);
+};
+
+
+
+template<class T>
+struct sum{
+	static void foo(T op1, T op2) {
+		cout << " sum j= " << endl;		
+	}	
+
+
+};
 int main() {
-	//int count[5] = {2, 4, 6, 8, 10};
-	int *pC = new int[100];
-	if(!pC) {cout <<"hi" << endl;}
-	//for (int i = 0; i < 5; i++) {
-	//	cout << ++*++pC << endl;
-	//}//
-//	cout << true << endl;
+
+	for (int ii = 0; ii < 3; ++ ii) {
+
+		switch(ii){
+		case 0: cout << "ZERO";
+		case 1: cout << "ONE"; continue;
+		case 2: cout << "TWO"; break;
+}
+	cout << endl;
+	}
+/*
+	int myints[] = {1,2,3,4,5,4,3,2,1};
+	vector<int> v(myints, myints+9);
+	sort(v.begin(), v.end());
+	cout << (binary_search(v.begin(), v.end(), 3)) << endl;
+*/	
+
+/*
+	list<int> L;
+	list<int>::iterator it;
+
+	L.push_back(10);
+	L.push_back(25);
+	L.push_back(40);
+	it = L.end();
+	L.push_back(55);
+	L.insert(it, 30);
+	L.push_front(15);
+	L.sort(greater<int>());
+	it= find_if(L.begin(), L.end(), bind2nd(less<int>(), 40));
+	cout << *it << endl;
+
+*/
+/*
+ 	vector<string> strVec;
+	strVec.push_back("foo");
+	strVec.push_back("bar");
+	strVec.push_back("baz");
+	strVec.push_back("bee");
+
+	cout << count_if(strVec.begin(), strVec.end(), bind2nd(greater<string>(), "baz"));
+	*/
+//A a2(a1);
+	
+/* TODO [ ] read this and figure it out
+	vector<int> v;
+	for (int i =0; i < 5; ++i) v.push_back(i);
+		v.erase(find(v.rbegin(), v.rend(), 2).base());
+		v.insert(find(v.rbegin(), v.rend(), 1).base(),10);
+		copy(v.begin(), v.end(), ostream_iterator<int>(cout, " "));*/
+	
+	
+/*
+	int myints[] = {1, 2,3,4,5,4,3,2,1};	
+	vector<int> v(myints, myints+9);
+	sort(v.begin(),v.end());
+	cout << (binary_search(v.begin(),v.end(), 3)) <<endl;
+*/	
+
+	/*
+	vector<string> strVec;
+	strVec.push_back("foo");
+	strVec.push_back("flip");
+	strVec.push_back("Baz");
+	cout << count_if(
+		strVec.begin(),
+		strVec.end(),
+		bind2nd(greater<string>(), "Baz")
+	);*/
+	/*
+	const int * cp;
+
+	int y1, m1, d1, y2, m2, d2;
+	y1 = 2008; 
+	m1 = 1;
+	d1 = 15;
+	y2 = 2010;
+	m2 = 5;
+	d2 = 26;
+
+	// goal is to efficiently calculate the number of days between two given dates. 
+
+	// strategy: shave off the edges of the dates to normalize to 1-1, eg the number of days remaining in y1 and y2 then just add 365 * deltayears. 
+	
+	// baseline number of years * 365; assuming no leap years - 
+	
+	int numDays = 0;
+	
+	numDays += ((y2-1) - y1)*365;//addleap year functionality using modulo operator. 
+	
+	// add leapyear functionality later. 
+	//now - calculate numyears int ending year.
+	
+	numDays += d2; //days elapsed in end date. 
+
+	//add days in the month 
+		for (int i = 1; i < m2; i++) {
+			if (i == 1 || i == 3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12){
+				numDays += 31;
+			}
+			else if (i == 2) {
+				if (y2 % 4 == 0) { numDays += 29; }
+				else {
+					numDays += 28;	
+				}
+			}
+			else {
+				numDays += 30;
+			}
+
+		}
+	
+
+	// repeat proceducre for beginning edge, but tweak algorithms for the fact that "extra days" are at the end of the calender.
+	// can't just add numDays because depending on which month, the value may change. 
+	bool firstMonth = true;
+	for (int i = m1; i <=12; i++) {
+		if (i == 1 || i ==3 || i == 5 || i == 7 || i == 8 || i == 10 || i == 12) {
+
+			if (firstMonth) {
+				firstMonth = false;
+				numDays += (31 - d1);
+			}
+			else {
+				numDays += 31;
+			}
+
+		}
+		else if (i == 2) {
+			if (firstMonth) {
+				firstMonth = false;
+				if (y1 % 4 == 0) { numDays += (29 -d1); }
+				else {
+					numDays += (28 - d1);
+				}
+			}
+			else {
+				if (y1 % 4 == 0) {
+					cout << y1 << "is a leap year!" << endl;
+					numDays += 29;
+				}
+				else { 
+					numDays += 28;
+				}
+			}
+		}
+		else {
+			if (firstMonth) {
+				firstMonth = false;
+				numDays += (30  - d1);
+			}
+			else {
+				numDays += 30;
+			}
+		}
+	}
+	
+	cout << "number of days between: " << d1 << "-" << m1 << "-" << y1 << endl;
+	cout << "and " << endl;
+	cout << "                        " << d2 << "-" << m2 << "-" << y2 << endl;
+	cout << numDays << endl;
+
+	*/
+
+
+
+
+
 	// suppose you are given two arrays of departures and arrivals for an airport where all planes are not native to the airport.
 	// what is the maximum number of ramps needed?
 

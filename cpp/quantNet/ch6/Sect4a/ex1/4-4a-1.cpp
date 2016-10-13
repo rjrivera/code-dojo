@@ -6,7 +6,7 @@
 #include "Array.hpp"
 #include "Circle.hpp"
 #include "Shape.hpp"
-//#include "global_vars.hpp"
+
 
 using namespace std;
 
@@ -19,11 +19,10 @@ using namespace std;
 */
 
 int main() {
-	Point peepee;
-	Array arr = Array(5); //create an array of length 5. 
-/*
+
+	Array<Point> arr = Array<Point>(5);// = Array<int>(5); //create an array of length 5. 
 	try {
-		cout << arr[5] << endl;//attempt to access the nonexistent 6th element. 
+		cout << arr[3] << endl;//attempt to access the nonexistent 6th element. 
 	}
 	catch(ArrayException& e) {
 		cout << e.GetMessage();
@@ -31,7 +30,6 @@ int main() {
 	catch(...) {
 		cout << "exception thrown and caught\n";
 	}
-*/
 	return 0;
 
 }

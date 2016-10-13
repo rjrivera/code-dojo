@@ -26,7 +26,6 @@ Shape::Shape() {
 	std:: normal_distribution<double> distribution (1, 1.0);
 	// =========
 	m_id = distribution(generator);
-	std::cout << "HIEHIE" << std::endl;
 	
 }
 

@@ -11,7 +11,6 @@
 
 //constructors
 Point::Point() : x(0), y(0), Shape(){
-	std::cout << "I am a Piont constructor\n";
 }
 
 Point::Point(double x_, double y_) : x(x_), y(y_), Shape(){
@@ -131,8 +130,7 @@ void Point::Draw() {
 
 }
 
-
 void Point::Print() const {
 	std::cout << this->ToString() << std::endl;
 }
- 
+

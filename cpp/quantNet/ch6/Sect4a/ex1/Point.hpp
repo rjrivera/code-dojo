@@ -4,7 +4,7 @@
 #include<iostream>
 #include "Shape.hpp"
 
-class Point :  public Shape{
+class Point : public Shape{
 
 	private:
 		double x,y;
