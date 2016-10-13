@@ -14,7 +14,9 @@
 #include <ctime>
 #include <chrono>
 #include <SFML/Graphics.hpp>
-
+#include <fstream>
+#define WIDTH 400
+#define HEIGHT 600
 using boost::asio::ip::tcp;
 
 int main(int argc, char* argv[])
@@ -62,7 +64,7 @@ int main(int argc, char* argv[])
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
 	// =============================================================
-	sf::RenderWindow window(sf::VideoMode(400, 600), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML works!");
 	sf::CircleShape shape(100.f);
 	
 	// load all sprites	
@@ -70,7 +72,7 @@ int main(int argc, char* argv[])
 	sf::Texture tempText;
 	std::vector<sf::Texture> blocks;
 	uint32_t numBlocks = 1;
-	sf::Sprite tempSprite; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
+	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
 		tempText.loadFromFile(textName);
@@ -78,6 +80,7 @@ int main(int argc, char* argv[])
 		std::cout << textName << std::endl;
 	}
 	bool inGame = true;
+	bool loadLevel = true;
 	// ==============================================================
 	// input paradigm, track previous inputs via a container.
 	// ==============================================================
@@ -87,7 +90,34 @@ int main(int argc, char* argv[])
 	//using pointers to swap references in prev/cur state each cycle. no need to manually copy the values in the containers. 
 	while (inGame) 
 	{
-	
+		// initialize the level. NOTE!: THIS IS A PROTOTYPE FOR LEVEL PIPELINEING, TODO [ ] replicate json generation from old engine
+		if (loadLevel)  {
+			loadLevel = false;
+			std::string line;
+			std::ifstream arena ("arena.txt");
+			uint32_t spriteIndex = 0;
+			uint32_t numLine = 0;
+			if (arena.is_open()  ) {
+				while (getline(arena, line)){
+					for (uint32_t i = 0; i < WIDTH/16; i++) {
+						if (line.at(i) == '1')  {
+							blockSprites.push_back(sf::Sprite());
+							blockSprites[spriteIndex].setTexture(blocks[0]);		
+							blockSprites[spriteIndex].setPosition(sf::Vector2f((float)(16*(i % (WIDTH/16))) , (float)(16*numLine))); 
+							std::cout << "pushing new sprite at column " << i << " row: " << line << std::endl;
+							spriteIndex++;
+						}
+
+					}
+					numLine++;
+				}
+				arena.close();
+			}
+			else { std::cout << "Unable to open Arena.txt\n"; }
+		
+
+			
+		}
 	// ==================INPUT HANDLING====================
 		//swap input states to modernize this input cycle. 
 		delete prevState; //throw away the garbage. 
@@ -129,11 +159,13 @@ int main(int argc, char* argv[])
 	// sprite draw logic
 	// ===================================================
 	window.clear();
-	
-	for (auto& text : blocks) {
+	// note, blocks is simply a repo of texture. 
+	// should iterate through a collection of sprites, not texutres. 
+	for (auto& sprite : blockSprites) {
 	// no rectangle paradigm established. tbc
-		tempSprite.setTexture(text);
-		window.draw(tempSprite);
+		//sprite.setTexture(text);
+		//tempSprite.setPosition(sf::Vector2f(400 - 16, 600 - 16)); 
+		window.draw(sprite);
 
 	
 
