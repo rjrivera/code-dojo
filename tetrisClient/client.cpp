@@ -59,14 +59,31 @@ int main(int argc, char* argv[])
   auto last = std::chrono::high_resolution_clock::now();
   std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(last-start).count() << std::endl;
 	// ==================end networking skeleton work. 
-	
-	sf::RenderWindow window(sf::VideoMode(200, 200), "SFML workds!");
+	// =============================================================
+	// 	PRE GAME-LOOP INITIALIZATIONS
+	// =============================================================
+	sf::RenderWindow window(sf::VideoMode(400, 600), "SFML works!");
 	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	
+	// load all sprites	
+	std::string textName = " ";
+	sf::Texture tempText;
+	std::vector<sf::Texture> blocks;
+	uint32_t numBlocks = 1;
+	sf::Sprite tempSprite; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
+	for (int i = 0; i < numBlocks; i++) {
+		textName = "textures/block" + std::to_string(i) + ".png";
+		tempText.loadFromFile(textName);
+		blocks.push_back(tempText);
+		std::cout << textName << std::endl;
+	}
 	bool inGame = true;
+	// ==============================================================
 	// input paradigm, track previous inputs via a container.
+	// ==============================================================
 	std::vector<uint32_t> * prevState = new std::vector<uint32_t>();
 	std::vector<uint32_t> * curState = new std::vector<uint32_t>(); 
+	sf::Keyboard::Key dummy;
 	//using pointers to swap references in prev/cur state each cycle. no need to manually copy the values in the containers. 
 	while (inGame) 
 	{
@@ -78,30 +95,52 @@ int main(int argc, char* argv[])
 		curState = new std::vector<uint32_t>(); // create a new one. 
 		
 	// capture all user input. 
-		// test iterating through sfml keyboard enums
+		// iterating through sfml keyboard enums - captures entire keyboard state. 
 		for (uint32_t curEnum = (uint32_t)sf::Keyboard::A; curEnum != sf::Keyboard::F15; curEnum++) {
 			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum)))  {
 				std::cout << "Key pressed enum value: " << curEnum << std::endl;
+				curState->push_back(curEnum);
 			}
-			if ( (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )) { inGame = false; }
+//			if ( (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )) { inGame = false; }
 		}
 	// ====================================================
+	// process all user input wrt game state logic. 
+	// ====================================================
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Escape) != curState->end()){
+			inGame = false;
+		}	 
+	
+	//tutorial polling for closure of the window via 'x'ing out the window. why not. 
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed ) {
 				window.close();			
+			
 			}
 		
 		}
 		
-		window.clear();
-		window.draw(shape);
-		window.display();
+		
+
+	
+
+	// ===================================================
+	// sprite draw logic
+	// ===================================================
+	window.clear();
+	
+	for (auto& text : blocks) {
+	// no rectangle paradigm established. tbc
+		tempSprite.setTexture(text);
+		window.draw(tempSprite);
+
+	
 
 	}
 
-	
+	window.display();
+   }
   return 0;
 	
 }
