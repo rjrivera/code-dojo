@@ -24,6 +24,8 @@ using boost::asio::ip::tcp;
 
 int main(int argc, char* argv[])
 {
+	
+/*
 	auto start = std::chrono::high_resolution_clock::now();
  try{
  if (argc != 2)
@@ -63,18 +65,22 @@ int main(int argc, char* argv[])
   }
   auto last = std::chrono::high_resolution_clock::now();
   std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(last-start).count() << std::endl;
+*/// ================== COMMENTED OUT THE NETWORKING COMPONENT OF THE CLIENT TO FOCUS ON THE CLIENT GAME LOGIC AD PLUMBING. 
 	// ==================end networking skeleton work. 
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
 	// =============================================================
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "SFML works!");
-	sf::CircleShape shape(100.f);
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Tetris Clone!");
 	
+	// ==================== timeing constants temporarily place here - to be placed in class constants.
+	std::chrono::milliseconds spawnTrigger{10000};
+	std::chrono::milliseconds dropTrigger{2000};
 	// load all sprites	
 	std::string textName = " ";
 	sf::Texture tempText;
 	std::vector<sf::Texture> blocks;
-	uint32_t numBlocks = 1;
+	uint32_t numBlocks = 2;
+	uint32_t numGameBlocks = -1;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -82,11 +88,17 @@ int main(int argc, char* argv[])
 		blocks.push_back(tempText);
 		std::cout << textName << std::endl;
 	}
+	// ==============================TODO [ ] transition this functionality to a viable object class such as shape::L shape::M etc
+	// used for prototyping.
+	std::vector<sf::Sprite> gameBlocks;// TODO[ ] transition global scope constants much like in csharp engine. 
+
 	bool inGame = true;
 	bool loadLevel = true;
 	auto deltaTime = std::chrono::high_resolution_clock::now();
 	auto lastCycle = std::chrono::high_resolution_clock::now();
 	auto now = std::chrono::high_resolution_clock::now();
+	std::chrono::nanoseconds spawnTimer; 
+	std::chrono::nanoseconds dropTimer;
 	//====sanity check -
 	//std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime).count() << std::endl;
 	//====
@@ -129,8 +141,29 @@ int main(int argc, char* argv[])
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
 		//deltaTime = now - lastCycle;	
-		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count() << std::endl;
-		// end timing capture.
+//		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count() << std::endl;
+		spawnTimer += now - lastCycle;//std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count();
+//		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).count()<< std::endl;
+		dropTimer += now - lastCycle; // TODO[ ] place all timers and triggers into containers. reduce LoC and improve readability. 		
+		// ============================begin update gamelogic. update all game logice before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
+		//
+		if ( spawnTimer > spawnTrigger ) {
+			numGameBlocks++;
+			//std::cout << "second elapsed" << std::endl;
+			gameBlocks.push_back(sf::Sprite()); // rearchitect TODO[ ] to valid game object class hierarchy. 
+			gameBlocks[numGameBlocks].setTexture(blocks[1]); // refactor TODO [ ] convert numbers to aformentioned constants
+			gameBlocks[numGameBlocks].setPosition(sf::Vector2f((float)(16*5) , (float)(16*3))); // refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
+ 
+			spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
+		}
+		if ( dropTimer > dropTrigger ) {
+			for (auto& gBlocks : gameBlocks ) {
+				gBlocks.move(0, 16);
+			}
+			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
+		}
+		// end timing capture and update capture/triggers.
+		// ===============================================
 	// ==================INPUT HANDLING====================
 		//swap input states to modernize this input cycle. 
 		delete prevState; //throw away the garbage. 
@@ -202,6 +235,10 @@ int main(int argc, char* argv[])
 
 	
 
+	}
+	for (auto& sprite : gameBlocks) {
+		window.draw(sprite);
+	
 	}
 
 	window.display();
