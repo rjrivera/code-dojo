@@ -73,14 +73,20 @@ int main(int argc, char* argv[])
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Tetris Clone!");
 	
 	// ==================== timeing constants temporarily place here - to be placed in class constants.
-	std::chrono::milliseconds spawnTrigger{10000};
-	std::chrono::milliseconds dropTrigger{2000};
+	std::chrono::milliseconds spawnTrigger{5000};
+	std::chrono::milliseconds dropTrigger{500};
 	// load all sprites	
 	std::string textName = " ";
 	sf::Texture tempText;
 	std::vector<sf::Texture> blocks;
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
+	std::vector<float> floor; 
+	for (int i = 0; i <= 13; i++) {
+
+		floor.push_back(35);// push units - multiply in gammelogic by constant of pixel size. 
+
+	}
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -158,7 +164,15 @@ int main(int argc, char* argv[])
 		}
 		if ( dropTimer > dropTrigger ) {
 			for (auto& gBlocks : gameBlocks ) {
-				gBlocks.move(0, 16);
+				// if ( floor encountered ) do drop TODO [ ] implement tracking mechanism for floor. 
+				if ( (gBlocks.getPosition()).y < floor[(gBlocks.getPosition().x/16) - 2]*16 ) { // TODO [ ] simplify to bool call.
+					gBlocks.move(0, 16);
+				}
+				else if ( (gBlocks.getPosition()).y == floor[(gBlocks.getPosition().x/16) - 2]*16 ) { 
+					floor[(gBlocks.getPosition().x/16) - 2]--;
+					std::cout << "floor triggered and amended\n";
+				}
+				 
 			}
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}
@@ -170,7 +184,7 @@ int main(int argc, char* argv[])
 		prevState = curState; // swap the input containers
 		curState = new std::vector<uint32_t>(); // create a new one. 
 		
-	// capture all user input. 
+	// capture all user input. TODO[ ] delegate userinput processing to function. 
 		// iterating through sfml keyboard enums - captures entire keyboard state. 
 		for (uint32_t curEnum = (uint32_t)sf::Keyboard::A; curEnum != sf::Keyboard::F15; curEnum++) {
 			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum))) {
@@ -187,22 +201,41 @@ int main(int argc, char* argv[])
 
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
-			std::cout << "Left key pressed" << std::endl;
+//			std::cout << "Left key pressed" << std::endl;
+			if (numGameBlocks >= 0) {
+				if ( (gameBlocks[numGameBlocks].getPosition()).x >= (16*3) ){ 
+					gameBlocks[numGameBlocks].move(-16, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
+				}
+			}
 		}
 
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Right) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
-			std::cout << "Right key pressed" << std::endl;
+//			std::cout << "Right key pressed" << std::endl;
+			if ( numGameBlocks >= 0 ) {
+				if ( (gameBlocks[numGameBlocks].getPosition()).x < (16*15) ){ 
+					gameBlocks[numGameBlocks].move(16, 0);
+				}
+			}
 		}
 		
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Up) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Up) == prevState->end()){
-			std::cout << "Up key pressed" << std::endl;
+	//		std::cout << "Up key pressed" << std::endl;
+		//	if ( numGameBlocks >= 0 ) {
+		//		gameBlocks.move(
+		//	}NOP
 		}
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Down) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
-			std::cout << "Down key pressed" << std::endl;
+		//	std::cout << "Down key pressed" << std::endl;
+			
+			if ( numGameBlocks >= 0 ) {
+				gameBlocks[numGameBlocks].move(0, 16);
+			}
 		}
+
+		  
 	// ====================================================
 	// end processing user input wrt game logic. 
 	// ====================================================
