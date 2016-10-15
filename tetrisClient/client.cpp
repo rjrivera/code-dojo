@@ -20,6 +20,9 @@
 #include <fstream>
 #define WIDTH 400
 #define HEIGHT 600
+#define SPAWNTIME 5000
+#define DROPTIME 500
+
 using boost::asio::ip::tcp;
 
 int main(int argc, char* argv[])
@@ -73,8 +76,8 @@ int main(int argc, char* argv[])
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Tetris Clone!");
 	
 	// ==================== timeing constants temporarily place here - to be placed in class constants.
-	std::chrono::milliseconds spawnTrigger{5000};
-	std::chrono::milliseconds dropTrigger{500};
+	std::chrono::milliseconds spawnTrigger{SPAWNTIME};
+	std::chrono::milliseconds dropTrigger{DROPTIME};
 	// load all sprites	
 	std::string textName = " ";
 	sf::Texture tempText;
@@ -82,12 +85,9 @@ int main(int argc, char* argv[])
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
 	std::vector<float> floor; 
-	for (int i = 0; i <= 13; i++) {
-
-		floor.push_back(35);// push units - multiply in gammelogic by constant of pixel size. 
-
-	}
-	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [ ] create a paradigm for multiple object refering to the same texture. 
+	uint32_t arenaOffset, arenaWidth, arenaHeight;
+	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
+	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
 		tempText.loadFromFile(textName);
@@ -124,22 +124,47 @@ int main(int argc, char* argv[])
 			std::ifstream arena ("arena.txt");
 			uint32_t spriteIndex = 0;
 			uint32_t numLine = 0;
+			
+			arenaWidth = arenaOffset = -1; // default  values used as flags below.
+			arenaHeight = 0;
+			bool newRow = true;
 			if (arena.is_open()  ) {
 				while (getline(arena, line)){
 					for (uint32_t i = 0; i < WIDTH/16; i++) {
 						if (line.at(i) == '1')  {
+							  
 							blockSprites.push_back(sf::Sprite());
 							blockSprites[spriteIndex].setTexture(blocks[0]);		
 							blockSprites[spriteIndex].setPosition(sf::Vector2f((float)(16*(i % (WIDTH/16))) , (float)(16*numLine))); 
 							//std::cout << "pushing new sprite: " << "1";
 							spriteIndex++;
 						}
-
+						else if ( line.at(i) == '0' )  {
+							if ( arenaOffset == -1 )  {
+								arenaOffset = i; //determine left boundary of our game arena.
+								std::cout << arenaOffset << std::endl;
+							}
+							if (newRow) { //tabulate height of arena by presence of '0' in arena.txt line string. 
+								arenaHeight++;
+								newRow = false;
+							}
+							if ( numLine == 1  ) {
+								arenaWidth++;
+								std::cout << "+1 arenaWidth" << std::endl;
+							}
+						}
+						
 					}
-					std::cout << line << std::endl;
+					newRow = true;//reset row flag. 
 					numLine++;
 				}
 				arena.close();
+				// based off information infered from arena.txt - tabulate the floor. 
+				std::cout << "arenaWidth, arenaHeight: " << arenaWidth << " " << arenaHeight << std::endl;
+				for (uint32_t i = 0; i <= arenaWidth ; i++) {
+
+					floor.push_back(arenaHeight);
+				}
 			}
 			else { std::cout << "Unable to open Arena.txt\n"; }
 		}
@@ -164,12 +189,12 @@ int main(int argc, char* argv[])
 		}
 		if ( dropTimer > dropTrigger ) {
 			for (auto& gBlocks : gameBlocks ) {
-				// if ( floor encountered ) do drop TODO [ ] implement tracking mechanism for floor. 
-				if ( (gBlocks.getPosition()).y < floor[(gBlocks.getPosition().x/16) - 2]*16 ) { // TODO [ ] simplify to bool call.
+				// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
+				if ( (gBlocks.getPosition()).y < floor[(gBlocks.getPosition().x/16) - arenaOffset]*16 ) { // TODO [ ] simplify to bool call.
 					gBlocks.move(0, 16);
 				}
-				else if ( (gBlocks.getPosition()).y == floor[(gBlocks.getPosition().x/16) - 2]*16 ) { 
-					floor[(gBlocks.getPosition().x/16) - 2]--;
+				else if ( (gBlocks.getPosition()).y == floor[(gBlocks.getPosition().x/16) - arenaOffset]*16 ) { 
+					floor[(gBlocks.getPosition().x/16) - arenaOffset]--;
 					std::cout << "floor triggered and amended\n";
 				}
 				 
@@ -190,45 +215,43 @@ int main(int argc, char* argv[])
 			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum))) {
 				curState->push_back(curEnum);
 			}
-//			if ( (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )) { inGame = false; }
 		}
 	// ====================================================
 	// process all user input wrt game state logic. 
 	// ====================================================
+		// Escape Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Escape) != curState->end()){
 			inGame = false;
 		}	 
-
+		// Left Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
 //			std::cout << "Left key pressed" << std::endl;
 			if (numGameBlocks >= 0) {
-				if ( (gameBlocks[numGameBlocks].getPosition()).x >= (16*3) ){ 
+				if ( (gameBlocks[numGameBlocks].getPosition()).x >= (16*(arenaOffset + 1) )){ 
 					gameBlocks[numGameBlocks].move(-16, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
 				}
 			}
 		}
-
+		//Right key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Right) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
-//			std::cout << "Right key pressed" << std::endl;
+
 			if ( numGameBlocks >= 0 ) {
-				if ( (gameBlocks[numGameBlocks].getPosition()).x < (16*15) ){ 
+				if ( (gameBlocks[numGameBlocks].getPosition()).x < (16*(arenaWidth+arenaOffset) )){ 
 					gameBlocks[numGameBlocks].move(16, 0);
 				}
 			}
 		}
-		
+		// implement debouncing functionality. 
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Up) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Up) == prevState->end()){
-	//		std::cout << "Up key pressed" << std::endl;
 		//	if ( numGameBlocks >= 0 ) {
 		//		gameBlocks.move(
 		//	}NOP
 		}
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Down) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
-		//	std::cout << "Down key pressed" << std::endl;
 			
 			if ( numGameBlocks >= 0 ) {
 				gameBlocks[numGameBlocks].move(0, 16);

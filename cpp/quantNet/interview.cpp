@@ -9,6 +9,7 @@
 #include <screen.hpp>
 #include <list>
 #include <functional>
+#include <boost/lexical_cast.hpp>
 //#include "print.h"
 using namespace std;
 
@@ -56,8 +57,114 @@ struct sum{
 
 
 };
-int main() {
+void swap(uint32_t& varA_, uint32_t& varB_) {
+	varA_ = varB_ - varA_;
+	varB_ -= varA_;
+	varA_ += varB_;
 
+}
+//given that 0 = empty, 1 = 'x', 2 = 'o'. -- amended to n-sized games - only checking horizontal and verticals as is because moving on. 
+bool winnerTTT(string gameState_) {
+	// very limited number of winning states. check for each state seperately. 
+	uint32_t streak = 0;
+	// for each side - traverse through all possible winning starting positions. 
+	uint32_t sideLength = sqrt(gameState_.size());
+	for (uint32_t i = 1; i < 3; i++) {
+		// 0 - 3 - 6
+			for (uint32_t start = 0; start < sideLength; start++) {
+				// check horizontal
+				for (uint32_t streakPos = 0; streakPos < sideLength; streakPos++) {
+					if (gameState_.at(start*sideLength + streakPos) == boost::lexical_cast<char>(i))  {
+						streak++;
+						cout << "streak value: " << streak << "after increment" << endl;
+					}
+					else { break;} //found a broken link, abandon loop to reduce operation overhead.  
+				}
+				if (streak == sideLength) { return true;}
+				streak = 0; //reset tracker for next iteration. 
+				// check vertical. 
+				for (uint32_t streakPos = 0; streakPos < sideLength; streakPos++) {
+					if ( (gameState_.at(start*sideLength + (streakPos*sideLength)) ) ==  boost::lexical_cast<char>(i)) {
+						streak++;
+						
+					}
+					else { break;}
+				}
+				if ( streak== sideLength ) { return true;} 
+				streak = 0;
+
+			}
+			
+	}
+	return false;
+
+}
+uint32_t calcFact(uint32_t factCand_ ){
+	return (factCand_ == 1 || factCand_ == 0) ? 1 : calcFact(factCand_ - 1 ) * factCand_;
+
+}
+int main() {
+	/*
+	// write a function that counts the number of trailing zeros in n-factorial
+	// yea I over though this, should have just used math from the beginning. 
+	//first, lets calc. n!
+	
+	uint32_t factCand = 10;
+	uint32_t fact = calcFact(factCand);
+	cout << "factorial of " << factCand << " is " << fact << endl;
+	 
+	uint32_t numZeros = 0;
+	
+	while (fact % 10 == 0) {
+		numZeros++;
+		fact/=10;
+
+	}
+	numZeros;
+	cout << "number of trailing zeros" << numZeros << endl;
+	*/
+	/*// convert to string abandoning the string approach
+	string fs = boost::lexical_cast<string>(fact);
+	cout << "As string: " << fs << endl;
+	uint32_t numTrailingZeros = fs.size() - fs.find_last_of("0");
+	cout << "number of trailing zeros: " << numTrailingZeros << endl;
+	//uint32_t numTrailingZeros = distance((string::find_last_of(fs, "0")), fs.end());
+	//cout << " number of trailing zeros: " << numTrailingZeros << endl;
+	*/
+	/*
+	//test cases 
+	vector<string> gameStates;
+	
+
+	// simple test cases - todo[ ] finish for verticals but it's good for reveiw purposes .
+	gameStates.push_back("111020020");
+	gameStates.push_back("000000000");
+	gameStates.push_back("222010010");
+	gameStates.push_back("120010021");
+	gameStates.push_back("120120100");
+	for (auto& game : gameStates) {
+
+		if (winnerTTT(game))  {
+			cout << "winner with string" << game << endl;
+		}
+		else {
+			cout << "loser with string" << game << endl;
+
+		}
+
+	}
+	*/
+	// develope a function to determine if there is a winner in a game of tic-tac-toe
+	/*
+	// swap a number without a temp variable. est. Time taken...3 minutes
+	uint32_t varA = 10;
+	uint32_t varB = 20;
+	cout << "before swap: " << varA << " " << varB <<endl;
+	swap(varA, varB);
+	cout << "after swap: " << varA << " " << varB <<endl;
+	*/
+
+/*
 	for (int ii = 0; ii < 3; ++ ii) {
 
 		switch(ii){
@@ -67,6 +174,7 @@ int main() {
 }
 	cout << endl;
 	}
+*/
 /*
 	int myints[] = {1,2,3,4,5,4,3,2,1};
 	vector<int> v(myints, myints+9);
