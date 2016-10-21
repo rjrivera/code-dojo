@@ -1,4 +1,4 @@
-//
+//immediate TODO[ ] GIVE TETSHAPE X Y ACCESSORS. 
 //// client.cpp
 //// ~~~~~~~~~~
 //// lines 25 - 60 
@@ -18,6 +18,8 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include <fstream>
+#include "tetShape.hpp"
+#include "tetSquare.hpp"
 #define WIDTH 400
 #define HEIGHT 600
 #define SPAWNTIME 5000
@@ -70,6 +72,12 @@ int main(int argc, char* argv[])
   std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(last-start).count() << std::endl;
 */// ================== COMMENTED OUT THE NETWORKING COMPONENT OF THE CLIENT TO FOCUS ON THE CLIENT GAME LOGIC AD PLUMBING. 
 	// ==================end networking skeleton work. 
+	// ====== simple texing section =======
+
+	std::vector<tetShape> shapes;
+	shapes.push_back(tetSquare());
+	std::cout << "testing tetSquare " << std::endl;
+	// ====================================
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
 	// =============================================================
@@ -84,9 +92,11 @@ int main(int argc, char* argv[])
 	std::vector<sf::Texture> blocks;
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
+	
 	std::vector<float> floor; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
+	std::vector<tetShape> tetShapes;
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -178,16 +188,22 @@ int main(int argc, char* argv[])
 		dropTimer += now - lastCycle; // TODO[ ] place all timers and triggers into containers. reduce LoC and improve readability. 		
 		// ============================begin update gamelogic. update all game logice before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
 		//
+		//// std::vector<tetShape> tetShapes; tetSquare : tetShape
 		if ( spawnTimer > spawnTrigger ) {
 			numGameBlocks++;
 			//std::cout << "second elapsed" << std::endl;
-			gameBlocks.push_back(sf::Sprite()); // rearchitect TODO[ ] to valid game object class hierarchy. 
-			gameBlocks[numGameBlocks].setTexture(blocks[1]); // refactor TODO [ ] convert numbers to aformentioned constants
-			gameBlocks[numGameBlocks].setPosition(sf::Vector2f((float)(16*5) , (float)(16*3))); // refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
- 
+			////gameBlocks.push_back(sf::Sprite()); // rearchitect TODO[ ] to valid game object class hierarchy. 
+			tetShapes.push_back(tetSquare(5, 3, &(blocks[1])));//
+			////gameBlocks[numGameBlocks].setTexture(blocks[1]); // refactor TODO [ ] convert numbers to aformentioned constants
+			////gameBlocks[numGameBlocks].setPosition(sf::Vector2f((float)(16*5) , (float)(16*3))); // refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
+ 			// reset spawn timer. 
 			spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
+			// output status of new instance of tetSquare. 
+			std::cout << "spawn new block\n";
+			std::cout << tetShapes.at(numGameBlocks).X() << std::endl;
+
 		}
-		if ( dropTimer > dropTrigger ) {
+		if ( dropTimer > dropTrigger ) {/*
 			for (auto& gBlocks : gameBlocks ) {
 				// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
 				if ( (gBlocks.getPosition()).y < floor[(gBlocks.getPosition().x/16) - arenaOffset]*16 ) { // TODO [ ] simplify to bool call.
@@ -198,7 +214,7 @@ int main(int argc, char* argv[])
 					std::cout << "floor triggered and amended\n";
 				}
 				 
-			}
+			}*/
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}
 		// end timing capture and update capture/triggers.
@@ -228,8 +244,8 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
 //			std::cout << "Left key pressed" << std::endl;
 			if (numGameBlocks >= 0) {
-				if ( (gameBlocks[numGameBlocks].getPosition()).x >= (16*(arenaOffset + 1) )){ 
-					gameBlocks[numGameBlocks].move(-16, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
+				if ( tetShapes[numGameBlocks].X()*16 >= (16*(arenaOffset + 1) )){ 
+					////gameBlocks[numGameBlocks].move(-16, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
 				}
 			}
 		}
@@ -238,23 +254,21 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
 
 			if ( numGameBlocks >= 0 ) {
-				if ( (gameBlocks[numGameBlocks].getPosition()).x < (16*(arenaWidth+arenaOffset) )){ 
-					gameBlocks[numGameBlocks].move(16, 0);
+				if ( tetShapes[numGameBlocks].X()*16 < (16*(arenaWidth+arenaOffset) )){ 
+					////tetShapes[numGameBlocks].move(16, 0); //do this foreach sprite in tetShapes
 				}
 			}
 		}
 		// implement debouncing functionality. 
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Up) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Up) == prevState->end()){
-		//	if ( numGameBlocks >= 0 ) {
-		//		gameBlocks.move(
-		//	}NOP
+		//	NOP
 		}
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Down) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
 			
 			if ( numGameBlocks >= 0 ) {
-				gameBlocks[numGameBlocks].move(0, 16);
+				////tetShapes[numGameBlocks].move(0, 16);
 			}
 		}
 
@@ -283,20 +297,33 @@ int main(int argc, char* argv[])
 	window.clear();
 	// note, blocks is simply a repo of texture. 
 	// should iterate through a collection of sprites, not texutres. 
+	
+
 	for (auto& sprite : blockSprites) {
 	// no rectangle paradigm established. tbc
+		
 		//sprite.setTexture(text);
+	//	tempS = sprites;
 		//tempSprite.setPosition(sf::Vector2f(400 - 16, 600 - 16)); 
 		window.draw(sprite);
-
+		
 	
 
 	}
-	for (auto& sprite : gameBlocks) {
-		window.draw(sprite);
-	
-	}
 
+//draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
+	for (auto& shape : tetShapes) {
+		std::cout << "in a shape\n";
+		
+
+		for (auto& sprite : shape.mySprites) {
+			std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
+			window.draw(sprite);
+		}
+		
+		
+	}
+	
 	window.display();
    }
   return 0;
