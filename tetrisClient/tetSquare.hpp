@@ -13,7 +13,7 @@ class tetSquare : public tetShape{
 	public:
 	//	std::vector<sf::Sprite> mySprites;	 
 		//constructors
-		tetSquare();
+		tetSquare(const sf::Texture * blkText_);
 		tetSquare(double x_, double y_, const sf::Texture * blkText_); // you want a pass-by reference asper best practices. 
 		explicit tetSquare(double z_);
 		tetSquare(const tetSquare& sauce);

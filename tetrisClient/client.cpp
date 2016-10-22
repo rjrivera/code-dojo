@@ -74,9 +74,7 @@ int main(int argc, char* argv[])
 	// ==================end networking skeleton work. 
 	// ====== simple texing section =======
 
-	std::vector<tetShape> shapes;
-	shapes.push_back(tetSquare());
-	std::cout << "testing tetSquare " << std::endl;
+	
 	// ====================================
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
@@ -96,7 +94,7 @@ int main(int argc, char* argv[])
 	std::vector<float> floor; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
-	std::vector<tetShape> tetShapes;
+	std::vector<tetSquare> tetShapes;
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -104,6 +102,9 @@ int main(int argc, char* argv[])
 		blocks.push_back(tempText);
 		std::cout << textName << std::endl;
 	}
+
+	tetSquare shapes = tetSquare(&blocks[1]);
+
 	// ==============================TODO [ ] transition this functionality to a viable object class such as shape::L shape::M etc
 	// used for prototyping.
 	std::vector<sf::Sprite> gameBlocks;// TODO[ ] transition global scope constants much like in csharp engine. 
@@ -313,7 +314,7 @@ int main(int argc, char* argv[])
 
 //draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
 	for (auto& shape : tetShapes) {
-		std::cout << "in a shape\n";
+		//std::cout << "in a shape\n";
 		
 
 		for (auto& sprite : shape.mySprites) {
@@ -322,6 +323,10 @@ int main(int argc, char* argv[])
 		}
 		
 		
+	}
+	for ( auto& sprite : shapes.mySprites) {
+		window.draw(sprite);
+	
 	}
 	
 	window.display();
