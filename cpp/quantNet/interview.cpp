@@ -10,6 +10,7 @@
 #include <list>
 #include <functional>
 #include <boost/lexical_cast.hpp>
+#include <map>
 //#include "print.h"
 using namespace std;
 
@@ -63,6 +64,8 @@ void swap(uint32_t& varA_, uint32_t& varB_) {
 	varA_ += varB_;
 
 }
+
+
 //given that 0 = empty, 1 = 'x', 2 = 'o'. -- amended to n-sized games - only checking horizontal and verticals as is because moving on. 
 bool winnerTTT(string gameState_) {
 	// very limited number of winning states. check for each state seperately. 
@@ -103,7 +106,113 @@ uint32_t calcFact(uint32_t factCand_ ){
 	return (factCand_ == 1 || factCand_ == 0) ? 1 : calcFact(factCand_ - 1 ) * factCand_;
 
 }
+
+typedef struct PTNode{
+	char ltr = NULL;
+	bool terminal = false;
+	map<char, PTNode>  cNodes;
+
+};
+
+
+string compressString(string word_){	
+	char currentChar = word_.at(0);
+	uint32_t count = 0;
+	string cString;
+	for (uint32_t i = 0; i < word_.size(); i++) {
+		if (word_.at(i) != currentChar && i > 0) {
+			cString+=currentChar;
+			cString+= to_string(count);
+			count = 1;
+			currentChar = word_.at(i);
+		}
+		else {
+			count++;
+		}
+	}
+	cString += currentChar;
+	cString += to_string(count); 
+	return cString;
+
+}
+
+string expandString(string word_){
+	string cString;
+	for (uint32_t i = 0; i < word_.size()-1; i+= 2) {
+		for (uint32_t j = 0; j < boost::lexical_cast<uint32_t>(word_.at(i+1)); j++) {
+			cString += word_.at(i);
+		}
+
+	}
+	return cString;
+}
+// presumes that the head node is properly initialized. 
+void insertWord(PTNode& head_, string word_) {
+	if ( word_.size() <= 0) {
+		return; //robustness measure. 
+	}
+	char firstChar = word_.at(0);
+	if (head_.cNodes.find(firstChar) == head_.cNodes.end()) {  // no word in our prefix tree exists starting with the current letter 
+		//create new node, insert char and move on through the candidate string. 
+		PTNode  tempNode;
+		tempNode.ltr = firstChar;
+		
+		head_.cNodes[firstChar] = tempNode;
+		if ( word_.size() > 1 )  {
+			insertWord(head_.cNodes[firstChar], word_.substr(1));
+		}
+		else {
+			head_.cNodes[firstChar].terminal = true;
+			return;
+		}
+
+	}	
+	else { //easy step, letter already exists in tree, just follow along. 
+		if ( word_.size() > 1  ) {
+			insertWord(head_.cNodes[firstChar], word_.substr(1));
+		}
+		else {
+			head_.cNodes[firstChar].terminal = true;
+			
+			return;
+		}
+	}
+}
+
+void traverseTree(PTNode& head, string word_){
+	
+//	else {
+		word_ += head.ltr;
+		
+		if ( head.terminal ) { 
+			cout << word_ << endl;
+
+
+		} 
+		for (auto& node : head.cNodes) {
+			traverseTree(node.second, word_);
+		}
+//	}
+}
+
+
 int main() {
+	PTNode head;
+	insertWord(head, "hello");
+	insertWord(head, "hell");
+	insertWord(head, "candy");
+	insertWord(head, "candidate");
+	traverseTree(head, "");
+	string cand = "aaaabbbeeeeetttt";
+	string comCand = compressString(cand);
+	string dCand = expandString(comCand);
+	cout << cand + " => " << comCand << " decompresses to => " << dCand << endl;
+	cand = "aaddaabbbebbghjeeeetttt";
+	comCand = compressString(cand);
+	dCand = expandString(comCand);
+	
+	cout << cand + " => " << comCand << " decompresses to => " << dCand << endl;
+	
 	/*
 	// write a function that counts the number of trailing zeros in n-factorial
 	// yea I over though this, should have just used math from the beginning. 
