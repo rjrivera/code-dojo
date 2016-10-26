@@ -197,6 +197,61 @@ void traverseTree(PTNode& head, string word_){
 
 
 int main() {
+
+	vector<uint32_t> GOOG;
+	GOOG.push_back(55);
+	GOOG.push_back(58);
+	GOOG.push_back(60);
+	GOOG.push_back(55);
+	GOOG.push_back(58);
+	GOOG.push_back(60);
+	GOOG.push_back(55);
+	GOOG.push_back(58);
+	GOOG.push_back(60);
+	GOOG.push_back(65);
+	GOOG.push_back(85);
+	uint32_t currentPoint = 0;
+	uint32_t scoutPoint = 1;//scout point shoud always be ahead. 
+	bool invested = false;
+	uint32_t profit = 0;
+	
+	while (scoutPoint < GOOG.size()) {
+		if (!invested) { 
+		    if ( GOOG[scoutPoint] > GOOG[currentPoint] ) {
+				//BUY ORDER
+				currentPoint = scoutPoint-1;
+				cout << "buy at: " << boost::lexical_cast<string>(GOOG[currentPoint]);
+				invested = true;
+				scoutPoint++;
+			}
+		    else {//price is dropping, do not buy because we are waiting for a buy price. 
+				while (GOOG[scoutPoint] > GOOG[scoutPoint+1] && (scoutPoint + 1) < GOOG.size()) {
+					scoutPoint++;
+				//traverse the order until we see a viable place to by. 
+				}
+				if (scoutPoint < GOOG.size() - 1 )  { // we have a valid buy point. 
+					invested = true;
+					currentPoint = scoutPoint;
+					scoutPoint++;
+					cout << "buy at: " << boost::lexical_cast<string>(GOOG[currentPoint]);
+				}
+			}
+		}
+		else { //detect the maxima. 
+			 while ((scoutPoint + 1) < GOOG.size() && GOOG[scoutPoint] < GOOG[scoutPoint+1]) {
+				scoutPoint++;	
+			 }
+			 profit += (GOOG[scoutPoint] - GOOG[currentPoint]);
+			cout << "sale at: " << GOOG[scoutPoint] << endl;
+			cout << "capgains earned this transaction: " << (GOOG[scoutPoint] - GOOG[currentPoint]) << endl;
+			currentPoint = scoutPoint;
+			scoutPoint++;
+			invested = false;
+
+		}
+	}
+	cout << "total profit earned this cycle: " << profit << endl;
+/*
 	PTNode head;
 	insertWord(head, "hello");
 	insertWord(head, "hell");
@@ -212,7 +267,7 @@ int main() {
 	dCand = expandString(comCand);
 	
 	cout << cand + " => " << comCand << " decompresses to => " << dCand << endl;
-	
+	*/
 	/*
 	// write a function that counts the number of trailing zeros in n-factorial
 	// yea I over though this, should have just used math from the beginning. 
