@@ -11,6 +11,8 @@
 #include <functional>
 #include <boost/lexical_cast.hpp>
 #include <map>
+#include <unordered_map>
+
 //#include "print.h"
 using namespace std;
 
@@ -195,9 +197,122 @@ void traverseTree(PTNode& head, string word_){
 //	}
 }
 
+unordered_map<string, int> createDict(string book[], uint32_t length_){
+	unordered_map<string, int> * tempMap = new unordered_map<string, int>();
+	uint32_t temp = 0;
+	for (uint32_t i = 0 ; i < length_ ; i++ ) {
+		cout << "at word: " << book[i] << endl;
+		if ( tempMap->count(book[i]) == 0){ 
+			tempMap->insert({book[i], 1});
+			cout << book[i] << " not in dict, creating key" << endl;
+//			tempMap->at(book[i]) = 1;
+		}
+		else {
 
+			temp = tempMap->at(book[i]);
+			cout << book[i] << " encountered " << temp+1 << " times\n";
+			tempMap->at(book[i]) = temp + 1;
+			cout << "count after insert-> command: " << tempMap->at(book[i]) << endl;
+		}
+	}
+	return *(tempMap);
+}
+
+struct Foo{
+Foo() {cout << "d";}
+Foo(int i) {cout << "i";}
+Foo(char c) {cout << "c";}
+Foo(long l) {cout << "l";}
+Foo(float f) {cout << "f";}
+};
+
+/*
+class foo {
+public:
+	virtual !foo()};
+	
+class foobar2 : public bar2{
+};
+
+class bar2 : public foo {
+
+
+};
+
+*/
+/*
+class base{
+protected int b;
+};
+
+class derived : base{
+	friend class Friend;
+
+};
+class Friend{
+	derived der;
+
+};
+*/
+/*
+class professor{
+	~professor() {cout << "destruct professor\n";
+};*/
+class Base{};
+class derived : Base{};
 int main() {
+	try{ 
+		derived * der = new derived();
+		throw der;
+	}
+	catch(Base * ) { cout << "caught pBase\n";}
+	catch(derived * ) { cout << "caught pDere\n";}
+/*
+	int i = 5;
+	for (int i =0; i < 10; i++) cout << i << endl;
 
+	cout << i << endl;
+*/
+/*
+	vector<int> numbers;
+	numbers.push_back(55);
+	numbers.push_back(37);
+	numbers.push_back(87);
+	numbers.push_back(1);
+	sort(numbers.begin(), numbers.end(), greater<int>());
+	for(int& number : numbers){
+	cout << number << endl;
+	}
+*/
+	//foobar2 * fb3 = new foo;
+/*
+	int i;
+	try { foo(); }
+	catch(double e) {i = 3;}
+	catch(int e) {i = 4;}
+	catch(bool e) {i = 5;}
+	cout << i << endl;
+*/
+/*A: reference to n is ambiguous
+	n = 5; 
+	return 0;
+*/
+/*
+	Foo f1('a');
+	Foo f2('a' + 1);
+	Foo f3(1);
+	Foo f4(0x01);
+*/
+/*
+//implement a dictionary of wordcounts for a given array of strings, to permit rapid lookup O(1) average of any query. 
+	string words[] = {"cat", "dog", "bear", "cat", "beet", "dog", "beaver", "griffon", "dog"};
+	unordered_map<string, int> dict = createDict(words, 9);
+	for (auto& row: dict) {
+		cout << "word: " << row.first << " frequency: " << row.second << endl;
+	}
+*/
+// Given stock prices and ability to buy and sell one share at any one time, optimize returns. no commission requirements.
+/*
 	vector<uint32_t> GOOG;
 	GOOG.push_back(55);
 	GOOG.push_back(58);
@@ -251,6 +366,7 @@ int main() {
 		}
 	}
 	cout << "total profit earned this cycle: " << profit << endl;
+*/
 /*
 	PTNode head;
 	insertWord(head, "hello");
@@ -339,14 +455,14 @@ int main() {
 	cout << endl;
 	}
 */
-/*
+
 	int myints[] = {1,2,3,4,5,4,3,2,1};
 	vector<int> v(myints, myints+9);
 	sort(v.begin(), v.end());
 	cout << (binary_search(v.begin(), v.end(), 3)) << endl;
-*/	
-
 /*
+
+
 	list<int> L;
 	list<int>::iterator it;
 
