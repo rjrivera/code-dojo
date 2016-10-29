@@ -272,21 +272,91 @@ typedef struct mazeNode {
 	uint32_t val;
 	bool end;
 };
+typedef struct pTNode{
+	string id; //using char reduces the number of lexical casts from uint32_t to char
+	map<string, pTNode> cPaths;
+};
 
+// upon proper path tracing and return of the new total path, the client protocol can manage a number of paths. 
+// this was honestly the biggest waste of fucking time ever 
+string insertPath(pTNode& node, deque<string> cPath, uint32_t cVal) { //using a string bc we need to remember our paths
+	if (node.id == "root" ) {//is root 
+		if (cPath.size() == 0) { //easy pz, we are the last step in a potential path. 
+			pTNode temp;
+			temp.id = boost::lexical_cast<string>(cVal);
+			node.cPaths[boost::lexical_cast<string>(cVal)] = temp;
+			return boost::lexical_cast<string>(cVal);
+		}
+		else{//traverse
+			//if it exists move accordingly.
+			if (node.cPaths.find(cPath.at(0)) != node.cPaths.end())  {
+				// return the current letter plus the next or null letter. 
+				string tempS = cPath.at(0);
+				cPath.pop_front();
+				return (tempS + insertPath(node.cPaths[tempS], cPath, cVal));
+			}
+			else {
+				pTNode temp;
+				temp.id = cPath.at(0);
+				node.cPaths[cPath.at(0)] = temp;
+				string tempS = cPath.at(0);
+				cPath.pop_front();
+				return (tempS + insertPath(node.cPaths[tempS], cPath, cVal));
+			}
+		}
+	}
+	else {
+		if (cPath.size() == 0) { //easy pz, we are the last step in a potential path. 
+			pTNode temp;
+			temp.id = boost::lexical_cast<string>(cVal);
+			node.cPaths[boost::lexical_cast<string>(cVal)] = temp;
+			return boost::lexical_cast<string>(cVal);
+		}
+		else{//traverse
+			//if it exists move accordingly.
+			if (node.cPaths.find(cPath.at(0)) != node.cPaths.end()) {
+				// return the current letter plus the next or null letter. 
+				string tempS = cPath.at(0);
+				cPath.pop_front();
+				return (tempS + insertPath(node.cPaths[tempS], cPath, cVal));
+			}
+			else {
+				pTNode temp;
+				temp.id = cPath.at(0);
+				node.cPaths[cPath.at(0)] = temp;
+				string tempS = cPath.at(0);
+				cPath.pop_front();
+				return (tempS + insertPath(node.cPaths[tempS], cPath, cVal));
+			}
+		}
+	}
+	
+}
+//construct a trie internal to this function to track the paths in an efficient manner using the parents and children as nodes. 
 vector<uint32_t> solveMaze(mazeNode maze_[][4], uint32_t goal_)  {
 	vector<uint32_t> * path = new vector<uint32_t>();
+	pTNode pathRoot;
+	pathRoot.id = "root";
 	// now begin a bfs while tracking a stack for EACH path and then identify the first stack that reaches id == goal_;
 	deque<mazeNode> unprocessed;
 	unordered_map<uint32_t, bool> processed; //mazeNode.id, false/true
+	processed[0] = true;
 	unprocessed.push_back(maze_[0][0]);
 	uint32_t xInd, yInd, maxX, maxY;
 	xInd = yInd = 0;
 	maxX = 7;
 	maxY = 4;
 	mazeNode temp;
-	deque<uint32_t> parent[28];// copy current stack and add to it, as a split is a new path or (fork). 
+		// accounting variables for efficiently tracking paths. 
+	uint32_t unProcIndex = 0; // used to keep a track record of previously accomplished work. ...
+	deque<uint32_t> stackNodes;
+	uint32_t numPaths = 1;
+	bool firstPass = true;
+	map<uint32_t, uint32_t> discovered;
 	while (unprocessed.size() > 0) {
 		temp = unprocessed.front();
+		stackNodes.push_back(temp.id);
+		//currentString = insertPath(pathRoot, currentString[currentPath], temp.id);//find the valid path. 
 		// calculate xInd and yInd based on the temp being processed. 
 		yInd = temp.id / maxX;
 		xInd = temp.id % maxX;
@@ -297,26 +367,68 @@ vector<uint32_t> solveMaze(mazeNode maze_[][4], uint32_t goal_)  {
 			//if its our target...
 			if ( temp.id == goal_ ) {
 				//return the corresponding path stack TODO: [ ] determine tracking system for various paths. 
+				cout << "I think the shortest path is [ asdf] : " << endl;
+				int tDec = 1;
+				for (uint32_t& sNode: stackNodes) {
+
+					cout << sNode << endl;
+				}
+				cout << "enough lollygagging\n";
+
+				uint32_t tID = temp.id;
+				while (tID != 0) {
+					cout << discovered[tID] << endl;
+					tID = discovered[tID];
+
+				}
+
 				break;
 			}
 			else if (maze_[xInd-1][yInd].val == 1)  {
 				//check if it's been encountered and queue accordingly. 
 				if (!processed[maze_[xInd-1][yInd].id]) { 
 					processed[maze_[xInd-1][yInd].id] = true; 
+	//				stackNodes.push_back(maze_[xInd-1][yInd].id);
+					discovered[maze_[xInd-1][yInd].id] = temp.id;
 					unprocessed.push_back(maze_[xInd-1][yInd]);
+					cout << "pushing node:  " << boost::lexical_cast<string>(maze_[xInd-1][yInd].id) << 
+						" from node " << boost::lexical_cast<string>(maze_[xInd][yInd].id) << " left " << endl;
+					numPaths++;
+					
 				} 
 			}
 		}
 		if (yInd < (maxY-1) ) { // can look down./if its our target...
 			if ( temp.id == goal_ ) {
 				//return the corresponding path stack TODO: [ ] determine tracking system for various paths. 
+				cout << "I think the shortest path is [ asdf] : " << endl;
+				int tDec = 1;
+				for (uint32_t& sNode: stackNodes) {
+
+					cout << sNode << endl;
+				}
+				cout << "enough lollygagging\n";
+
+				uint32_t tID = temp.id;
+				while (tID != 0) {
+					cout << discovered[tID] << endl;
+					tID = discovered[tID];
+
+				}
+
 				break;
+
 			}
 			else if (maze_[xInd][yInd+1].val == 1)  {
 				//check if it's been encountered and queue accordingly. 
 				if (!processed[maze_[xInd][yInd+1].id]) { 
 					processed[maze_[xInd][yInd+1].id] = true; 
+					//stackNodes.push_back(maze_[xInd][yInd+1].id);
+					discovered[maze_[xInd][yInd+1].id] = temp.id;
 					unprocessed.push_back(maze_[xInd][yInd+1]);
+					cout << "pushing node: " << boost::lexical_cast<string>(maze_[xInd][yInd+1].id) << 
+						" from node " << boost::lexical_cast<string>(maze_[xInd][yInd].id) << " down " << endl;
+					numPaths++;
 				} 
 			} 
 		
@@ -324,6 +436,21 @@ vector<uint32_t> solveMaze(mazeNode maze_[][4], uint32_t goal_)  {
 		if (yInd > 0) { // can look up. 
 			if ( temp.id == goal_ ) {
 				//return the corresponding path stack TODO: [ ] determine tracking system for various paths. 
+				cout << "I think the shortest path is [ asdf] : " << endl;
+				int tDec = 1;
+				for (uint32_t& sNode: stackNodes) {
+
+					cout << sNode << endl;
+				}
+				cout << "enough lollygagging\n";
+
+				uint32_t tID = temp.id;
+				while (tID != 0) {
+					cout << discovered[tID] << endl;
+					tID = discovered[tID];
+
+				}
+
 				break;
 			}
 			else if (maze_[xInd][yInd-1].val == 1)  {
@@ -331,24 +458,51 @@ vector<uint32_t> solveMaze(mazeNode maze_[][4], uint32_t goal_)  {
 				if (!processed[maze_[xInd][yInd-1].id]) { 
 					processed[maze_[xInd][yInd-1].id] = true; 
 					unprocessed.push_back(maze_[xInd][yInd-1]);
+	//				stackNodes.push_back(maze_[xInd][yInd-1].id);
+					discovered[maze_[xInd][yInd-1].id] = temp.id;
+					cout << "pushing node: " << boost::lexical_cast<string>(maze_[xInd][yInd-1].id) << endl;
+					numPaths++;
 				} 
 			} 
 
 		}
 		if (xInd < (maxX-1) ) { // can look right.
-			if ( temp.id == goal_ ) {
+		
+				if ( temp.id == goal_ ) {
 				//return the corresponding path stack TODO: [ ] determine tracking system for various paths. 
+				cout << "I think the shortest path is [ asdf] : " << endl;
+				int tDec = 1;
+				for (uint32_t& sNode: stackNodes) {
+
+					cout << sNode << endl;
+				}
+				cout << "enough lollygagging\n";
+
+				uint32_t tID = temp.id;
+				while (tID != 0) {
+					cout << discovered[tID] << endl;
+					tID = discovered[tID];
+
+				}
+
 				break;
 			}
+			
 			else if (maze_[xInd+1][yInd].val == 1)  {
 				
 				//check if it's been encountered and queue accordingly. 
 				if (!processed[maze_[xInd+1][yInd].id]) { 
 					processed[maze_[xInd+1][yInd].id] = true; 
 					unprocessed.push_back(maze_[xInd+1][yInd]);
+	//				stackNodes.push_back(maze_[xInd+1][yInd].id);
+					discovered[maze_[xInd+1][yInd].id] = temp.id;
+					cout << "pushing node: " << boost::lexical_cast<string>(maze_[xInd+1][yInd].id) <<
+						" from node " << boost::lexical_cast<string>(maze_[xInd][yInd].id) << " right " << endl;
+					numPaths++;
 				} 
 			} 
 		}
+		++unProcIndex;
 	}
 
 	return *(path);
@@ -373,10 +527,11 @@ int main() {
 	uint32_t maxX, maxY; 
 	maxX = 6;
 	maxY = 4;
+	
 	while (mazeInit.size() > 0) {
-		if (yInd > maxY)  {
-			yInd = 0;
-			++xInd; //preincrement is fastr than postincrement 
+		if (xInd > maxX)  {
+			xInd = 0;
+			++yInd; //preincrement is fastr than postincrement 
 		}
 		// populate your maze data Structure. 
 		maze[xInd][yInd] = mazeNode();
@@ -384,7 +539,7 @@ int main() {
 		maze[xInd][yInd].val = boost::lexical_cast<uint32_t>(mazeInit.at(0));
 		mazeInit = mazeInit.substr(1);
 		++currentVal;
-		++yInd;
+		++xInd;
 	}
 /*
 	for (uint32_t x = 0; x < maxX; x++) {
