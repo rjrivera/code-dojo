@@ -1,4 +1,5 @@
-//immediate TODO[ ] GIVE TETSHAPE X Y ACCESSORS. 
+//immediate TODO[X] GIVE TETSHAPE X Y ACCESSORS. 
+//current TODO[ ] GENERATE A CLASS HIEARCHEY AND STORE IN A CONTAINER OF SMARTPOINTERS.
 //// client.cpp
 //// ~~~~~~~~~~
 //// lines 25 - 60 
@@ -22,7 +23,7 @@
 #include "tetSquare.hpp"
 #define WIDTH 400
 #define HEIGHT 600
-#define SPAWNTIME 5000
+#define SPAWNTIME 10000
 #define DROPTIME 500
 
 using boost::asio::ip::tcp;
@@ -74,7 +75,9 @@ int main(int argc, char* argv[])
 	// ==================end networking skeleton work. 
 	// ====== simple texing section =======
 
-	
+	std::vector<tetShape> shapes;
+	shapes.push_back(tetSquare());
+	std::cout << "testing tetSquare " << std::endl;
 	// ====================================
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
@@ -94,7 +97,7 @@ int main(int argc, char* argv[])
 	std::vector<float> floor; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
-	std::vector<tetSquare> tetShapes;
+	std::vector<tetSquare*> tetShapes;
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -102,9 +105,6 @@ int main(int argc, char* argv[])
 		blocks.push_back(tempText);
 		std::cout << textName << std::endl;
 	}
-
-	tetSquare shapes = tetSquare(&blocks[1]);
-
 	// ==============================TODO [ ] transition this functionality to a viable object class such as shape::L shape::M etc
 	// used for prototyping.
 	std::vector<sf::Sprite> gameBlocks;// TODO[ ] transition global scope constants much like in csharp engine. 
@@ -194,28 +194,28 @@ int main(int argc, char* argv[])
 			numGameBlocks++;
 			//std::cout << "second elapsed" << std::endl;
 			////gameBlocks.push_back(sf::Sprite()); // rearchitect TODO[ ] to valid game object class hierarchy. 
-			tetShapes.push_back(tetSquare(5, 3, &(blocks[1])));//
+			tetShapes.push_back(new tetSquare(5, 3, &(blocks[1])));//
 			////gameBlocks[numGameBlocks].setTexture(blocks[1]); // refactor TODO [ ] convert numbers to aformentioned constants
 			////gameBlocks[numGameBlocks].setPosition(sf::Vector2f((float)(16*5) , (float)(16*3))); // refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
  			// reset spawn timer. 
 			spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
 			// output status of new instance of tetSquare. 
 			std::cout << "spawn new block\n";
-			std::cout << tetShapes.at(numGameBlocks).X() << std::endl;
+			std::cout << tetShapes.at(numGameBlocks)->X() << std::endl;
 
 		}
-		if ( dropTimer > dropTrigger ) {/*
-			for (auto& gBlocks : gameBlocks ) {
+		if ( dropTimer > dropTrigger ) {
+			for (auto& gBlocks : tetShapes ) {
 				// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
-				if ( (gBlocks.getPosition()).y < floor[(gBlocks.getPosition().x/16) - arenaOffset]*16 ) { // TODO [ ] simplify to bool call.
-					gBlocks.move(0, 16);
+				if ( (gBlocks->mySprites[0].getPosition()).y < floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]*16 ) { // TODO [ ] simplify to bool call.
+					gBlocks->move(0, 1);
 				}
-				else if ( (gBlocks.getPosition()).y == floor[(gBlocks.getPosition().x/16) - arenaOffset]*16 ) { 
-					floor[(gBlocks.getPosition().x/16) - arenaOffset]--;
+				else if ( (gBlocks->mySprites[0].getPosition()).y == floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]*16 ) { 
+					floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]--;
 					std::cout << "floor triggered and amended\n";
 				}
 				 
-			}*/
+			}
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}
 		// end timing capture and update capture/triggers.
@@ -245,8 +245,9 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
 //			std::cout << "Left key pressed" << std::endl;
 			if (numGameBlocks >= 0) {
-				if ( tetShapes[numGameBlocks].X()*16 >= (16*(arenaOffset + 1) )){ 
-					////gameBlocks[numGameBlocks].move(-16, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
+				if ( tetShapes[numGameBlocks]->X()*16 >= (16*(arenaOffset)+1 )){ //delegate specifics to the class.
+					tetShapes[numGameBlocks]->move(-1, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
+					std::cout << "moving left - old X: " << tetShapes[numGameBlocks]->X();
 				}
 			}
 		}
@@ -255,7 +256,7 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
 
 			if ( numGameBlocks >= 0 ) {
-				if ( tetShapes[numGameBlocks].X()*16 < (16*(arenaWidth+arenaOffset) )){ 
+				if ( tetShapes[numGameBlocks]->X()*16 < (16*(arenaWidth+arenaOffset) )){ 
 					////tetShapes[numGameBlocks].move(16, 0); //do this foreach sprite in tetShapes
 				}
 			}
@@ -314,19 +315,15 @@ int main(int argc, char* argv[])
 
 //draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
 	for (auto& shape : tetShapes) {
-		//std::cout << "in a shape\n";
+	//	std::cout << "in a shape\n";
 		
 
-		for (auto& sprite : shape.mySprites) {
-			std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
+		for (auto& sprite : shape->mySprites) {
+	//		std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
 			window.draw(sprite);
 		}
 		
 		
-	}
-	for ( auto& sprite : shapes.mySprites) {
-		window.draw(sprite);
-	
 	}
 	
 	window.display();

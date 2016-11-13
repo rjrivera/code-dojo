@@ -11,9 +11,9 @@ class tetSquare : public tetShape{
 	private:
 		//std::vector<sf::Sprite> mySprites;		
 	public:
-	//	std::vector<sf::Sprite> mySprites;	 
+	//	std::vector<sf::Sprite> mySprites;			
 		//constructors
-		tetSquare(const sf::Texture * blkText_);
+		tetSquare();
 		tetSquare(double x_, double y_, const sf::Texture * blkText_); // you want a pass-by reference asper best practices. 
 		explicit tetSquare(double z_);
 		tetSquare(const tetSquare& sauce);
@@ -37,7 +37,7 @@ class tetSquare : public tetShape{
 		//mutators
 		void X(double x_);
 		void Y(double y_);
-
+		void move(double x_, double y_) override;
 		//calculate the distance between the instance and the origin/argument, respectively.
 		double Distance() const;
 		double Distance(const tetSquare& p) const; 

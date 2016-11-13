@@ -12,12 +12,13 @@
 class tetShape{
 
 	protected:
-		double m_id, y;
+		double m_id;
 
 	public:
+//		virtual uint8_t int_counter7;
 		std::vector<sf::Sprite> mySprites;
 		std::vector<int> myInts;
-		double x;
+		double x, y;
 		tetShape();
 		tetShape(double x_, double y_);
 		virtual ~tetShape();
@@ -34,6 +35,7 @@ class tetShape{
 		// modifiers
 		// choosing a diameter vice rad method to take advantage of overloading. 
 		void ID(double target_); 
+		virtual void move(double x_, double y_);
 
 };
 

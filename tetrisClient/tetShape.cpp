@@ -82,6 +82,9 @@ double tetShape::ID() const{
 	return m_id;
 }
 
+void tetShape::move(double x_, double y_) {
+
+}
 void tetShape::Draw() {
 	std::cout << "void tetShape::Draw()\n";
 
