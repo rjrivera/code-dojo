@@ -78,6 +78,15 @@ bool tetShape::rBoundCheck(double x_) const {
 
 }
 
+
+bool tetShape::lBoundCheck(double x_) const {
+	return false;
+}
+
+bool tetShape::floorBoundCheck(std::vector<double>& y_) const {
+	return false;
+}
+
 		// modifiers
 		// choosing a diameter vice rad method to take advantage of overloading. 
 void tetShape::ID(double target_) { 

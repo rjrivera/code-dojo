@@ -31,6 +31,8 @@ class tetShape{
 		// improving class by adding this compare function
 		bool operator== (const tetShape& source_) const;
 		virtual bool rBoundCheck(double x_) const;
+		virtual bool lBoundCheck(double x_) const;
+		virtual bool floorBoundCheck(std::vector<double>& y_) const;
 		virtual void Draw();		
 
 		// modifiers

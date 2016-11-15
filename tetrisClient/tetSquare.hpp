@@ -32,6 +32,8 @@ class tetSquare : public tetShape{
 		double X() const override;
 		double Y() const override;
 		bool rBoundCheck(double x_) const override;
+		bool lBoundCheck(double x_) const override;
+		bool floorBoundCheck(std::vector<double>& y_) const override;
 		
 		void Draw() override;
 		

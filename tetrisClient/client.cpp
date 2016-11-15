@@ -23,6 +23,7 @@
 #include "tetShape.hpp"
 #include "tetSquare.hpp"
 #include "tetLine.hpp"
+#include "tetL.hpp"
 #define WIDTH 400
 #define HEIGHT 600
 #define SPAWNTIME 5000
@@ -87,7 +88,7 @@ int main(int argc, char* argv[])
 	// uniform RNG for block generation. 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine generator (seed);
-	std::uniform_int_distribution<uint32_t> distribution (0, 1);
+	std::uniform_int_distribution<uint32_t> distribution (0, 2);
 	uint32_t blockType;
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Tetris Clone!");
@@ -178,10 +179,8 @@ int main(int argc, char* argv[])
 					numLine++;
 				}
 				arena.close();
-				// based off information infered from arena.txt - tabulate the floor. 
-				std::cout << "arenaWidth, arenaHeight: " << arenaWidth << " " << arenaHeight << std::endl;
+				// based off information infered from arena.txt - tabulate the floor. 				
 				for (uint32_t i = 0; i <= arenaWidth ; i++) {
-
 					floor.push_back(arenaHeight);
 				}
 			}
@@ -203,6 +202,7 @@ int main(int argc, char* argv[])
 			blockType = distribution(generator);
 			if (blockType == 0) tetShapes.emplace_back(new tetSquare(5, 3, &(blocks[1])));
 			else if (blockType == 1)  tetShapes.emplace_back(new tetLine(5, 3, &(blocks[1])));
+			else if (blockType == 2)  tetShapes.emplace_back(new tetL(5, 3, &(blocks[1])));
 			// rearchitect TODO[x] to valid game object class hierarchy. 
 			// refactor TODO [ ] convert magic numbers to aformentioned constants
 			// refactor TODO [x] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
@@ -253,9 +253,8 @@ int main(int argc, char* argv[])
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
 			if (numGameBlocks >= 0) {
-				if ( tetShapes[numGameBlocks]->X()*16 >= (16*(arenaOffset)+1 )){ //delegate specifics to the class.
+				if ( tetShapes[numGameBlocks]->lBoundCheck(arenaOffset-1)){ //delegate specifics to the class.
 					tetShapes[numGameBlocks]->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
-					std::cout << "moving left - old X: " << tetShapes[numGameBlocks]->X();
 				}
 			}
 		}

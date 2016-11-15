@@ -1,5 +1,5 @@
 #include <iostream>
-#include "tetLine.hpp"
+#include "tetL.hpp"
 #include <string>
 #include <cmath>
 #include <SFML/Graphics.hpp>
@@ -11,10 +11,10 @@
 */
 
 //constructors
-tetLine::tetLine() : tetShape(0, 0){
+tetL::tetL() : tetShape(0, 0){
 }
 
-tetLine::tetLine(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
+tetL::tetL(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites; //std::vector<sf::Sprite>
 	myInts; //std::vector<int> for test purposes.
 	for (int i = 0; i < 4; i++) {
@@ -24,23 +24,20 @@ tetLine::tetLine(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_
 	mySprites[0].setPosition(sf::Vector2f((float)(16*x_) , (float)(16*y_))); 
 	mySprites[1].setPosition(sf::Vector2f((float)(16*(x_)) , (float)(16*(y_+1)))); 
 	mySprites[2].setPosition(sf::Vector2f((float)(16*x_) , (float)(16*(y_+2)))); 
-	mySprites[3].setPosition(sf::Vector2f((float)(16*(x_)) , (float)(16*(y_+3)))); 
-	for (auto& sprite : mySprites) {
-		std::cout << "X, Y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;
-	}
+	mySprites[3].setPosition(sf::Vector2f((float)(16*(x_+1)) , (float)(16*(y_+2)))); 
 
 }
 
-tetLine::tetLine(double z_) : tetShape(z_, z_){
+tetL::tetL(double z_) : tetShape(z_, z_){
 }
 
-tetLine::~tetLine() {
+tetL::~tetL() {
 	//delete mySprites;
 	std::cout << "in tetSquare destructor\n";
 }
 
 //copy constructor
-tetLine::tetLine(const tetLine& sauce) {
+tetL::tetL(const tetL& sauce) {
 	x = sauce.x;
 	y = sauce.y;
 	m_id = sauce.m_id;
@@ -51,89 +48,88 @@ tetLine::tetLine(const tetLine& sauce) {
 
 //operator overloading
 
-tetLine tetLine::operator-() const{
-	tetLine temp = tetLine(x*-1, y*-1, mySprites[0].getTexture());
+tetL tetL::operator-() const{
+	tetL temp = tetL(x*-1, y*-1, mySprites[0].getTexture());
 	return temp;
 }
 
-tetLine tetLine::operator* (double factor) const {
+tetL tetL::operator* (double factor) const {
 		//TODO[ ] find a suitable operation for this...perhaps implement the transform here?
 	return *this;
 }
 
-tetLine tetLine::operator+ (const tetLine& p) const{ // Add Coordinates
+tetL tetL::operator+ (const tetL& p) const{ // Add Coordinates
 	
-	tetLine temp = tetLine(x + p.X(), y + p.Y(), p.mySprites[0].getTexture());
+	tetL temp = tetL(x + p.X(), y + p.Y(), p.mySprites[0].getTexture());
 	return temp;
 }
 
-bool tetLine::operator== (const tetLine& p) const {
+bool tetL::operator== (const tetL& p) const {
 	if (p.x == x && p.y == y && p.m_id == m_id) {
 		return true;
 	}
 	return false;
 }
 
-tetLine& tetLine::operator= (const tetLine& source) {
+tetL& tetL::operator= (const tetL& source) {
 	x = source.x;
 	y = source.y;
 	m_id = source.m_id;
 	return *this;	
 }
 
-tetLine& tetLine::operator*= (double factor) {
+tetL& tetL::operator*= (double factor) {
 	x *= factor;
 	y *= factor;
 	return *this;
 }
 
-std::ostream& operator<< (std::ostream& os, const tetLine& source) {
+std::ostream& operator<< (std::ostream& os, const tetL& source) {
 	os << "Point ID: " << source.m_id << "(" << source.x << ", " << source.y << ")" << std::endl;
 	return os;
 }
 //selectors
-double tetLine::X() const {
+double tetL::X() const {
 	return x;
 }
 
-double tetLine::Y() const {
+double tetL::Y() const {
 	return y;
-}
-
-bool tetLine::floorBoundCheck(std::vector<double>& y_) const {
-	//floors will be pushed into the vector from left to right by client software.
-	if (y + 4 < y_[0]) return true;
-	return false; 
 }
 	
 	//mutators
-void tetLine::X(double x_){
+void tetL::X(double x_){
 	x = x_;
 }
 	
-void tetLine::Y(double y_){
+void tetL::Y(double y_){
 	y = y_;
 }
 
-double tetLine::Distance() const {
+double tetL::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);
 	return (std::sqrt(pow(a,2) + pow(b,2)));
 }
 
-bool tetLine::rBoundCheck(double x_) const {
-	if (x+1 < x_ ) return true;
+bool tetL::rBoundCheck(double x_) const {
+	if (x+2 < x_ ) return true;
 	return false;
 }
 
-bool tetLine::lBoundCheck(double x_) const {
+bool tetL::lBoundCheck(double x_) const {
 	if ( (x-1) > x_ )  return true;
 	return false; 
 }
 
+bool tetL::floorBoundCheck(std::vector<double>& y_) const {
+	if( (y+3) < y_[0] && (y+3) < y_[1]) return true;
+	return false;
+
+}
 
 //altered signature to pass-by-reference in order to avoid copy constructor call and reduce overhead. Made argument const as per instructions so function cannot alter state of referenced value. 
-double tetLine::Distance(const tetLine& p) const{	
+double tetL::Distance(const tetL& p) const{	
 	double a, b;
 	// p.x = 55; uncomment to test read-only nature of const Point& reference. 
 	if (p.x > x) {
@@ -151,7 +147,7 @@ double tetLine::Distance(const tetLine& p) const{
 	return (std::sqrt(std::pow(a, 2) + std::pow(b,2)));
 }
 
-void tetLine::move(double x_, double y_) {
+void tetL::move(double x_, double y_) {
 	for (auto& gBlock : mySprites) {
 		gBlock.move(x_*16, y_*16);
 	}
@@ -160,7 +156,7 @@ void tetLine::move(double x_, double y_) {
 
 }
 
-void tetLine::Draw() {
+void tetL::Draw() {
 
 	std::cout << ".\n";
 

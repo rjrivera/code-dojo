@@ -119,6 +119,18 @@ bool tetSquare::rBoundCheck(double x_) const {
 	return false;
 }
 
+
+bool tetSquare::lBoundCheck(double x_) const{
+	if ( x-1 > x_ ) return true;
+	return false;
+}
+
+bool tetSquare::floorBoundCheck(std::vector<double>& y_) const {
+	//floors will be pushed into the vector from left to right by client software.
+	if (y + 2 < y_[0] && y + 2 < y_[1] ) return true;
+	return false; 
+}
+
 double tetSquare::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);
