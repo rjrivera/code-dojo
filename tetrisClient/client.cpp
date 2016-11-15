@@ -19,11 +19,13 @@
 #include <chrono>
 #include <SFML/Graphics.hpp>
 #include <fstream>
+#include <random>
 #include "tetShape.hpp"
 #include "tetSquare.hpp"
+#include "tetLine.hpp"
 #define WIDTH 400
 #define HEIGHT 600
-#define SPAWNTIME 10000
+#define SPAWNTIME 5000
 #define DROPTIME 500
 
 using boost::asio::ip::tcp;
@@ -82,6 +84,12 @@ int main(int argc, char* argv[])
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
 	// =============================================================
+	// uniform RNG for block generation. 
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	std::default_random_engine generator (seed);
+	std::uniform_int_distribution<uint32_t> distribution (0, 1);
+	uint32_t blockType;
+
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Tetris Clone!");
 	
 	// ==================== timeing constants temporarily place here - to be placed in class constants.
@@ -97,7 +105,7 @@ int main(int argc, char* argv[])
 	std::vector<float> floor; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
-	std::vector<tetSquare*> tetShapes;
+	std::vector<std::unique_ptr<tetShape>> tetShapes;
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -192,15 +200,16 @@ int main(int argc, char* argv[])
 		//// std::vector<tetShape> tetShapes; tetSquare : tetShape
 		if ( spawnTimer > spawnTrigger ) {
 			numGameBlocks++;
-			//std::cout << "second elapsed" << std::endl;
-			////gameBlocks.push_back(sf::Sprite()); // rearchitect TODO[ ] to valid game object class hierarchy. 
-			tetShapes.push_back(new tetSquare(5, 3, &(blocks[1])));//
-			////gameBlocks[numGameBlocks].setTexture(blocks[1]); // refactor TODO [ ] convert numbers to aformentioned constants
-			////gameBlocks[numGameBlocks].setPosition(sf::Vector2f((float)(16*5) , (float)(16*3))); // refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
+			blockType = distribution(generator);
+			if (blockType == 0) tetShapes.emplace_back(new tetSquare(5, 3, &(blocks[1])));
+			else if (blockType == 1)  tetShapes.emplace_back(new tetLine(5, 3, &(blocks[1])));
+			// rearchitect TODO[x] to valid game object class hierarchy. 
+			// refactor TODO [ ] convert magic numbers to aformentioned constants
+			// refactor TODO [x] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
  			// reset spawn timer. 
 			spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
 			// output status of new instance of tetSquare. 
-			std::cout << "spawn new block\n";
+			std::cout << "spawn new block --- RNG yielded: " << blockType << std::endl;
 			std::cout << tetShapes.at(numGameBlocks)->X() << std::endl;
 
 		}

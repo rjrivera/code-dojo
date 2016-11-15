@@ -508,7 +508,74 @@ vector<uint32_t> solveMaze(mazeNode maze_[][4], uint32_t goal_)  {
 	return *(path);
 }
 
+int binSearch(vector<int> nums_, int target, int lB, int rB) {
+	int pos;
+
+	while ((rB - lB) > 1) {
+		pos = (rB-lB) / 2 + lB; // the offset
+		if (nums_[pos] == target ) return pos;
+		else if ( nums_[pos] > target ) {
+			rB--;	
+		}
+		else lB++;
+	}
+
+}
+
+struct gNode{
+	int val;
+	vector<gNode*> eV;
+	gNode(int i) : val(i) { }
+};
+
+void traverseGraph(gNode root) {
+	map<int, bool> discovered;
+	deque<gNode> toProcess;
+	toProcess.push_back(root);
+	discovered[root.val] = true;
+	while (toProcess.size() >0) {
+		root = toProcess.front();
+		toProcess.pop_front();
+		cout << "at node: " << root.val << endl;
+		
+		for (gNode* gN : root.eV) {
+			if (!discovered[gN->val]) {
+				toProcess.push_back(*(gN));
+				discovered[gN->val] = true;
+			}
+		}
+		
+		
+	}
+}
+
 int main() {
+
+	gNode A(1);
+	gNode B(2);
+	gNode C(3);
+	gNode D(4);
+	gNode E(5);
+	A.eV.push_back(&B);
+	D.eV.push_back(&E);
+	B.eV.push_back(&C);
+	C.eV.push_back(&D);
+		
+	traverseGraph(A);
+
+
+/*
+	vector<int> nums;
+	nums.push_back(1);
+	nums.push_back(2);
+	nums.push_back(3);
+	nums.push_back(4);
+	nums.push_back(5);
+	nums.push_back(6);
+	nums.push_back(7);
+	
+	cout << binSearch(nums, 6, 0, nums.size()-1);	
+*/
 	//see REF: mazeNode
 	//given an input of 0's and 1's defining a maze structre and a root of id=0 and GOAL of id=rand, find the shortest path to goal. 
 	
@@ -520,6 +587,8 @@ int main() {
  *
  *	return the inorder shortest path in any data structure. 
  * */
+
+/*
 	mazeNode maze[7][4];
 	string mazeInit = "1110010110111011110111100001";
 	uint32_t xInd, yInd, currentVal;
@@ -541,18 +610,19 @@ int main() {
 		++currentVal;
 		++xInd;
 	}
+*/
 /*
 	for (uint32_t x = 0; x < maxX; x++) {
 	
 		for (uint32_t y = 0; y < maxY; y++) {
 			cout << boost::lexical_cast<string>(maze[x][y].id) << " => " << boost::lexical_cast<string>(maze[x][y].val) << endl;
 		}
-	}*/
+	}
 	vector<uint32_t> answer = solveMaze(maze, 27);
 	for (uint32_t& path: answer) {
 		cout << boost::lexical_cast<string>(path) << endl;
 	}
-	
+	*/
 /*
 	try{ 
 		derived * der = new derived();
