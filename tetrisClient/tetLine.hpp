@@ -30,7 +30,9 @@ class tetLine : public tetShape{
 		//selectors
 		double X() const override;
 		double Y() const override;
-		
+		bool rBoundCheck(double x_) const;
+				
+
 		void Draw() override;
 		
 		//mutators

@@ -31,6 +31,7 @@ class tetSquare : public tetShape{
 		//selectors
 		double X() const override;
 		double Y() const override;
+		bool rBoundCheck(double x_) const override;
 		
 		void Draw() override;
 		

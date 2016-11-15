@@ -115,6 +115,11 @@ double tetLine::Distance() const {
 	return (std::sqrt(pow(a,2) + pow(b,2)));
 }
 
+bool tetLine::rBoundCheck(double x_) const {
+	if (x+1 < x_ ) return true;
+	return false;
+}
+
 //altered signature to pass-by-reference in order to avoid copy constructor call and reduce overhead. Made argument const as per instructions so function cannot alter state of referenced value. 
 double tetLine::Distance(const tetLine& p) const{	
 	double a, b;

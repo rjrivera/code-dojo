@@ -113,6 +113,12 @@ void tetSquare::Y(double y_){
 	y = y_;
 }
 
+// x_ is the arena wall position, must determine if our right most member (x_+1) can fit there. 
+bool tetSquare::rBoundCheck(double x_) const {
+	if (x+2 < x_ ) return true;
+	return false;
+}
+
 double tetSquare::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);

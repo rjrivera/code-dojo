@@ -252,10 +252,9 @@ int main(int argc, char* argv[])
 		// Left Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
-//			std::cout << "Left key pressed" << std::endl;
 			if (numGameBlocks >= 0) {
 				if ( tetShapes[numGameBlocks]->X()*16 >= (16*(arenaOffset)+1 )){ //delegate specifics to the class.
-					tetShapes[numGameBlocks]->move(-1, 0); // TODO [ ] begin delegating responsibilities to other aspects of the project. 
+					tetShapes[numGameBlocks]->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
 					std::cout << "moving left - old X: " << tetShapes[numGameBlocks]->X();
 				}
 			}
@@ -265,8 +264,8 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
 
 			if ( numGameBlocks >= 0 ) {
-				if ( tetShapes[numGameBlocks]->X()*16 < (16*(arenaWidth+arenaOffset) )){ 
-					////tetShapes[numGameBlocks].move(16, 0); //do this foreach sprite in tetShapes
+				if ( tetShapes[numGameBlocks]->rBoundCheck(arenaWidth+arenaOffset+1)) {
+					tetShapes[numGameBlocks]->move(1, 0); 
 				}
 			}
 		}

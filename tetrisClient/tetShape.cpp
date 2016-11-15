@@ -72,6 +72,12 @@ bool tetShape::operator== (const tetShape& source_) const {
 
 }
 
+
+bool tetShape::rBoundCheck(double x_) const {
+	return false;
+
+}
+
 		// modifiers
 		// choosing a diameter vice rad method to take advantage of overloading. 
 void tetShape::ID(double target_) { 
