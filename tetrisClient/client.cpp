@@ -1,5 +1,5 @@
 //immediate TODO[X] GIVE TETSHAPE X Y ACCESSORS. 
-//current TODO[ ] GENERATE A CLASS HIEARCHEY AND STORE IN A CONTAINER OF SMARTPOINTERS.
+//current TODO[X] GENERATE A CLASS HIEARCHEY AND STORE IN A CONTAINER OF SMARTPOINTERS.
 //// client.cpp
 //// ~~~~~~~~~~
 //// lines 25 - 60 
@@ -78,9 +78,6 @@ int main(int argc, char* argv[])
 	// ==================end networking skeleton work. 
 	// ====== simple texing section =======
 
-	std::vector<tetShape> shapes;
-	shapes.push_back(tetSquare());
-	std::cout << "testing tetSquare " << std::endl;
 	// ====================================
 	// =============================================================
 	// 	PRE GAME-LOOP INITIALIZATIONS
@@ -103,7 +100,7 @@ int main(int argc, char* argv[])
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
 	
-	std::vector<float> floor; 
+	std::vector<double> floor; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
 	std::vector<std::unique_ptr<tetShape>> tetShapes;
@@ -213,17 +210,27 @@ int main(int argc, char* argv[])
 			std::cout << tetShapes.at(numGameBlocks)->X() << std::endl;
 
 		}
-		if ( dropTimer > dropTrigger ) {
-			for (auto& gBlocks : tetShapes ) {
-				// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
-				if ( (gBlocks->mySprites[0].getPosition()).y < floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]*16 ) { // TODO [ ] simplify to bool call.
-					gBlocks->move(0, 1);
-				}
-				else if ( (gBlocks->mySprites[0].getPosition()).y == floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]*16 ) { 
-					floor[(gBlocks->mySprites[0].getPosition().x/16) - arenaOffset]--;
+		if ( dropTimer > dropTrigger && tetShapes.size() > 0) {
+			std::vector<double> floorSnap;	
+//			floorSnap.push_back(floor[0]);
+//			floorSnap.push_back(floor[1]);
+			
+			// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
+			for (auto& shape : tetShapes) {
+			floorSnap.push_back(floor[shape->X() - arenaOffset]);
+			floorSnap.push_back(floor[shape->X() - arenaOffset + 1]);
+				if (shape->floorBoundCheck(floorSnap) ){ // TODO [x] simplify to bool call.
+					shape->move(0, 1);
+				
+				}	
+				else if (!shape->onFloor) { //use index for now, but TODO[ ] convert the blocks to a game 2D array of bools for sprites
+					// determine a for_each scheme 
+					floor[shape->X() - arenaOffset] = shape->Y();
+					floor[shape->X() - arenaOffset + 1] = shape->Y();
+					shape->onFloor = true;
 					std::cout << "floor triggered and amended\n";
 				}
-				 
+				
 			}
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}

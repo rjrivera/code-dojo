@@ -33,8 +33,7 @@ tetSquare::tetSquare(double x_, double y_,const sf::Texture* blkText_) : tetShap
 		myInts.push_back(i);
 		std::cout << "init int: " << myInts[i] << std::endl;
 	}
-	//x = x_;
-	//y = y_;
+	
 }
 
 tetSquare::tetSquare(double z_) : tetShape(z_, z_){

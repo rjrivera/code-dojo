@@ -16,6 +16,7 @@ class tetShape{
 
 	public:
 //		virtual uint8_t int_counter7;
+		bool onFloor;
 		std::vector<sf::Sprite> mySprites;
 		std::vector<int> myInts;
 		double x, y;

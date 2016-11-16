@@ -24,6 +24,7 @@ tetShape::tetShape() : x(0), y(0) {
 	std::default_random_engine generator (seed);
 	std:: normal_distribution<double> distribution (1, 1.0);
 	m_id = distribution(generator);
+	onFloor = false;
 }
 
 tetShape::tetShape(double x_, double y_) : x(x_), y(y_) {
