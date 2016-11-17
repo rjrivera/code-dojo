@@ -8,36 +8,15 @@
 	RELEASE NOTES v4-4a-1
 
 	Template Array class 
-
 */
-/*
-class ArrayException {
-	
-	public:
-		virtual std::string GetMessage() = 0; //make abstract
 
-};
-
-class OutOfBoundsException : public ArrayException {
-
-	private: 
-		int m_index;
-
-	public: 
-		OutOfBoundsException();
-		OutOfBoundsException(int index_);
-		~OutOfBoundsException();
-		std::string GetMessage() override;
-
-};
-*/
-// ============ END EXCEPTION OBJECT DEF
 template<class T> 
 class Array{
 
 	private:
 		T * m_data;
 		int m_length;
+		static int def_size;
 	public:
 		//constructors and destructors. 
 		Array();
@@ -50,6 +29,7 @@ class Array{
 		int Size() const;
 		
 		T GetElement(int index_) const;	
+		int DefaultSize() const;
 		// operator overloads
 		Array<T>& operator=(const Array<T>& source_);
 		const T& operator[](int index_) const; //used for access
@@ -57,6 +37,7 @@ class Array{
 
 		// setters
 		void SetElement(int index_, T& target_);
+		void DefaultSize(int index_);
 };
 
 /*

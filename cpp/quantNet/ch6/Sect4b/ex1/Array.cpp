@@ -19,32 +19,14 @@ private:
 /*
 	DEFINING ARRAY EXCEPTION CLASS BEFORE ARRAY
 */
-/*
-OutOfBoundsException::OutOfBoundsException() {
-	m_index = -1;
-}
 
-OutOfBoundsException::OutOfBoundsException(int index_) {
-	m_index = index_;
-}
+template<class T>
+int Array<T>::def_size = 10;
 
-OutOfBoundsException::~OutOfBoundsException() {
-
-}
-
-
-
-std::string OutOfBoundsException::GetMessage() {
-	return "The given index is out of bounds\n";
-}
-*/
-/*
-default constructor - instantiates to size 10 <typedef T>. 
-*/
 template<class T> 
 Array<T>::Array() {
-	m_length = 10;
-	m_data = new T[m_length];
+	m_length = def_size;
+	m_data = new T[def_size];
 	
 
 	for (int i = 0; i < m_length; i++) {
@@ -92,7 +74,19 @@ T Array<T>::GetElement(int index_) const {
 	else { throw OutOfBoundsException(index_);}
 }
 
+template<class T>
+void Array<T>::DefaultSize(int index_) {
+	def_size = index_;
+}
+
+template<class T>
+int Array<T>::DefaultSize() const {
+	return def_size;
+}
+
 /*
+ *
+ *
 assignment operator
 */
 template<class T>

@@ -3,10 +3,10 @@
 #include <random>
 #include "Point.hpp"
 #include "Line.hpp"
-#include "Array.hpp"
+#include "Array.cpp"
 #include "Circle.hpp"
 #include "Shape.hpp"
-
+#include "OutOfBoundsException.hpp"
 
 using namespace std;
 
