@@ -8,6 +8,7 @@
 #include "Shape.hpp"
 #include "OutOfBoundsException.hpp"
 #include "NumericArray.cpp"
+#include "PointArray.cpp"
 
 using namespace std;
 
@@ -25,36 +26,12 @@ using namespace std;
 */
 
 int main() {
-	NumericArray<int> intArray1(5);
-	intArray1[0] = 1;
-	intArray1[1] = 2;
-	intArray1[2] = 3;
-	intArray1[3] = 4;
-	intArray1[4] = 5;
-	NumericArray<int> intArray2(5);
-	intArray2[0] = 1;
-	intArray2[1] = 2;
-	intArray2[2] = 3;
-	intArray2[3] = 4;
-	intArray2[4] = 5;
-	int tempDP = intArray1.DotProduct(intArray2);
-	cout << "dot product of arrays 1 and 2 is: " << tempDP << endl;
-	
-	NumericArray<Point> intArray3(4);
-	intArray2[0] ;
-	intArray2[1] ;
-	intArray2[2] ;
-	intArray2[3] ;
+	PointArray<Point> pA(3);
+	pA[0] = Point();
+	pA[1] = Point(2, 2);
+	pA[2] = Point(3, 5);
 
-	cout << "attempting to dp two numarrays that are differenct lenghts: " << endl; 
-	intArray1.DotProduct(intArray3);
-	
-	intArray1 = intArray1 + intArray2;
-	intArray1 = intArray1 * 2;
-	
-	for (int i = 0 ; i < 5; i++) {
-		cout << intArray1[i] << endl;
+	cout << "distance between the 3 predefined points in the PArray: " << pA.Length();
 
-	}
-
+	return 0 ;
 }
