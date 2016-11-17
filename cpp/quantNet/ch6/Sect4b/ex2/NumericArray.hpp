@@ -30,14 +30,7 @@ class NumericArray : public Array<T> {
 		// operator overloads
 		NumericArray& operator* (int index_);
 		NumericArray& operator+ (NumericArray<T>& index_);
-		/*
-		NumericArray<T>& operator=(const NumericArray<T>& source_);
-		const T& operator[](int index_) const; //used for access
-		T& operator[](int index_); 
-
-		// setters
-		void SetElement(int index_, T& target_);
-*/
+		T DotProduct(NumericArray<T>& b_);		
 
 		void DefaultSize(int index_);
 

@@ -96,6 +96,20 @@ NumericArray<T>& NumericArray<T>::operator+(NumericArray<T>& index_) {
 	return *this;
 }
 
+template<class T>
+T NumericArray<T>::DotProduct(NumericArray<T>& b_) {
+	if (Array<T>::m_length != b_.Array<T>::m_length )  {
+		std::cout << "two candidate arrays for DP not equal\n";
+		return 0;
+	}
+	T dP = 0;
+	for (int i = 0; i < Array<T>::m_length; i++) {
+		dP += b_.Array<T>::m_data[i] * Array<T>::m_data[i];
+	}
+	return dP;
+
+}
+
 
 /*
  *
