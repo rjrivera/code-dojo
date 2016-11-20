@@ -104,6 +104,12 @@ Array<T>& Array<T>::operator=(const Array<T>& source_) {
 
 	return *this;
 }
+
+/*
+ *
+ * Accessor method that returns a value at the specified index - throws appropriately. 
+ *
+ */
 template<class T>
 T& Array<T>::operator[](int index_) {
 	if (index_ >= 0 && index_ <  m_length) {
@@ -112,6 +118,11 @@ T& Array<T>::operator[](int index_) {
 	else { throw OutOfBoundsException(index_);}
 }	
 
+/*
+ *
+ * accessor operator overload - returns value at provided index - throws appropriately
+ *
+ */
 template<class T>
 const T& Array<T>::operator[](int index_) const {
 	if (index_ >= 0 && index_ < m_length) { 
@@ -120,17 +131,27 @@ const T& Array<T>::operator[](int index_) const {
 	else {	throw OutOfBoundsException(index_);}
 	
 }
+
+/*
+ * destructor handling memory deltion of array. 
+ */
 template<class T>
 Array<T>::~Array() {
 	
 	delete[] m_data; 
 }
 
+/*
+ * Accessor - returns length of array
+ */
 template<class T>
 int Array<T>::Size() const {
 	return m_length;
 }
 
+/*
+ * Mutator - set specified index with target of type T
+ */
 template<class T>
 void Array<T>::SetElement(int index_, T& target_) {
 	if (index_ >= 0 || index_ < m_length) { 
@@ -139,13 +160,5 @@ void Array<T>::SetElement(int index_, T& target_) {
 	else {throw OutOfBoundsException(index_);}
 
 }
-
-//===========================
-/*
-template class Array<Point>;
-template class Array<Circle>;
-template class Array<Line>;
-template class Array<int>;
-*/
 
 #endif

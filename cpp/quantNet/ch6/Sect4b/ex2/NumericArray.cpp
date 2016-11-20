@@ -2,7 +2,8 @@
 #define NUMERICARRAY_CPP
 
 #include "NumericArray.hpp"
-//#include "Array.hpp"
+#include "ArrayException.hpp"
+#include "UniqueSizeException.hpp"
 #include <iostream>
 #include <string>
 
@@ -17,10 +18,9 @@ private:
 
 */
 
-
-//template<class T>
-//int NumericArray<T>::def_size = 10;
-
+/*
+ * Default Constructor
+ */
 template<class T> 
 NumericArray<T>::NumericArray() : Array<T>() {
 	
@@ -49,10 +49,12 @@ NumericArray<T>::NumericArray(const NumericArray<T>& source_) {
 	}
 }
 
+/*
+ * Destructor - does not delete anything, Array.cpp deletes memory
+ */
 template<class T>
 NumericArray<T>::~NumericArray() {
 	
-	//delete[] Array<T>::m_data;
 }
 
 /*
@@ -66,16 +68,25 @@ T NumericArray<T>::GetElement(int index_) const {
 	else { throw OutOfBoundsException(index_);}
 }
 
+/*
+ * Static variable mutator for altering the class default size
+ * */
 template<class T>
 void NumericArray<T>::DefaultSize(int index_) {
 	Array<T>::def_size = index_;
 }
 
+/*
+ * Static Variable accessor for viewing the class default size. 
+ */
 template<class T>
 int NumericArray<T>::DefaultSize() const {
 	return Array<T>::def_size;
 }
 
+/*
+ * Mutator - Scale the elements of the numeric array by a factor
+ * */
 template<class T>
 NumericArray<T>& NumericArray<T>::operator* (int index_) {
 	for (int i = 0; i < Array<T>::m_length; i++) {
@@ -84,10 +95,15 @@ NumericArray<T>& NumericArray<T>::operator* (int index_) {
 	return *this;
 }
 
+/*
+ *
+ * Mutator, add the elements of two numeric arrays. Throw an exception if two arrays are not the same size. 
+ *
+ */
 template<class T>
 NumericArray<T>& NumericArray<T>::operator+(NumericArray<T>& index_) {
 	if (Array<T>::m_length != index_.Array<T>::m_length )  {
-		std::cout << "two candidate arrays for scaling not equal\n";
+		throw UniqueSizeException();
 		return *this;
 	}
 	for (int i = 0; i < Array<T>::m_length; i++) {
@@ -96,10 +112,13 @@ NumericArray<T>& NumericArray<T>::operator+(NumericArray<T>& index_) {
 	return *this;
 }
 
+/*
+ * Calculate the Dot Product of two arrays, throw an exception if not the same size. 
+ */
 template<class T>
 T NumericArray<T>::DotProduct(NumericArray<T>& b_) {
 	if (Array<T>::m_length != b_.Array<T>::m_length )  {
-		std::cout << "two candidate arrays for DP not equal\n";
+		throw UniqueSizeException();
 		return 0;
 	}
 	T dP = 0;
@@ -109,73 +128,5 @@ T NumericArray<T>::DotProduct(NumericArray<T>& b_) {
 	return dP;
 
 }
-
-
-/*
- *
- *
-assignment operator
-*/
-/*
-template<class T>
-Array<T>& Array<T>::operator=(const Array<T>& source_) {
-	m_length = source_.Size();
-
-	if (&source_ == this) {return *this;} //handle self-assignment. 
-	//INITIALIZE ARRAY OF OBJECTS. 
-	delete[] m_data;
-	m_data = new T[m_length];
-	
-	for (int i = 0; i < m_length; i++) {
-		m_data[i] = source_.m_data[i]; //amended line. 
-	}	
-
-	return *this;
-}
-template<class T>
-T& Array<T>::operator[](int index_) {
-	if (index_ >= 0 && index_ <  m_length) {
-		return m_data[index_];
-	}
-	else { throw OutOfBoundsException(index_);}
-}	
-
-template<class T>
-const T& Array<T>::operator[](int index_) const {
-	if (index_ >= 0 && index_ < m_length) { 
-		return m_data[index_];
-	} 
-	else {	throw OutOfBoundsException(index_);}
-	
-}
-template<class T>
-Array<T>::~Array() {
-	
-	delete[] m_data; 
-}
-
-*/
-/*
-template<class T>
-int Array<T>::Size() const {
-	return m_length;
-}
-
-template<class T>
-void Array<T>::SetElement(int index_, T& target_) {
-	if (index_ >= 0 || index_ < m_length) { 
-		m_data[index_] = target_;
-	}
-	else {throw OutOfBoundsException(index_);}
-
-}
-*/
-//===========================
-/*
-template class Array<Point>;
-template class Array<Circle>;
-template class Array<Line>;
-template class Array<int>;
-*/
 
 #endif

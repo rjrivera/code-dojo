@@ -10,28 +10,8 @@
 	Template Array class 
 
 */
-/*
-class ArrayException {
-	
-	public:
-		virtual std::string GetMessage() = 0; //make abstract
 
-};
 
-class OutOfBoundsException : public ArrayException {
-
-	private: 
-		int m_index;
-
-	public: 
-		OutOfBoundsException();
-		OutOfBoundsException(int index_);
-		~OutOfBoundsException();
-		std::string GetMessage() override;
-
-};
-*/
-// ============ END EXCEPTION OBJECT DEF
 template<class T> 
 class Array{
 
@@ -48,9 +28,10 @@ class Array{
 		// accessor methods. 
 		
 		int Size() const;
-		
 		T GetElement(int index_) const;	
+
 		// operator overloads
+		
 		Array<T>& operator=(const Array<T>& source_);
 		const T& operator[](int index_) const; //used for access
 		T& operator[](int index_); 
@@ -59,11 +40,5 @@ class Array{
 		void SetElement(int index_, T& target_);
 };
 
-/*
-#ifndef ARRAY_CPP
-#include "Array.cpp"
-
-#endif
-*/
 #endif
 

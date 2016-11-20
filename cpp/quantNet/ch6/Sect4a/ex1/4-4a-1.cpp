@@ -16,6 +16,9 @@ using namespace std;
 	Amended Array to throw an error for exception handling bounds erros. 
 
 	after attempting to access out of bounds elements, exception is thrown but no caught, abort call made. 
+
+	If the Array.hpp included the code snippet to include the .cpp code, then you can continue using the .hpp FILE IN THE INLUDE STATEMENT FOR THE MAIN program, because then the header would also contain the source code as per the compiler's behavior. 
+developer has chosen not to include the Header.
 */
 
 int main() {

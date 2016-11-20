@@ -4,6 +4,7 @@
 #include <string>
 #include "ArrayException.hpp"
 #include "OutOfBoundsException.hpp"
+#include "UniqueSizeException.hpp"
 #include "Array.hpp"
 /*
 	RELEASE NOTES v4-4b-1

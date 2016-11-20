@@ -18,8 +18,9 @@ private:
 */
 
 
-//template<class T>
-//int NumericArray<T>::def_size = 10;
+/*
+ *Default Constructor
+ */
 
 template<class Point> 
 PointArray<Point>::PointArray() : Array<Point>() {
@@ -49,10 +50,12 @@ PointArray<Point>::PointArray(const PointArray<Point>& source_) {
 	}
 }
 
+/*
+ * Destructor
+ */
 template<class Point>
 PointArray<Point>::~PointArray() {
 	
-	//delete[] Array<T>::m_data;
 }
 
 /*
@@ -66,6 +69,9 @@ Point PointArray<Point>::GetElement(int index_) const {
 	else { throw OutOfBoundsException(index_);}
 }
 
+/*
+ * Accessor - returns the calculated distance traveled traversing the points from index 0 to final point. 
+ */
 template<class Point>
 double PointArray<Point>::Length() const {
 	double val = 0;
@@ -76,16 +82,25 @@ double PointArray<Point>::Length() const {
 	return val;
 }
 
+/*
+ * Static variable mutator altering the class definition for the default size. 
+ */
 template<class Point>
 void PointArray<Point>::DefaultSize(int index_) {
 	Array<Point>::def_size = index_;
 }
 
+/*
+ * Static variable accessor returning the current value of the default size variable. 
+ */
 template<class Point>
 int PointArray<Point>::DefaultSize() const {
 	return Array<Point>::def_size;
 }
 
+/**
+ * Mutator operator overload, scales all points by the same factor (index_)
+ */
 template<class Point>
 PointArray<Point>& PointArray<Point>::operator* (int index_) {
 	for (int i = 0; i < Array<Point>::m_length; i++) {
@@ -93,6 +108,10 @@ PointArray<Point>& PointArray<Point>::operator* (int index_) {
 	}
 	return *this;
 }
+
+/*
+ *Mutator function adding all points with their respective points in the parameter Array<Point>
+ */
 
 template<class Point>
 PointArray<Point>& PointArray<Point>::operator+(PointArray<Point>& index_) {
@@ -107,72 +126,5 @@ PointArray<Point>& PointArray<Point>::operator+(PointArray<Point>& index_) {
 }
 
 
-
-/*
- *
- *
-assignment operator
-*/
-/*
-template<class T>
-Array<T>& Array<T>::operator=(const Array<T>& source_) {
-	m_length = source_.Size();
-
-	if (&source_ == this) {return *this;} //handle self-assignment. 
-	//INITIALIZE ARRAY OF OBJECTS. 
-	delete[] m_data;
-	m_data = new T[m_length];
-	
-	for (int i = 0; i < m_length; i++) {
-		m_data[i] = source_.m_data[i]; //amended line. 
-	}	
-
-	return *this;
-}
-template<class T>
-T& Array<T>::operator[](int index_) {
-	if (index_ >= 0 && index_ <  m_length) {
-		return m_data[index_];
-	}
-	else { throw OutOfBoundsException(index_);}
-}	
-
-template<class T>
-const T& Array<T>::operator[](int index_) const {
-	if (index_ >= 0 && index_ < m_length) { 
-		return m_data[index_];
-	} 
-	else {	throw OutOfBoundsException(index_);}
-	
-}
-template<class T>
-Array<T>::~Array() {
-	
-	delete[] m_data; 
-}
-
-*/
-/*
-template<class T>
-int Array<T>::Size() const {
-	return m_length;
-}
-
-template<class T>
-void Array<T>::SetElement(int index_, T& target_) {
-	if (index_ >= 0 || index_ < m_length) { 
-		m_data[index_] = target_;
-	}
-	else {throw OutOfBoundsException(index_);}
-
-}
-*/
-//===========================
-/*
-template class Array<Point>;
-template class Array<Circle>;
-template class Array<Line>;
-template class Array<int>;
-*/
 
 #endif

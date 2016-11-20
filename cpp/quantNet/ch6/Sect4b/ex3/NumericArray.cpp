@@ -2,7 +2,6 @@
 #define NUMERICARRAY_CPP
 
 #include "NumericArray.hpp"
-//#include "Array.hpp"
 #include <iostream>
 #include <string>
 

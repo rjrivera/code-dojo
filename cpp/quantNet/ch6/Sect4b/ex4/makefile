@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = 4-4b-4.cpp Point.cpp Line.cpp Array.cpp Circle.cpp Shape.cpp OutOfBoundsException.cpp NumericArray.cpp PointArray.cpp Stack.cpp StackFullException.cpp
+OBJS = 4-4b-4.cpp Point.cpp Line.cpp Array.cpp Circle.cpp Shape.cpp OutOfBoundsException.cpp NumericArray.cpp PointArray.cpp Stack.cpp StackFullException.cpp UniqueSizeException.cpp
 #CC specifies which compiler we're using 
 CC = g++
 
