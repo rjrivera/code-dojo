@@ -44,11 +44,12 @@ class Array{
 		virtual void DefaultSize(int index_);
 };
 
-/*
+
 #ifndef ARRAY_CPP
 #include "Array.cpp"
 
 #endif
-*/
+
+
 #endif
 

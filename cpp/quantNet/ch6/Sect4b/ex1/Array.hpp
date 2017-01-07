@@ -40,11 +40,11 @@ class Array{
 		void DefaultSize(int index_);
 };
 
-/*
+// HW AMENDMENT - INCLUDE SOURCE FILES IN HEADER.
 #ifndef ARRAY_CPP
 #include "Array.cpp"
 
 #endif
-*/
+
 #endif
 

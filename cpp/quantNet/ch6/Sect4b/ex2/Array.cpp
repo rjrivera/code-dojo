@@ -23,12 +23,12 @@ private:
 template<class T>
 int Array<T>::def_size = 10;
 
-template<class T> 
-Array<T>::Array() {
-	m_length = def_size;
-	m_data = new T[def_size];
-	
 
+// HW EDIT: use colon syntax for constructors
+template<class T> 
+Array<T>::Array() : m_length(def_size), m_data(new T[def_size]){
+//	m_length = def_size;
+//	m_data = new T[def_size];
 	for (int i = 0; i < m_length; i++) {
 		m_data[i] = T();
 	}
@@ -38,9 +38,9 @@ Array<T>::Array() {
 constructor with size
 */
 template<class T>
-Array<T>::Array(int size_) {
-	m_length = size_;
-	m_data = new T[m_length];
+Array<T>::Array(int size_) : m_length(size_), m_data(new T[def_size]){
+//	m_length = size_;
+//	m_data = new T[m_length];
 
 	for (int i = 0; i < m_length; i++) {
 		m_data[i] = T();

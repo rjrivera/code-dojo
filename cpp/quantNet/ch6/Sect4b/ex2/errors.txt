@@ -1,0 +1,36 @@
+g++ 4-4b-2.cpp Point.cpp Line.cpp Array.cpp Circle.cpp Shape.cpp OutOfBoundsException.cpp NumericArray.cpp UniqueSizeException.cpp -I. -w -std=c++11  -o ex1
+In file included from 4-4b-2.cpp:10:0:
+NumericArray.cpp: In instantiation of ‘NumericArray<T>& NumericArray<T>::operator+(NumericArray<T>&) const [with T = int]’:
+4-4b-2.cpp:57:26:   required from here
+NumericArray.cpp:108:11: error: binding ‘const NumericArray<int>’ to reference of type ‘NumericArray<int>&’ discards qualifiers
+   return *this;
+           ^
+NumericArray.cpp:114:23: error: passing ‘const NumericArray<int>’ as ‘this’ argument discards qualifiers [-fpermissive]
+   Array<T>::SetElement(i, temp);
+                       ^
+In file included from Array.hpp:49:0,
+                 from 4-4b-2.cpp:6:
+Array.cpp:156:6: note:   in call to ‘void Array<T>::SetElement(int, T&) [with T = int]’
+ void Array<T>::SetElement(int index_, T& target_) {
+      ^
+In file included from 4-4b-2.cpp:10:0:
+NumericArray.cpp:117:10: error: binding ‘const NumericArray<int>’ to reference of type ‘NumericArray<int>&’ discards qualifiers
+  return *this;
+          ^
+NumericArray.cpp: In instantiation of ‘NumericArray<T>& NumericArray<T>::operator=(const NumericArray<T>&) [with T = int]’:
+4-4b-2.cpp:57:12:   required from here
+NumericArray.cpp:70:36: error: invalid initialization of reference of type ‘NumericArray<int>&’ from expression of type ‘Array<int>’
+  return Array<T>::operator=(source_);//isn't quite right. 
+                                    ^
+NumericArray.cpp: In instantiation of ‘const NumericArray<T>& NumericArray<T>::operator*(int) const [with T = int]’:
+4-4b-2.cpp:58:26:   required from here
+NumericArray.cpp:94:23: error: passing ‘const NumericArray<int>’ as ‘this’ argument discards qualifiers [-fpermissive]
+   Array<T>::SetElement(index_, temp);
+                       ^
+In file included from Array.hpp:49:0,
+                 from 4-4b-2.cpp:6:
+Array.cpp:156:6: note:   in call to ‘void Array<T>::SetElement(int, T&) [with T = int]’
+ void Array<T>::SetElement(int index_, T& target_) {
+      ^
+makefile:18: recipe for target 'all' failed
+make: *** [all] Error 1

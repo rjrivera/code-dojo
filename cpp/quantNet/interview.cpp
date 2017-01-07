@@ -12,6 +12,7 @@
 #include <boost/lexical_cast.hpp>
 #include <map>
 #include <unordered_map>
+#include <sstream>
 
 //#include "print.h"
 using namespace std;
@@ -63,6 +64,7 @@ struct sum{
 };
 
 */
+/*
 void swap(uint32_t& varA_, uint32_t& varB_) {
 	varA_ = varB_ - varA_;
 	varB_ -= varA_;
@@ -220,6 +222,7 @@ unordered_map<string, int> createDict(string book[], uint32_t length_){
 	}
 	return *(tempMap);
 }
+*/
 /*
 struct Foo{
 Foo() {cout << "d";}
@@ -267,6 +270,8 @@ class derived : Base{};
 */
 // maze node structure used to demonstrate bfs traversal and stack tracking of a maze shortest path solution. We have no knowledge of the end point. 
 // REF: mazeNode
+// 
+/*
 typedef struct mazeNode {
 	uint32_t id;
 	uint32_t val;
@@ -549,8 +554,243 @@ void traverseGraph(gNode root) {
 	}
 }
 
-int main() {
+void insert(int& count) {
+	count++;
+}
+*/
+//Kruskal's algorithm 6.1.2 Alg Des Man
+//
+struct kNode {
+	int weight;
+	char vertex;
+};
 
+class kGraph {
+	protected:
+	 	map<char, vector<kNode*>> edges;
+
+	public: 
+		kGraph();
+		~kGraph();
+		void insertEdge(char P, char C, int weight);
+		void iterateEdges();
+		vector<char> primAlgo(char spawn);
+	
+};
+
+kGraph::kGraph() {
+	edges = *(new map<char, vector<kNode*>>);
+}
+kGraph::~kGraph(){
+
+//	delete *edges;
+}
+void kGraph::insertEdge(char P, char C, int weight) {
+	kNode * temp = new kNode();
+	temp->weight = weight;
+	temp->vertex = C;
+	edges[P].push_back(temp);
+	temp = new kNode();
+	temp->weight = weight;
+	temp->vertex = P;
+	edges[C].push_back(temp);
+}
+
+void kGraph::iterateEdges() {
+	for (map<char, vector<kNode*>>::iterator it = edges.begin(); it != edges.end(); it++) {
+		cout << it->first << " connects with these nodes:\n";
+		for (kNode* n : it->second) {
+			cout << "Node - " << n->vertex << " Edge weight: " << n->weight << endl;
+		}
+	}
+}
+
+/*
+ * The prim algorithm for defining minimum spanning trees is a greedy algorithm
+ * Traversing a graph, building the tree, each new path is selected by the cheapes local edge leading to an undiscovered edge.
+ */
+
+vector<char> kGraph::primAlgo(char spawn) {
+	//map<char, vector<kNode*>>::iterator it;
+	vector<char> disc; 
+	disc.push_back(spawn);
+	int numKeys = edges.size();
+	int lWeight;// 'local weight'. 
+	char nNode;
+	int iterations; 
+	int totalW = 0;
+	// robustness measure, the spawn and subsequent traversal may lead to a dead end, at which point, start from the original spawn and just go the other way. 
+	char start = spawn;
+	while (numKeys > disc.size()){
+		
+		lWeight = INT_MAX;
+		if ( iterations == numKeys ) {
+			spawn =  start; //robustness measure
+			iterations = 0;//incase it happens again lol. 
+		}
+
+		for (kNode* e : edges[spawn]) {
+			if (e->weight < lWeight && 
+				find(disc.begin(),disc.end(),e->vertex) == disc.end()) {
+				nNode = e->vertex;
+				lWeight = e->weight;	
+		
+			}
+	
+		}
+		// robustness measure 
+		if (lWeight!=INT_MAX ) { 
+			disc.push_back(nNode);
+			cout << spawn << " routes to " << nNode << " with weight " << lWeight << endl;
+			spawn = nNode;
+			totalW += lWeight;
+		}
+		iterations++;
+	}
+	cout << "traversal cost: " << totalW << endl;
+	return disc;
+}
+
+void qSHelper(int arr[], int left, int right){
+	int temp;
+	if (right-left <=1) {
+		return;
+	}
+	//select pivot value. [heuristically today, middle of posts. 	
+	//move it to the front of this partition. 
+	int pivot = arr[((right-left)/2) + left];
+	arr[((right-left))/2 + left] = arr[left];
+	arr[left] = pivot;
+	int pInd = left;
+	//iterate through partition and sort according to pivot value. 
+	for (int i = left+1;i<=right; i++) {
+		if (arr[i] < pivot) {
+			//swap pivot with neighbor
+			arr[pInd] = arr[pInd+1];
+			arr[pInd+1] = pivot;
+			//now switch the neighbor with the current val
+			temp = arr[pInd];
+			arr[pInd] = arr[i];
+			arr[i] = temp;
+			//iterate index, move on 
+			pInd++;
+		}
+	}
+	//test
+	cout << "left values:\n";
+	for (int i = left; i < pInd; i++) cout << arr[i] << endl;
+	cout << "pivot value: " << pivot << endl;
+	cout << "right values:\n";
+	for (int i = pInd+1; i <= right; i++) cout << arr[i] << endl;
+	//divide and conquer based on the pivot index.
+	qSHelper(arr, left, pInd-1);
+	qSHelper(arr, pInd+1, right);
+	
+}
+
+// quick sort, array addition.
+
+void qSort(int arr[], int length) {
+	for (int i = 0; i < length; i++) cout << arr[i] << endl;
+	qSHelper(arr, 0, length-1);
+
+}
+
+int atoi(string num_) {
+	if (num_.size() <1) return 0; 
+	bool neg = false;
+	if (num_.at(0) == '-') neg = true;
+	int val = 0;
+	for (int i = 1; i < num_.size(); i++) {
+		val *=10;
+		val += (int)num_.at(i);
+		
+	}
+	if (neg) return -1*val;
+	return val; 
+}
+
+void reverseWords(string& phrase) {
+	istringstream myS(phrase);
+	string temp;
+	string ans = "";
+	while(myS) {
+		myS >> temp;
+		cout << temp << endl;
+		ans = temp + " " + ans;
+	}
+	phrase = ans;
+}
+
+bool isSub(string one, string two)  {
+	if (two.size() < one.size()) return false;
+	for (int i = 0; i < two.size()-one.size(); i++) {
+		if (one == two.substr(i,one.size() )) return true; 
+	}
+	return false;
+}
+
+int main() {
+	if (isSub("bat", "batman")) cout << "bat is a substr of batman" << endl;
+	else cout << "bat is not a substr of batman" << endl;
+	if (isSub("tab", "tannery")) cout <<"tab is a substr of tannery" <<endl;
+	else cout << "tab is not a substr of tannery" << endl;
+	cout << atoi("-12345") << endl;
+	string oc = "MC Sucker Has to Pay";
+	cout << oc << endl;
+	reverseWords(oc);
+	cout << oc << endl;
+/*
+	int Arr[10] = {5,26,73,85,12,4,7,10,3,2};
+	int val;
+	int l = end(Arr)-begin(Arr);
+	for (int i = 0; i < l; i++) {
+		val = Arr[i];
+		cout << "val: " << val << endl;
+	}
+	qSort(Arr, l);
+	cout << "after qsort" << endl;
+	for (int i = 0; i < end(Arr)-begin(Arr); i++) {
+		val = Arr[i];
+		cout << "val: " << val << endl;
+	}
+*/
+/*
+	kGraph myKG = kGraph();
+	myKG.insertEdge('a', 'b', 5);
+	myKG.insertEdge('a', 'd', 4);
+	myKG.insertEdge('a', 'i', 9);
+	myKG.insertEdge('b', 'd', 3);
+	myKG.insertEdge('g', 'd', 6);
+	myKG.insertEdge('g', 'e', 6);
+	myKG.insertEdge('d', 'e', 4);
+	myKG.insertEdge('i', 'g', 2);
+	myKG.insertEdge('i', 'j', 1);
+	myKG.insertEdge('j', 'h', 4);
+	myKG.insertEdge('h', 'g', 3);
+	myKG.insertEdge('h', 'f', 11);
+	myKG.insertEdge('f', 'c', 2);
+	myKG.insertEdge('b', 'c', 3);
+	myKG.insertEdge('c', 'e', 2);
+	myKG.insertEdge('e', 'f', 8);
+	myKG.insertEdge('h', 'e', 7);
+	myKG.insertEdge('j', 'g', 2);
+	myKG.insertEdge('e', 'b', 1);
+	myKG.iterateEdges();
+	myKG.primAlgo('c');
+//another graph rep. paradigm - map<char, vector<nodes> Edges, Nodes retain weight and node name. 
+*/
+/*
+	int test[10] = {};
+	for (int i = 0; i < 10; i++) {
+		cout << test[i] << endl;
+	}
+	int count = 0;
+	insert(count);
+	cout << count << endl;
+	insert(count);
+	cout << count << endl;
+	
 	gNode A(1);
 	gNode B(2);
 	gNode C(3);
@@ -563,7 +803,7 @@ int main() {
 		
 	traverseGraph(A);
 
-
+*/
 /*
 	vector<int> nums;
 	nums.push_back(1);

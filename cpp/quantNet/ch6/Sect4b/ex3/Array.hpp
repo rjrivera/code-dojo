@@ -43,11 +43,11 @@ class Array{
 		virtual void DefaultSize(int index_);
 };
 
-/*
+// HW AMENDMENT INCLUDE SOURCE AT BOTTOM OF TEMPLATE HEADER
 #ifndef ARRAY_CPP
 #include "Array.cpp"
 
 #endif
-*/
+
 #endif
 

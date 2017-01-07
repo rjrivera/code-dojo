@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = interview.cpp
+OBJS = heapsPrimer.cpp
 
 
 #CC specifies which compiler we're using 
