@@ -30,10 +30,13 @@ class tetLine : public tetShape{
 		//selectors
 		double X() const override;
 		double Y() const override;
-		bool rBoundCheck(double x_) const override;
-		bool lBoundCheck(double x_) const override;
-		bool floorBoundCheck(std::vector<double>& y_) const override;
-				
+		bool rBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const override;
+		bool lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const override;
+		bool floorBoundCheck(std::vector<std::vector<bool>>& y_) const override;
+		void amendGrid(std::vector<std::vector<bool>>& grid) const override;
+		bool onFloor() const override;
+		virtual std::vector<sf::Sprite>& getSprites() override;
+
 
 		void Draw() override;
 		
@@ -41,6 +44,7 @@ class tetLine : public tetShape{
 		void X(double x_);
 		void Y(double y_);
 		void move(double x_, double y_) override;
+		void onFloor(bool val) override;
 		//calculate the distance between the instance and the origin/argument, respectively.
 		double Distance() const;
 		double Distance(const tetLine& p) const; 

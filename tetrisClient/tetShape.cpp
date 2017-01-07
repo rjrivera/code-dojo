@@ -17,17 +17,18 @@
 
 //distribution / generator are global variables
 
-tetShape::tetShape() : x(0), y(0) {
+tetShape::tetShape() : x(0), y(0), mySprites(std::vector<sf::Sprite>()) {
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 	std::default_random_engine generator (seed);
 	std:: normal_distribution<double> distribution (1, 1.0);
 	m_id = distribution(generator);
-	onFloor = false;
+	onFloor_ = false;
 }
 
-tetShape::tetShape(double x_, double y_) : x(x_), y(y_) {
+
+tetShape::tetShape(double x_, double y_) : x(x_), y(y_), mySprites(std::vector<sf::Sprite>()){
 	// ======== code block - std::normal_distribution::(constructor)
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
@@ -36,7 +37,7 @@ tetShape::tetShape(double x_, double y_) : x(x_), y(y_) {
 	std:: normal_distribution<double> distribution (1, 1.0);
 	// =========
 	m_id = distribution(generator);
-	
+	onFloor_ = false;
 }
 
 
@@ -73,20 +74,38 @@ bool tetShape::operator== (const tetShape& source_) const {
 
 }
 
+std::vector<sf::Sprite>& tetShape::getSprites() {
+	return mySprites;
+}
 
-bool tetShape::rBoundCheck(double x_) const {
+bool tetShape::rBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
 	return false;
 
 }
 
 
-bool tetShape::lBoundCheck(double x_) const {
+bool tetShape::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
 	return false;
 }
 
-bool tetShape::floorBoundCheck(std::vector<double>& y_) const {
+bool tetShape::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
 	return false;
 }
+
+
+void tetShape::amendGrid(std::vector<std::vector<bool>>& grid) const {
+	return; // do nothing for proto-typing
+}
+
+void tetShape::onFloor(bool val) {
+	onFloor_ = val;
+}
+
+/*
+bool tetShape::onFloor() const{
+	return onFloor_;
+}
+*/
 
 		// modifiers
 		// choosing a diameter vice rad method to take advantage of overloading. 

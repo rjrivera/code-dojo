@@ -16,7 +16,7 @@ tetLine::tetLine() : tetShape(0, 0){
 
 tetLine::tetLine(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites; //std::vector<sf::Sprite>
-	myInts; //std::vector<int> for test purposes.
+	//myInts; //std::vector<int> for test purposes.
 	for (int i = 0; i < 4; i++) {
 		mySprites.push_back(sf::Sprite());
 		mySprites[i].setTexture(*blkText_); 
@@ -36,7 +36,6 @@ tetLine::tetLine(double z_) : tetShape(z_, z_){
 
 tetLine::~tetLine() {
 	//delete mySprites;
-	std::cout << "in tetSquare destructor\n";
 }
 
 //copy constructor
@@ -100,11 +99,26 @@ double tetLine::Y() const {
 	return y;
 }
 
-bool tetLine::floorBoundCheck(std::vector<double>& y_) const {
-	//floors will be pushed into the vector from left to right by client software.
-	if (y + 4 < y_[0]) return true;
+bool tetLine::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
+	//floors will be pushed into the vector from left to right by client software.:wq
+	
+	if (!y_.at(x-2)[y+4]) return true;   
 	return false; 
 }
+
+void tetLine::amendGrid(std::vector<std::vector<bool>>& grid) const{
+	//same not as floorBoundCheck.
+	grid.at(x-2)[y] = true;
+	grid.at(x-2)[y+1] = true;
+	grid.at(x-2)[y+2] = true;
+	grid.at(x-2)[y+3] = true;
+
+}
+std::vector<sf::Sprite>& tetLine::getSprites()  {
+	return mySprites;
+}
+
+
 	
 	//mutators
 void tetLine::X(double x_){
@@ -121,14 +135,20 @@ double tetLine::Distance() const {
 	return (std::sqrt(pow(a,2) + pow(b,2)));
 }
 
-bool tetLine::rBoundCheck(double x_) const {
-	if (x+1 < x_ ) return true;
-	return false;
+bool tetLine::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
+	if (x+1 >= x_ ) return false;
+	if (grid.at(x+1-2)[y] || grid.at(x+1-2)[y+1] || grid.at(x+1-2)[y+2] || grid.at(x+1-2)[y+3]) return false; 
+	return true;
 }
 
-bool tetLine::lBoundCheck(double x_) const {
-	if ( (x-1) > x_ )  return true;
-	return false; 
+bool tetLine::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
+	if ( (x-1) <= x_ )  return false;
+	if (grid.at(x-1-2)[y] || grid.at(x-1-2)[y+1] || grid.at(x-1-2)[y+2] || grid.at(x-1-2)[y+3]) return false; 
+	return true; 
+}
+
+bool tetLine::onFloor() const {
+	return onFloor_;
 }
 
 
@@ -151,6 +171,9 @@ double tetLine::Distance(const tetLine& p) const{
 	return (std::sqrt(std::pow(a, 2) + std::pow(b,2)));
 }
 
+void tetLine::onFloor(bool val) {
+	onFloor_ = val;
+}
 void tetLine::move(double x_, double y_) {
 	for (auto& gBlock : mySprites) {
 		gBlock.move(x_*16, y_*16);

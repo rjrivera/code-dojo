@@ -15,6 +15,7 @@
 #include <iostream>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <algorithm>
 #include <ctime>
 #include <chrono>
 #include <SFML/Graphics.hpp>
@@ -24,6 +25,7 @@
 #include "tetSquare.hpp"
 #include "tetLine.hpp"
 #include "tetL.hpp"
+#include <boost/shared_ptr.hpp>
 #define WIDTH 400
 #define HEIGHT 600
 #define SPAWNTIME 1000
@@ -31,10 +33,66 @@
 
 using boost::asio::ip::tcp;
 
+// OOB TODO[ ] refactor clientv2.cpp functions code to be part of an arena class. 
+
+/* check if the current grid has a valid horizontal line.
+ * actual toggle of 'full' rows performed by different function "because best practices ;)" 
+ *
+ * RETURN vector of row indexes which meet criteria of "full"
+ * 	will return a vector of size 0 if no such rows meet the criteria. 
+ */
+
+std::vector<double> checkClear(std::vector<std::vector<bool>>& curGrid_, double width_, double height_) {
+	std::vector<double> clearRows = std::vector<double>();
+	double cInd = 0;
+	bool clear;
+	for (double i = 0; i <= height_; i++) {
+		clear = true;
+		for (double j = 0; j <= width_; j++)  {
+			//check if square is empty.
+			if (!curGrid_.at(j)[i]) {
+				clear = false; 
+				break; //save computation power.
+			}
+		}
+		if (clear) clearRows.push_back(cInd);
+		cInd++; 
+	}
+	return clearRows;
+}
+
+
+/* clear full rows
+ * drop all blocks above row;
+ *
+ */
+
+void clearDropRows(std::vector<std::vector<bool>>& curGrid_, std::vector<double>& fullRows) {
+	double tallRow = *std::min_element(fullRows.begin(), fullRows.end());
+	double numRows = fullRows.size();
+	std::cout << "num full rows: " << numRows << std::endl;
+	//clear the rows. 
+	for (double j = 0; j < numRows; j++) {
+		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[fullRows[j]] = false;
+		std::cout << "cleared row: " << fullRows[j] << std::endl;
+	}
+
+	//"clone" and drop all blocks above the tallest row (remember, the tallest row is the lowest value in this y-coord scheme).
+	for (double cRow = tallRow - 1; cRow >= 0; cRow--) {
+		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[cRow+numRows] = curGrid_.at(i)[cRow];
+	}
+	//empty the top [numRows] 
+	for (double cRow = 0; cRow < numRows; cRow++) {
+		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[cRow] = false;
+	}
+	
+	
+}
+
 int main(int argc, char* argv[])
 {
 	
-/*
+/*	//===================BEGIN NETWORKING TESTS=====================
 	auto start = std::chrono::high_resolution_clock::now();
  try{
  if (argc != 2)
@@ -97,13 +155,29 @@ int main(int argc, char* argv[])
 	std::string textName = " ";
 	sf::Texture tempText;
 	std::vector<sf::Texture> blocks;
+	std::vector<std::vector<sf::Sprite>> staticSprites;
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
 	
-	std::vector<double> floor; 
+	std::vector<std::vector<bool>> gamegrid; 
 	uint32_t arenaOffset, arenaWidth, arenaHeight;
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
-	std::vector<std::unique_ptr<tetShape>> tetShapes;
+	//TODO[ ] revisit shared_ptr scheme of tracking the active world beyond the base puzzle grid. 
+	////std::vector<std::unique_ptr<tetShape>> tetShapes;
+	tetShape * tetShapes;
+	//	//initialize an array of size 5 to contain obects of type 'boost::shared_ptr<Shape>'
+/*
+	Array<boost::shared_ptr<Shape>> shapes  = Array<boost::shared_ptr<Shape>>(5);
+	//create a number of different shapes using shared pointers.
+	boost::shared_ptr<Circle> c(new Circle());
+	boost::shared_ptr<Point> p(new Point());
+	boost::shared_ptr<Line> l(new Line());
+	// place the new pointers into the array we created 
+	shapes[0] = c;
+	*/
+	//boost::shared_ptr<tetShape> tetShapes;
+	//tetSquare * tetShapes = new tetSquare(5, 3, &(blocks[1]));
+
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
 		textName = "textures/block" + std::to_string(i) + ".png";
@@ -111,7 +185,7 @@ int main(int argc, char* argv[])
 		blocks.push_back(tempText);
 		std::cout << textName << std::endl;
 	}
-	// ==============================TODO [ ] transition this functionality to a viable object class such as shape::L shape::M etc
+	// ==============================TODO [X] transition this functionality to a viable object class such as shape::L shape::M etc
 	// used for prototyping.
 	std::vector<sf::Sprite> gameBlocks;// TODO[ ] transition global scope constants much like in csharp engine. 
 
@@ -138,6 +212,7 @@ int main(int argc, char* argv[])
 	while (inGame) 
 	{
 		// initialize the level. NOTE!: THIS IS A PROTOTYPE FOR LEVEL PIPELINEING, TODO [ ] replicate json generation from old engine
+		// is unnecessary for tetris (in fact, it's overkill) but is the basis for a rapid level generation in other 2d games. 
 		if (loadLevel)  {
 			loadLevel = false;
 			std::string line;
@@ -152,7 +227,7 @@ int main(int argc, char* argv[])
 				while (getline(arena, line)){
 					for (uint32_t i = 0; i < WIDTH/16; i++) {
 						if (line.at(i) == '1')  {
-							  
+							 
 							blockSprites.push_back(sf::Sprite());
 							blockSprites[spriteIndex].setTexture(blocks[0]);		
 							blockSprites[spriteIndex].setPosition(sf::Vector2f((float)(16*(i % (WIDTH/16))) , (float)(16*numLine))); 
@@ -179,9 +254,21 @@ int main(int argc, char* argv[])
 					numLine++;
 				}
 				arena.close();
-				// based off information infered from arena.txt - tabulate the floor. 				
+				// based off information infered from arena.txt - tabulate the floor.
+				//
+				
 				for (uint32_t i = 0; i <= arenaWidth ; i++) {
-					floor.push_back(arenaHeight);
+					gamegrid.push_back(std::vector<bool>());//init the oncoming column.
+					staticSprites.push_back(std::vector<sf::Sprite>());
+					//gamegrid.at(i).push_back(true);//push the floor. 
+					for (uint32_t j = 0; j <=arenaHeight; j++) {
+						gamegrid.at(i).push_back(false);		 
+						staticSprites.at(i).push_back(sf::Sprite());
+						staticSprites.at(i)[j].setTexture(blocks[1]);		
+						staticSprites.at(i)[j].setPosition(sf::Vector2f((float)(16*(i)+arenaOffset*16), (float)(16*j))); 
+
+					}
+					gamegrid.at(i).push_back(true);
 				}
 			}
 			else { std::cout << "Unable to open Arena.txt\n"; }
@@ -189,51 +276,49 @@ int main(int argc, char* argv[])
 		// timing for current gamecycle. 
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
-		//deltaTime = now - lastCycle;	
-//		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count() << std::endl;
 		spawnTimer += now - lastCycle;//std::chrono::duration_cast<std::chrono::nanoseconds>(now-lastCycle).count();
-//		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).count()<< std::endl;
 		dropTimer += now - lastCycle; // TODO[ ] place all timers and triggers into containers. reduce LoC and improve readability. 		
-		// ============================begin update gamelogic. update all game logice before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
-		//
-		//// std::vector<tetShape> tetShapes; tetSquare : tetShape
+		// ============================begin update gamelogic. update all game logic before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
+		
+		//check if we need to drop a new game piece. 
 		if ( spawnTimer > spawnTrigger  && spawnPiece == true) {
 			spawnPiece = false;
-			numGameBlocks++;
+			numGameBlocks++; //potentially remove
 			blockType = distribution(generator);
-			if (blockType == 0) tetShapes.emplace_back(new tetSquare(5, 3, &(blocks[1])));
-			else if (blockType == 1)  tetShapes.emplace_back(new tetLine(5, 3, &(blocks[1])));
-			else if (blockType == 2)  tetShapes.emplace_back(new tetL(5, 3, &(blocks[1])));
+			if (numGameBlocks> 0) delete tetShapes; //throw away the last piece, we aren't tracking it anymore.  
+			if (blockType == 0) tetShapes = new tetSquare(5, 3, &(blocks[1]));
+			else if (blockType == 1) tetShapes = new tetL(5, 3, &(blocks[1]));
+			else if (blockType == 2)  tetShapes = new tetLine(5, 3, &(blocks[1]));
 			// rearchitect TODO[x] to valid game object class hierarchy. 
 			// refactor TODO [ ] convert magic numbers to aformentioned constants
-			// refactor TODO [x] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
+			// refactor TODO [ ] create static spawn vector2 to refer to, vice this raw constructor call for a new vector each initialization of a new block.
  			// reset spawn timer. 
 			spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
-			// output status of new instance of tetSquare. 
-			std::cout << "spawn new block --- RNG yielded: " << blockType << std::endl;
-			std::cout << tetShapes.at(numGameBlocks)->X() << std::endl;
-
 		}
-		if ( dropTimer > dropTrigger && tetShapes.size() > 0) {
-			std::vector<double> floorSnap;	
-			
-			// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
-			for (auto& shape : tetShapes) {
-/*
-			floorSnap.push_back(floor[shape->X() - arenaOffset]);
-			floorSnap.push_back(floor[shape->X() - arenaOffset + 1]);*/
-				// TODO [x] simplify to bool call.
-				if (shape->floorBoundCheck(floor)) shape->move(0, 1);
-				else if (!shape->onFloor()) { //use index for now, but TODO[ ] convert the blocks to a game 2D array of bools for sprites
-					// determine a for_each scheme 
-					floor[shape->X()] = shape->Y();
-					floor[shape->X() + 1] = shape->Y();
-					shape->onFloor(true);
+		if ( dropTimer > dropTrigger ) { 
+
+			// TODO [x] implement tracking mechanism for floor. 
+			// TODO [x] simplify to bool call.
+			if (tetShapes->floorBoundCheck(gamegrid)) tetShapes->move(0, 1);
+			else if (!tetShapes->onFloor() ) { // TODO[X] convert the blocks to a game 2D array of bools for sprites
+					// TODO[X] this needs a valid "amendgrid" method for each shape, shouldn't be done here. 
+					tetShapes->amendGrid(gamegrid);
+					tetShapes->onFloor(true);
+					//piece has landed, the spawn control flags are triggered accordingly.
 					spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
 					spawnPiece = true;
-				}
-				
+					std::vector<double> fullRows;					
+					fullRows = checkClear(gamegrid, arenaWidth, arenaHeight);
+					if (fullRows.size() >0) { 
+						try{
+							clearDropRows(gamegrid, fullRows);   
+						}
+						catch(...){
+							 std::cout << "bug in clearDropRows\n";
+						}
+					}
 			}
+			// reset the drop timer. 
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}
 		// end timing capture and update capture/triggers.
@@ -257,13 +342,23 @@ int main(int argc, char* argv[])
 		// Escape Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Escape) != curState->end()){
 			inGame = false;
-		}	 
+		}
+/*// comment block for regression purposes (alteration from tetShapes to single tetShape active on board. 
+ *		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
+			if (numGameBlocks >= 0) {
+				if ( tetShapes[numGameBlocks]->lBoundCheck(arenaOffset-1, gamegrid)){ //delegate specifics to the class.
+					tetShapes[numGameBlocks]->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
+				}
+			}
+		}
+	*/
 		// Left Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
 			if (numGameBlocks >= 0) {
-				if ( tetShapes[numGameBlocks]->lBoundCheck(arenaOffset-1)){ //delegate specifics to the class.
-					tetShapes[numGameBlocks]->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
+				if ( tetShapes->lBoundCheck(arenaOffset-1, gamegrid)){ //delegate specifics to the class.
+					tetShapes->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
 				}
 			}
 		}
@@ -272,8 +367,8 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
 
 			if ( numGameBlocks >= 0 ) {
-				if ( tetShapes[numGameBlocks]->rBoundCheck(arenaOffset + arenaWidth + 1)) {
-					tetShapes[numGameBlocks]->move(1, 0); 
+				if ( tetShapes->rBoundCheck(arenaOffset + arenaWidth + 1, gamegrid)) {
+					tetShapes->move(1, 0); 
 				}
 			}
 		}
@@ -286,7 +381,8 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
 			
 			if ( numGameBlocks >= 0 ) {
-				////tetShapes[numGameBlocks].move(0, 16);
+				//tetShapes[numGameBlocks].move(0, 16);
+				dropTimer = dropTrigger;
 			}
 		}
 
@@ -315,7 +411,6 @@ int main(int argc, char* argv[])
 	window.clear();
 	// note, blocks is simply a repo of texture. 
 	// should iterate through a collection of sprites, not texutres. 
-	
 
 	for (auto& sprite : blockSprites) {
 	// no rectangle paradigm established. tbc
@@ -329,21 +424,36 @@ int main(int argc, char* argv[])
 
 	}
 
-//draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
-	for (auto& shape : tetShapes) {
-	//	std::cout << "in a shape\n";
-		
 
-		for (auto& sprite : shape->getSprites()) {
-	//		std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
-			window.draw(sprite);
+	//for (auto& sprite : staticSprites.at(5)) window.draw(sprite);
+	
+	//draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
+
+	//for (auto& shape : tetShapes) {
+	
+		
+		if (!tetShapes->onFloor() ) {
+			for (auto& sprite : tetShapes->getSprites()) {
+		//		std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
+				window.draw(sprite);
+			}
 		}
 		
 		
+	//}
+	for (uint32_t i = 0; i <= arenaWidth; i++) 	{
+		for (uint32_t j = 0; j <= arenaHeight; j++) {
+			if (gamegrid.at(i)[j]) 	window.draw(staticSprites.at(i)[j]);
+
+		}
 	}
-	
+
 	window.display();
-   }
+  
+  }
+ 
   return 0;
 	
+  
+
 }

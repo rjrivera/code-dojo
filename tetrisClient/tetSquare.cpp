@@ -16,7 +16,7 @@ tetSquare::tetSquare() : tetShape(0, 0){
 
 tetSquare::tetSquare(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites; //std::vector<sf::Sprite>
-	myInts; //std::vector<int> for test purposes.
+	
 	for (int i = 0; i < 4; i++) {
 		mySprites.push_back(sf::Sprite());
 		mySprites[i].setTexture(*blkText_); 
@@ -28,20 +28,12 @@ tetSquare::tetSquare(double x_, double y_,const sf::Texture* blkText_) : tetShap
 	for (auto& sprite : mySprites) {
 		std::cout << "X, Y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;
 	}
-	//tetShape->myInts = *(new std::vector<int>);
-	for (int i = 0; i < 4; i++) {
-		myInts.push_back(i);
-		std::cout << "init int: " << myInts[i] << std::endl;
-	}
-	
 }
 
 tetSquare::tetSquare(double z_) : tetShape(z_, z_){
 }
 
 tetSquare::~tetSquare() {
-	//delete mySprites;
-	std::cout << "in tetSquare destructor\n";
 }
 
 //copy constructor
@@ -102,6 +94,10 @@ double tetSquare::X() const {
 double tetSquare::Y() const {
 	return y;
 }
+
+std::vector<sf::Sprite>& tetSquare::getSprites() {
+	return mySprites;
+}
 	
 	//mutators
 void tetSquare::X(double x_){
@@ -113,23 +109,37 @@ void tetSquare::Y(double y_){
 }
 
 // x_ is the arena wall position, must determine if our right most member (x_+1) can fit there. 
-bool tetSquare::rBoundCheck(double x_) const {
-	if (x+2 < x_ ) return true;
-	return false;
+bool tetSquare::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
+	if (x+2 >= x_ ) return false;
+	if (grid.at(x+2-2)[y] || grid.at(x+2-2)[y+1]) return false; 
+	return true;
 }
 
 
-bool tetSquare::lBoundCheck(double x_) const{
-	if ( x-1 > x_ ) return true;
-	return false;
+bool tetSquare::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const{
+	if ( x-1 <= x_ ) return false;
+	if (grid.at(x-1-2)[y] || grid.at(x-1-2)[y+1]) return false; 
+	return true;
 }
 
-bool tetSquare::floorBoundCheck(std::vector<double>& y_) const {
-	//floors will be pushed into the vector from left to right by client software.
-	if (y + 2 < y_[0] && y + 2 < y_[1] ) return true;
+//returns true if the bottom slots are available, permitting a drop. 
+bool tetSquare::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
+	//floors will be purely passed into from client - TODO[ ] resolve magic number into a global
+	//y+2 because its two tall for a square.
+	if (!y_.at(x-2)[y+2]  && !y_.at(x+1-2)[y+2]) return true;   
 	return false; 
 }
 
+void tetSquare::amendGrid(std::vector<std::vector<bool>>& grid) const{
+	//same not as floorBoundCheck.
+	grid.at(x-2)[y] = true;
+	grid.at(x+1-2)[y] = true;
+	grid.at(x-2)[y+1] = true;
+	grid.at(x+1-2)[y+1] = true;
+
+}
+	
+	
 double tetSquare::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);
@@ -155,6 +165,13 @@ double tetSquare::Distance(const tetSquare& p) const{
 	return (std::sqrt(std::pow(a, 2) + std::pow(b,2)));
 }
 
+void tetSquare::onFloor(bool val) {
+	onFloor_ = val;
+}
+
+bool tetSquare::onFloor() const{
+	return onFloor_;
+}
 void tetSquare::move(double x_, double y_) {
 	for (auto& gBlock : mySprites) {
 		gBlock.move(x_*16, y_*16);

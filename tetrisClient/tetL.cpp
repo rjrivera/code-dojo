@@ -16,7 +16,7 @@ tetL::tetL() : tetShape(0, 0){
 
 tetL::tetL(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites; //std::vector<sf::Sprite>
-	myInts; //std::vector<int> for test purposes.
+	//myInts; //std::vector<int> for test purposes.
 	for (int i = 0; i < 4; i++) {
 		mySprites.push_back(sf::Sprite());
 		mySprites[i].setTexture(*blkText_); 
@@ -33,7 +33,7 @@ tetL::tetL(double z_) : tetShape(z_, z_){
 
 tetL::~tetL() {
 	//delete mySprites;
-	std::cout << "in tetSquare destructor\n";
+	//
 }
 
 //copy constructor
@@ -97,6 +97,13 @@ double tetL::Y() const {
 	return y;
 }
 	
+std::vector<sf::Sprite>& tetL::getSprites() {
+	return mySprites;
+}
+
+bool tetL::onFloor() const {
+	return onFloor_;
+}
 	//mutators
 void tetL::X(double x_){
 	x = x_;
@@ -106,25 +113,45 @@ void tetL::Y(double y_){
 	y = y_;
 }
 
+void tetL::onFloor(bool val){
+	onFloor_ = val;
+}
+
 double tetL::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);
 	return (std::sqrt(pow(a,2) + pow(b,2)));
 }
 
-bool tetL::rBoundCheck(double x_) const {
-	if (x+2 < x_ ) return true;
-	return false;
+bool tetL::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
+	if (x+2 >= x_ ) return false;
+	if (grid.at(x+2-2)[y+2] || grid.at(x+1-2)[y+1] || grid.at(x+1-2)[y]) return false; 
+	return true;
 }
 
-bool tetL::lBoundCheck(double x_) const {
-	if ( (x-1) > x_ )  return true;
-	return false; 
+bool tetL::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
+	if ( (x-1) <= x_ )  return false;
+	if (grid.at(x-1-2)[y+2] || grid.at(x-1-2)[y+1] || grid.at(x-1-2)[y]) return false; 
+	return true; 
 }
 
-bool tetL::floorBoundCheck(std::vector<double>& y_) const {
-	if( (y+3) < y_[0] && (y+3) < y_[1]) return true;
+bool tetL::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
+	//same TODO as tetSquare.cpp
+	if (!y_.at(x-2)[y+3]  && !y_.at(x+1-2)[y+3]) return true;   
 	return false;
+
+}
+
+void tetL::amendGrid(std::vector<std::vector<bool>>& grid) const{
+	grid.at(x-2)[y] = true;
+	grid.at(x-2)[y+1] = true;
+	grid.at(x-2)[y+2] = true;
+	grid.at(x+1-2)[y+2] = true;
+	std::cout << "amendments made to game grid:\n" <<
+		"x: " << x-2 << "y: " << y << std::endl <<
+		"x: " << x-2 << "y: " << y+1 << std::endl <<
+		"x: " << x-2 << "y: " << y+2 << std::endl <<
+		"x: " << x+1-2 << "y: " << y+3 << std::endl;
 
 }
 
