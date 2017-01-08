@@ -17,7 +17,7 @@
 
 //distribution / generator are global variables
 
-tetShape::tetShape() : x(0), y(0), mySprites(std::vector<sf::Sprite>()) {
+tetShape::tetShape() : x(0), y(0), bState(ONE), mySprites(std::vector<sf::Sprite>()) {
 
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
@@ -101,6 +101,10 @@ void tetShape::onFloor(bool val) {
 	onFloor_ = val;
 }
 
+/*
+void tetShape::morph(std::vector<std<vector<bool>>& grid){
+
+}*/
 /*
 bool tetShape::onFloor() const{
 	return onFloor_;

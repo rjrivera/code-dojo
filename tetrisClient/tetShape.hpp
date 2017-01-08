@@ -13,9 +13,11 @@ class tetShape{
 
 	protected:
 		double m_id;
-		int pos, maxPos;		
 		bool onFloor_;
+	 	enum block_state { ONE, TWO, THREE };
+		block_state bState;
 		std::vector<sf::Sprite> mySprites;
+		virtual bool morphCheck(std::vector<std::vector<bool>>& grid) = 0;
 
 	public:
 
@@ -32,6 +34,7 @@ class tetShape{
 		virtual double X() const;
 		virtual double Y() const;
 		virtual bool onFloor() const = 0;
+		virtual void morph(std::vector<std::vector<bool>>& grid) = 0;
 		// improving class by adding this compare function
 		bool operator== (const tetShape& source_) const;
 		virtual bool rBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const;

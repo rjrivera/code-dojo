@@ -343,16 +343,6 @@ int main(int argc, char* argv[])
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Escape) != curState->end()){
 			inGame = false;
 		}
-/*// comment block for regression purposes (alteration from tetShapes to single tetShape active on board. 
- *		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
-			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
-			if (numGameBlocks >= 0) {
-				if ( tetShapes[numGameBlocks]->lBoundCheck(arenaOffset-1, gamegrid)){ //delegate specifics to the class.
-					tetShapes[numGameBlocks]->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
-				}
-			}
-		}
-	*/
 		// Left Key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Left) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Left) == prevState->end()){
@@ -377,6 +367,7 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Up) == prevState->end()){
 		//	NOP
 		}
+		// Down key pressed
 		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Down) != curState->end() && // debouncing feature;
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Down) == prevState->end()){
 			
@@ -386,7 +377,17 @@ int main(int argc, char* argv[])
 			}
 		}
 
-		  
+		// Space key pressed
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::Space) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Space) == prevState->end()){
+			
+			if ( numGameBlocks >= 0 ) {
+				tetShapes->morph(gamegrid);
+				std::cout << "Spacebar pressed\n";
+			}
+		}
+
+
 	// ====================================================
 	// end processing user input wrt game logic. 
 	// ====================================================

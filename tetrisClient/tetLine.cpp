@@ -28,7 +28,7 @@ tetLine::tetLine(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_
 	for (auto& sprite : mySprites) {
 		std::cout << "X, Y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;
 	}
-
+	tetShape::bState = ONE;
 }
 
 tetLine::tetLine(double z_) : tetShape(z_, z_){
@@ -101,19 +101,40 @@ double tetLine::Y() const {
 
 bool tetLine::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
 	//floors will be pushed into the vector from left to right by client software.:wq
-	
+	switch(bState) {
+		case(ONE):
+			//check for the wall.
+			if (y_.at(x-2)[y+4]) return false;
+			break;
+		case(TWO):
+			if (y_.at(x-2)[y+1] || y_.at(x-2+1)[y+1] || y_.at(x-2+2)[y+1] || y_.at(x-2+3)[y+1]) return false; 
+			break;
+	}
+	return true;
+/*
 	if (!y_.at(x-2)[y+4]) return true;   
 	return false; 
+*/
 }
 
 void tetLine::amendGrid(std::vector<std::vector<bool>>& grid) const{
 	//same not as floorBoundCheck.
-	grid.at(x-2)[y] = true;
-	grid.at(x-2)[y+1] = true;
-	grid.at(x-2)[y+2] = true;
-	grid.at(x-2)[y+3] = true;
-
+	switch(bState) {
+		case(ONE):
+			grid.at(x-2)[y]   =  true;
+			grid.at(x-2)[y+1] = true;
+			grid.at(x-2)[y+2] = true;
+			grid.at(x-2)[y+3] = true;
+			break;
+		case(TWO):
+			grid.at(x-2)[y]   =  true;
+			grid.at(x-2+1)[y] = true;
+			grid.at(x-2+2)[y] = true;
+			grid.at(x-2+3)[y] = true;
+			break;
+	}
 }
+
 std::vector<sf::Sprite>& tetLine::getSprites()  {
 	return mySprites;
 }
@@ -136,15 +157,75 @@ double tetLine::Distance() const {
 }
 
 bool tetLine::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
-	if (x+1 >= x_ ) return false;
-	if (grid.at(x+1-2)[y] || grid.at(x+1-2)[y+1] || grid.at(x+1-2)[y+2] || grid.at(x+1-2)[y+3]) return false; 
+	switch(bState) {
+		case(ONE):
+			//check for the wall.
+			if (x+1 >= x_) return false;
+			if (grid.at(x-2+1)[y] || grid.at(x-2+1)[y+1] || grid.at(x-2+1)[y+2] || grid.at(x-2+1)[y+3]) return false; 
+			break;
+		case(TWO):
+			if (x+4 >= x_) return false; 
+			if (grid.at(x-2+4)[y]) return false; 
+			break;
+	}
+
 	return true;
 }
 
 bool tetLine::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
+	switch(bState) {
+		case(ONE):
+			//check for the wall.
+			if (x-1<= x_) return false;
+			if (grid.at(x-2-1)[y] || grid.at(x-2-1)[y+1] || grid.at(x-2-1)[y+2] || grid.at(x-2-1)[y+3]) return false; 
+			break;
+		case(TWO):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y]) return false; 
+			break;
+	}
+	return true;
+/*
 	if ( (x-1) <= x_ )  return false;
 	if (grid.at(x-1-2)[y] || grid.at(x-1-2)[y+1] || grid.at(x-1-2)[y+2] || grid.at(x-1-2)[y+3]) return false; 
 	return true; 
+*/
+}
+
+void tetLine::morph(std::vector<std::vector<bool>>& grid) 	{
+	//even tho there are 4 blocks, you only need to consider three of them since the first block never changes in my version. 
+	switch(bState) {
+		case(ONE):
+			if (morphCheck(grid)) { 
+				mySprites[1].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y)))); 
+				mySprites[2].setPosition(sf::Vector2f((float)(16*(x+2)) , (float)(16*(y)))); 
+				mySprites[3].setPosition(sf::Vector2f((float)(16*(x+3)) , (float)(16*(y)))); 
+				bState = TWO;
+			}
+			break;
+		case(TWO):
+			if (morphCheck(grid)) { 
+				mySprites[1].setPosition(sf::Vector2f((float)(16*(x)) , (float)(16*(y+1)))); 
+				mySprites[2].setPosition(sf::Vector2f((float)(16*x) , (float)(16*(y+2)))); 
+				mySprites[3].setPosition(sf::Vector2f((float)(16*(x)) , (float)(16*(y+3)))); 
+				bState = ONE;
+			}
+			break;
+	}
+}
+
+//remember, still have to replace the offset value or not write it in. 
+bool tetLine::morphCheck(std::vector<std::vector<bool>>& grid) {
+	switch(bState) {
+		case(ONE):
+			if (grid.at(x+1-2)[y] || grid.at(x+2-2)[y] || grid.at(x+3-2)[y]) return false;
+			break;
+		case(TWO):
+			if (grid.at(x-2)[y+1] || grid.at(x-2)[y+2] || grid.at(x+-2)[y+3]) return false; 
+			break;
+	}
+
+	return true;
 }
 
 bool tetLine::onFloor() const {

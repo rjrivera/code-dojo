@@ -8,8 +8,9 @@
 
 class tetL : public tetShape{
 
-	private:
-	
+	protected:
+		virtual bool morphCheck(std::vector<std::vector<bool>>& grid) override; 
+
 	public:
 		//constructors
 		tetL();
@@ -34,6 +35,7 @@ class tetL : public tetShape{
 		bool lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const override;
 		bool floorBoundCheck(std::vector<std::vector<bool>>& y_) const override;
 		void amendGrid(std::vector<std::vector<bool>>& grid) const override;
+		virtual void morph(std::vector<std::vector<bool>>& grid) override;
 		bool onFloor() const override;	
 		virtual std::vector<sf::Sprite>& getSprites() override;
 		void Draw() override;

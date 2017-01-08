@@ -28,6 +28,7 @@ tetSquare::tetSquare(double x_, double y_,const sf::Texture* blkText_) : tetShap
 	for (auto& sprite : mySprites) {
 		std::cout << "X, Y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;
 	}
+	tetShape::bState = ONE;
 }
 
 tetSquare::tetSquare(double z_) : tetShape(z_, z_){
@@ -138,8 +139,19 @@ void tetSquare::amendGrid(std::vector<std::vector<bool>>& grid) const{
 	grid.at(x+1-2)[y+1] = true;
 
 }
+
+void tetSquare::morph(std::vector<std::vector<bool>>& grid) 	{
+	//NOP - Square doesn't morph
+	return;
+
+}
 	
-	
+bool tetSquare::morphCheck(std::vector<std::vector<bool>>& grid) {
+
+
+	return true;
+}
+
 double tetSquare::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);

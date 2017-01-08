@@ -9,9 +9,11 @@
 class tetSquare : public tetShape{
 
 	private:
-		//std::vector<sf::Sprite> mySprites;		
+	
+	protected:
+		virtual bool morphCheck(std::vector<std::vector<bool>>& grid) override; 
+
 	public:
-	//	std::vector<sf::Sprite> mySprites;			
 		//constructors
 		tetSquare();
 		tetSquare(double x_, double y_, const sf::Texture * blkText_); // you want a pass-by reference asper best practices. 
@@ -35,7 +37,7 @@ class tetSquare : public tetShape{
 		bool lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const override;
 		bool floorBoundCheck(std::vector<std::vector<bool>>& y_) const override;
 		virtual void amendGrid(std::vector<std::vector<bool>>& grid) const override;
-
+		virtual void morph(std::vector<std::vector<bool>>& grid) override;
 		void Draw() override;
 		bool onFloor() const override;
 		std::vector<sf::Sprite>& getSprites() override;
