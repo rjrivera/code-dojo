@@ -124,15 +124,40 @@ double tetL::Distance() const {
 }
 
 bool tetL::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
-	if (x+2 >= x_ ) return false;
-	if (grid.at(x+2-2)[y+2] || grid.at(x+1-2)[y+1] || grid.at(x+1-2)[y]) return false; 
+	switch(bState) {
+		case(ONE):
+			if (x+2 >= x_) return false; 
+			if (grid.at(x-2+1)[y] || grid.at(x-2+1)[y+1] || grid.at(x-2+2)[y+2]) return false;
+			break;
+		case(TWO):
+			if (x+3 >= x_) return false; 
+			if (grid.at(x-2+3)[y] || grid.at(x-2+3)[y-1]) return false;
+			break;
+		case(THREE):
+			if (x+2 >= x_) return false; 
+			if (grid.at(x-2+2)[y] || grid.at(x-2+2)[y+1] || grid.at(x-2+2)[y+2]) return false;
+			break;
+	}
 	return true;
+
 }
 
 bool tetL::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
-	if ( (x-1) <= x_ )  return false;
-	if (grid.at(x-1-2)[y+2] || grid.at(x-1-2)[y+1] || grid.at(x-1-2)[y]) return false; 
-	return true; 
+	switch(bState) {
+		case(ONE):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y] || grid.at(x-2-1)[y+1] || grid.at(x-2-1)[y+2]) return false;
+			break;
+		case(TWO):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y]) return false;
+			break;
+		case(THREE):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y] || grid.at(x-2)[y+1] || grid.at(x-2)[y+2]) return false;
+			break;
+	}
+	return true;
 }
 
 bool tetL::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
