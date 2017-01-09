@@ -1,0 +1,2 @@
+g++ clientv2.cpp tetSquare.cpp tetShape.cpp tetLine.cpp tetL.cpp arena.cpp -I. -w -std=c++11 -lboost_system -lpthread -lsfml-graphics -lsfml-window -lsfml-system -o ex1
+makefile:18: recipe for target 'all' failed

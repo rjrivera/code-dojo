@@ -35,65 +35,6 @@
 
 using boost::asio::ip::tcp;
 
-// OOB TODO[ ] refactor clientv2.cpp functions code to be part of an arena class. 
-
-/* check if the current grid has a valid horizontal line.
- * actual toggle of 'full' rows performed by different function "because best practices ;)" 
- *
- * RETURN vector of row indexes which meet criteria of "full"
- * 	will return a vector of size 0 if no such rows meet the criteria. 
- */
-/*
-std::vector<double> checkClear(std::vector<std::vector<bool>>& curGrid_, double width_, double height_) {
-	std::vector<double> clearRows = std::vector<double>();
-	double cInd = 0;
-	bool clear;
-	for (double i = 0; i <= height_; i++) {
-		clear = true;
-		for (double j = 0; j <= width_; j++)  {
-			//check if square is empty.
-			if (!curGrid_.at(j)[i]) {
-				clear = false; 
-				break; //save computation power.
-			}
-		}
-		if (clear) clearRows.push_back(cInd);
-		cInd++; 
-	}
-	return clearRows;
-}
-
-*/
-/* clear full rows
- * drop all blocks above row;
- *
- */
-
-/*
-void clearDropRows(std::vector<std::vector<bool>>& curGrid_, std::vector<double>& fullRows) {
-	double tallRow = *std::min_element(fullRows.begin(), fullRows.end());
-	double numRows = fullRows.size();
-	std::cout << "num full rows: " << numRows << std::endl;
-	//clear the rows. 
-	for (double j = 0; j < numRows; j++) {
-		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[fullRows[j]] = false;
-		std::cout << "cleared row: " << fullRows[j] << std::endl;
-	}
-
-	//"clone" and drop all blocks above the tallest row (remember, the tallest row is the lowest value in this y-coord scheme).
-	for (double cRow = tallRow - 1; cRow >= 0; cRow--) {
-		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[cRow+numRows] = curGrid_.at(i)[cRow];
-	}
-	//empty the top [numRows] 
-	for (double cRow = 0; cRow < numRows; cRow++) {
-		for (double i = 0; i < curGrid_.size(); i++) curGrid_.at(i)[cRow] = false;
-	}
-	
-	
-}
-*/
-
-
 int main(int argc, char* argv[])
 {
 	
@@ -159,7 +100,6 @@ int main(int argc, char* argv[])
 	std::string textName = " ";
 	sf::Texture tempText;
 	std::vector<sf::Texture> blocks;
-////	std::vector<std::vector<sf::Sprite>> staticSprites; //migrated to arena.cpp
 	arena * curArena = new arena();
 	uint32_t numBlocks = 2;
 	uint32_t numGameBlocks = -1;
@@ -169,7 +109,6 @@ int main(int argc, char* argv[])
 	std::vector<sf::Sprite> blockSprites; //used in sprite logic section. TODO [x] create a paradigm for multiple object refering to the same texture. 
 	//TODO[ ] revisit shared_ptr scheme of tracking the active world beyond the base puzzle grid. 
 	////std::vector<std::unique_ptr<tetShape>> tetShapes;
-////	tetShape * tetShapes;
 
 	// map all textures to their appropriate spot in the vector 
 	for (int i = 0; i < numBlocks; i++) {
@@ -178,8 +117,7 @@ int main(int argc, char* argv[])
 		blocks.push_back(tempText);
 	}
 	// ==============================TODO [X] transition this functionality to a viable object class such as shape::L shape::M etc
-	// used for prototyping.
-	//std::vector<sf::Sprite> gameBlocks;// TODO[ ] transition global scope constants much like in csharp engine. 
+	// TODO[ ] transition global scope constants much like in csharp engine. 
 
 	bool inGame = true;
 	bool loadLevel = true;
@@ -210,65 +148,6 @@ int main(int argc, char* argv[])
 			arenaOffset = 2; //TODO[ ] replace these with accessors from the arena object. 
 			arenaWidth = 14;
 			arenaHeight = 36;
-			/*
-			std::string line;
-			std::ifstream arena ("arena.txt");
-			uint32_t spriteIndex = 0;
-			uint32_t numLine = 0;
-			
-			arenaWidth = arenaOffset = -1; // default  values used as flags below.
-			arenaHeight = 0;
-			bool newRow = true;
-			if (arena.is_open()  ) {
-				while (getline(arena, line)){
-					for (uint32_t i = 0; i < WIDTH/16; i++) {
-						if (line.at(i) == '1')  {
-							 
-							blockSprites.push_back(sf::Sprite());
-							blockSprites[spriteIndex].setTexture(blocks[0]);		
-							blockSprites[spriteIndex].setPosition(sf::Vector2f((float)(16*(i % (WIDTH/16))) , (float)(16*numLine))); 
-							//std::cout << "pushing new sprite: " << "1";
-							spriteIndex++;
-						}
-						else if ( line.at(i) == '0' )  {
-							if ( arenaOffset == -1 )  {
-								arenaOffset = i; //determine left boundary of our game arena.
-								std::cout << arenaOffset << std::endl;
-							}
-							if (newRow) { //tabulate height of arena by presence of '0' in arena.txt line string. 
-								arenaHeight++;
-								newRow = false;
-							}
-							if ( numLine == 1  ) {
-								arenaWidth++;
-								std::cout << "+1 arenaWidth" << std::endl;
-							}
-						}
-						
-					}
-					newRow = true;//reset row flag. 
-					numLine++;
-				}
-				arena.close();
-				// based off information infered from arena.txt - tabulate the floor.
-				//
-				
-				for (uint32_t i = 0; i <= arenaWidth ; i++) {
-					gamegrid.push_back(std::vector<bool>());//init the oncoming column.
-					staticSprites.push_back(std::vector<sf::Sprite>());
-					//gamegrid.at(i).push_back(true);//push the floor. 
-					for (uint32_t j = 0; j <=arenaHeight; j++) {
-						gamegrid.at(i).push_back(false);		 
-						staticSprites.at(i).push_back(sf::Sprite());
-						staticSprites.at(i)[j].setTexture(blocks[1]);		
-						staticSprites.at(i)[j].setPosition(sf::Vector2f((float)(16*(i)+arenaOffset*16), (float)(16*j))); 
-
-					}
-					gamegrid.at(i).push_back(true);
-				}
-			}
-			else { std::cout << "Unable to open Arena.txt\n"; }
-			*/
 		}
 		// transmit current state to the game server.
 		// TODO[ ] IMPLEMENT A NETWORK CLIENT CLASS 
@@ -405,10 +284,6 @@ int main(int argc, char* argv[])
 			}
 		
 		}
-		
-		
-
-	
 
 	// ===================================================
 	// sprite draw logic
@@ -426,29 +301,19 @@ int main(int argc, char* argv[])
 		window.draw(sprite);
 		
 	}
-
-	//for (auto& sprite : staticSprites.at(5)) window.draw(sprite);
 	
 	//draw all sprites associated with shapes in the shapes container vector<tetShape> tetShapes
 
-	//for (auto& shape : tetShapes) {
-	
 		
-		if ( !((curArena->getPiece())->onFloor()) ) {
-			for (auto& sprite : (curArena->getPiece())->getSprites()) {
-		//		std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
-				window.draw(sprite);
-			}
+	if ( !((curArena->getPiece())->onFloor()) ) {
+		for (auto& sprite : (curArena->getPiece())->getSprites()) {
+			window.draw(sprite);
 		}
-		
-		
-	//}
-	
+	}		
 	
 	for (uint32_t i = 0; i < arenaWidth; i++) 	{
 		for (uint32_t j = 0; j < arenaHeight; j++) { // -1 because you don't draw the floor
 			if ((curArena->getGrid()).at(i)[j]) 	window.draw((curArena->getGridSprites()).at(i)[j]);
-
 		}
 	}
 
@@ -457,7 +322,5 @@ int main(int argc, char* argv[])
   }
  
   return 0;
-	
-  
 
 }
