@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = heapsPrimer.cpp
+OBJS = clrsRanBinTree.cpp
 
 
 #CC specifies which compiler we're using 
