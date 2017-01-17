@@ -1,0 +1,2 @@
+g++ 4-4a-1.cpp Point.cpp Line.cpp Array.cpp Circle.cpp Shape.cpp OutOfBoundsException.cpp -I. -w -std=c++11  -o ex1
+makefile:18: recipe for target 'all' failed

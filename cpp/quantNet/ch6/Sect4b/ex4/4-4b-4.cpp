@@ -3,7 +3,7 @@
 #include <random>
 #include "Point.hpp"
 #include "Line.hpp"
-#include "Array.cpp"
+#include "Array.hpp"
 #include "Circle.hpp"
 #include "Shape.hpp"
 #include "OutOfBoundsException.hpp"

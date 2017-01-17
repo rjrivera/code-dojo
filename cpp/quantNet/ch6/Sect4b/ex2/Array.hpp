@@ -14,7 +14,7 @@
 template<class T> 
 class Array{
 
-	protected:
+	private:
 
 		T * m_data;
 		int m_length;
@@ -31,7 +31,7 @@ class Array{
 		// accessor methods. 
 		
 		int Size() const;
-		
+
 		virtual T GetElement(int index_) const;	
 		virtual int DefaultSize() const;
 		// operator overloads
@@ -44,11 +44,11 @@ class Array{
 		virtual void DefaultSize(int index_);
 };
 
-/*
+// HW AMENDMENT INCLUDE SOURCE AT BOTTOM OF TEMPLATE HEADER
 #ifndef ARRAY_CPP
 #include "Array.cpp"
 
 #endif
-*/
+
 #endif
 

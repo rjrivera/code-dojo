@@ -26,7 +26,7 @@
 #include "tetL.hpp"
 #define WIDTH 400
 #define HEIGHT 600
-#define SPAWNTIME 5000
+#define SPAWNTIME 1000
 #define DROPTIME 500
 
 using boost::asio::ip::tcp;
@@ -117,6 +117,7 @@ int main(int argc, char* argv[])
 
 	bool inGame = true;
 	bool loadLevel = true;
+	bool spawnPiece = true;
 	auto deltaTime = std::chrono::high_resolution_clock::now();
 	auto lastCycle = std::chrono::high_resolution_clock::now();
 	auto now = std::chrono::high_resolution_clock::now();
@@ -131,6 +132,8 @@ int main(int argc, char* argv[])
 	std::vector<uint32_t> * prevState = new std::vector<uint32_t>();
 	std::vector<uint32_t> * curState = new std::vector<uint32_t>(); 
 	sf::Keyboard::Key dummy;
+
+	
 	//using pointers to swap references in prev/cur state each cycle. no need to manually copy the values in the containers. 
 	while (inGame) 
 	{
@@ -194,7 +197,8 @@ int main(int argc, char* argv[])
 		// ============================begin update gamelogic. update all game logice before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
 		//
 		//// std::vector<tetShape> tetShapes; tetSquare : tetShape
-		if ( spawnTimer > spawnTrigger ) {
+		if ( spawnTimer > spawnTrigger  && spawnPiece == true) {
+			spawnPiece = false;
 			numGameBlocks++;
 			blockType = distribution(generator);
 			if (blockType == 0) tetShapes.emplace_back(new tetSquare(5, 3, &(blocks[1])));
@@ -212,23 +216,21 @@ int main(int argc, char* argv[])
 		}
 		if ( dropTimer > dropTrigger && tetShapes.size() > 0) {
 			std::vector<double> floorSnap;	
-//			floorSnap.push_back(floor[0]);
-//			floorSnap.push_back(floor[1]);
 			
 			// if ( floor encountered ) do drop TODO [x] implement tracking mechanism for floor. 
 			for (auto& shape : tetShapes) {
+/*
 			floorSnap.push_back(floor[shape->X() - arenaOffset]);
-			floorSnap.push_back(floor[shape->X() - arenaOffset + 1]);
-				if (shape->floorBoundCheck(floorSnap) ){ // TODO [x] simplify to bool call.
-					shape->move(0, 1);
-				
-				}	
-				else if (!shape->onFloor) { //use index for now, but TODO[ ] convert the blocks to a game 2D array of bools for sprites
+			floorSnap.push_back(floor[shape->X() - arenaOffset + 1]);*/
+				// TODO [x] simplify to bool call.
+				if (shape->floorBoundCheck(floor)) shape->move(0, 1);
+				else if (!shape->onFloor()) { //use index for now, but TODO[ ] convert the blocks to a game 2D array of bools for sprites
 					// determine a for_each scheme 
-					floor[shape->X() - arenaOffset] = shape->Y();
-					floor[shape->X() - arenaOffset + 1] = shape->Y();
-					shape->onFloor = true;
-					std::cout << "floor triggered and amended\n";
+					floor[shape->X()] = shape->Y();
+					floor[shape->X() + 1] = shape->Y();
+					shape->onFloor(true);
+					spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(spawnTimer).zero();
+					spawnPiece = true;
 				}
 				
 			}
@@ -270,7 +272,7 @@ int main(int argc, char* argv[])
 			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::Right) == prevState->end()){
 
 			if ( numGameBlocks >= 0 ) {
-				if ( tetShapes[numGameBlocks]->rBoundCheck(arenaWidth+arenaOffset+1)) {
+				if ( tetShapes[numGameBlocks]->rBoundCheck(arenaOffset + arenaWidth + 1)) {
 					tetShapes[numGameBlocks]->move(1, 0); 
 				}
 			}
@@ -332,7 +334,7 @@ int main(int argc, char* argv[])
 	//	std::cout << "in a shape\n";
 		
 
-		for (auto& sprite : shape->mySprites) {
+		for (auto& sprite : shape->getSprites()) {
 	//		std::cout << "x, y: " << (sprite.getPosition()).x << " " << (sprite.getPosition()).y << std::endl;	
 			window.draw(sprite);
 		}

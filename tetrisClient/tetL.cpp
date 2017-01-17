@@ -16,7 +16,7 @@ tetL::tetL() : tetShape(0, 0){
 
 tetL::tetL(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites; //std::vector<sf::Sprite>
-	myInts; //std::vector<int> for test purposes.
+	//myInts; //std::vector<int> for test purposes.
 	for (int i = 0; i < 4; i++) {
 		mySprites.push_back(sf::Sprite());
 		mySprites[i].setTexture(*blkText_); 
@@ -25,7 +25,7 @@ tetL::tetL(double x_, double y_,const sf::Texture* blkText_) : tetShape(x_, y_){
 	mySprites[1].setPosition(sf::Vector2f((float)(16*(x_)) , (float)(16*(y_+1)))); 
 	mySprites[2].setPosition(sf::Vector2f((float)(16*x_) , (float)(16*(y_+2)))); 
 	mySprites[3].setPosition(sf::Vector2f((float)(16*(x_+1)) , (float)(16*(y_+2)))); 
-
+	tetShape::bState = ONE;
 }
 
 tetL::tetL(double z_) : tetShape(z_, z_){
@@ -33,7 +33,7 @@ tetL::tetL(double z_) : tetShape(z_, z_){
 
 tetL::~tetL() {
 	//delete mySprites;
-	std::cout << "in tetSquare destructor\n";
+	//
 }
 
 //copy constructor
@@ -97,6 +97,13 @@ double tetL::Y() const {
 	return y;
 }
 	
+std::vector<sf::Sprite>& tetL::getSprites() {
+	return mySprites;
+}
+
+bool tetL::onFloor() const {
+	return onFloor_;
+}
 	//mutators
 void tetL::X(double x_){
 	x = x_;
@@ -106,27 +113,137 @@ void tetL::Y(double y_){
 	y = y_;
 }
 
+void tetL::onFloor(bool val){
+	onFloor_ = val;
+}
+
 double tetL::Distance() const {
 	double a = std::abs(x);
 	double b = std::abs(y);
 	return (std::sqrt(pow(a,2) + pow(b,2)));
 }
 
-bool tetL::rBoundCheck(double x_) const {
-	if (x+2 < x_ ) return true;
-	return false;
+bool tetL::rBoundCheck(double x_,std::vector<std::vector<bool>>& grid) const {
+	switch(bState) {
+		case(ONE):
+			if (x+2 >= x_) return false; 
+			if (grid.at(x-2+1)[y] || grid.at(x-2+1)[y+1] || grid.at(x-2+2)[y+2]) return false;
+			break;
+		case(TWO):
+			if (x+3 >= x_) return false; 
+			if (grid.at(x-2+3)[y] || grid.at(x-2+3)[y-1]) return false;
+			break;
+		case(THREE):
+			if (x+2 >= x_) return false; 
+			if (grid.at(x-2+2)[y] || grid.at(x-2+2)[y+1] || grid.at(x-2+2)[y+2]) return false;
+			break;
+	}
+	return true;
+
 }
 
-bool tetL::lBoundCheck(double x_) const {
-	if ( (x-1) > x_ )  return true;
-	return false; 
+bool tetL::lBoundCheck(double x_, std::vector<std::vector<bool>>& grid) const {
+	switch(bState) {
+		case(ONE):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y] || grid.at(x-2-1)[y+1] || grid.at(x-2-1)[y+2]) return false;
+			break;
+		case(TWO):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y]) return false;
+			break;
+		case(THREE):
+			if (x-1 <= x_) return false; 
+			if (grid.at(x-2-1)[y] || grid.at(x-2)[y+1] || grid.at(x-2)[y+2]) return false;
+			break;
+	}
+	return true;
 }
 
-bool tetL::floorBoundCheck(std::vector<double>& y_) const {
-	if( (y+3) < y_[0] && (y+3) < y_[1]) return true;
-	return false;
+bool tetL::floorBoundCheck(std::vector<std::vector<bool>>& y_) const {
+	switch(bState) {
+		case(ONE):
+			if (y_.at(x-2)[y+3] || y_.at(x-2+1)[y+3]) return false;
+			break;
+		case(TWO):
+			if (y_.at(x-2)[y+1] || y_.at(x-2+1)[y+1] || y_.at(x-2+2)[y+1]) return false;
+			break;
+		case(THREE):
+			if (y_.at(x-2)[y+1] || y_.at(x-2+1)[y+3]) return false;
+			break;
+	}
+	return true;
+	//same TODO as tetSquare.cpp
+
 
 }
+
+void tetL::amendGrid(std::vector<std::vector<bool>>& grid) const{
+
+	//same not as floorBoundCheck.
+	switch(bState) {
+		case(ONE):
+			grid.at(x-2)[y]   =  true;
+			grid.at(x-2)[y+1] = true;
+			grid.at(x-2)[y+2] = true;
+			grid.at(x-2+1)[y+2] = true;
+			break;
+		case(TWO):
+			grid.at(x-2)[y]   =  true;
+			grid.at(x-2+1)[y] = true;
+			grid.at(x-2+2)[y] = true;
+			grid.at(x-2+2)[y-1] = true;
+			break;
+		case(THREE):
+			grid.at(x-2)[y]   =  true;
+			grid.at(x-2+1)[y] = true;
+			grid.at(x-2+1)[y+1] = true;
+			grid.at(x-2+1)[y+2] = true;
+			break;
+	}
+
+}
+
+void tetL::morph(std::vector<std::vector<bool>>& grid) {
+	switch(bState) {
+		case(ONE):
+			mySprites[1].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y)))); 
+			mySprites[2].setPosition(sf::Vector2f((float)(16*(x+2)) , (float)(16*(y)))); 
+			mySprites[3].setPosition(sf::Vector2f((float)(16*(x+2)) , (float)(16*(y-1)))); 
+			bState = TWO;
+			break;
+		case(TWO):
+			mySprites[1].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y)))); 
+			mySprites[2].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y+1)))); 
+			mySprites[3].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y+2)))); 
+			bState = THREE;
+			break;		
+		case(THREE):
+			mySprites[1].setPosition(sf::Vector2f((float)(16*(x)) , (float)(16*(y+1)))); 
+			mySprites[2].setPosition(sf::Vector2f((float)(16*(x)) , (float)(16*(y+2)))); 
+			mySprites[3].setPosition(sf::Vector2f((float)(16*(x+1)) , (float)(16*(y+2)))); 
+			bState = ONE;
+			break;
+	}
+}
+
+bool tetL::morphCheck(std::vector<std::vector<bool>>& grid) {
+	switch(bState) {
+		case(ONE):
+			if (grid.at(x-2+1)[y] || grid.at(x-2+2)[y] || grid.at(x-2+2)[y-1]) return false;
+			break;
+		case(TWO):
+			if (grid.at(x-2+1)[y] || grid.at(x-2+1)[y+1] || grid.at(x-2+1)[y+2]) return false; 
+			break;
+		case(THREE):
+			if (grid.at(x-2)[y+1] || grid.at(x-2)[y+2] || grid.at(x-2+1)[y+2]) return false; 
+			break;
+
+	}
+
+	return true;
+}
+
 
 //altered signature to pass-by-reference in order to avoid copy constructor call and reduce overhead. Made argument const as per instructions so function cannot alter state of referenced value. 
 double tetL::Distance(const tetL& p) const{	
