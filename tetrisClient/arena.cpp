@@ -10,6 +10,21 @@ arena::arena() : gridSize(16), grid(*(new std::vector<std::vector<bool>>())) {
 };
 arena::arena(double width, double height, double offSet) {};
 
+/* copy constructor - used for multiplayer on same console to save time on resources and for consistency. 
+ *		tetShape * actPiece_;		std::vector<std::vector<bool>> grid;
+		double offSet, gridSize;	std::vector<sf::Sprite> arenaSprites; 
+		std::vector<std::vector<sf::Sprite>> gridSprites;
+ *
+ */
+arena::arena(const arena& source) {
+	actPiece_ = source.actPiece_;
+	grid = source.grid;
+	offSet = source.offSet;
+	gridSize = source.gridSize;
+	arenaSprites = source.arenaSprites;
+	gridSprites = source.gridSprites;
+};
+
 /*Provide a reference to the class sprites which must be drawn. 
  * Each sprite doesn't represent a unique screen object, they are just
  * used as props to paint one part of a <true> part of the vector<vector<bool>> grid. 

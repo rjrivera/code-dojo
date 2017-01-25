@@ -19,6 +19,7 @@ class arena {
 	public:
 		arena();
 		arena(double width, double height, double offSet);
+		arena(const arena& source);
 		std::vector<sf::Sprite>& getArenaSprites();
 		std::vector<double> checkClear();
 		std::vector<std::vector<bool>>& getGrid();
