@@ -4,8 +4,9 @@
 //// Copyright (c) 2016 Robert J Rivera same license as above. 
 //	NOTE: in an effort to 'optimize early' and solve a bizarre bug found when incorporating two player input
 //	I lost an hour of my life attempting to migrate to an associative container.
-//	TODO[ ] short-circuit the whole process by using more memory and heuristics to speed up lookups (as I suspect that is where the bug is coming from).
+//	TODO[---] short-circuit the whole process by using more memory and heuristics to speed up lookups (as I suspect that is where the bug is coming from).
 //	migrate containers to a vector<bool> where there are [0 - max number of keys] elements and each sf::keyboardenum is the lookup value. 
+//	Note - 30 Jan - attempted all initial AI's to remedy input capture related segfault and can't resolve. ignoring, as it's not important. 
 ////
 
 #include <iostream>
@@ -144,10 +145,16 @@ int main(int argc, char* argv[])
 	// ==============================================================
 	// input paradigm, track previous inputs via a container.
 	// ==============================================================
-	//std::vector<uint32_t> * prevState = new std::vector<uint32_t>();
-	//std::vector<uint32_t> * curState = new std::vector<uint32_t>(); 
+	std::vector<uint32_t> * prevState = new std::vector<uint32_t>();
+	std::vector<uint32_t> * curState = new std::vector<uint32_t>(); 
+	/*
 	std::map<uint32_t, bool> * prevStateMap = new std::map<uint32_t,bool>();
 	std::map<uint32_t, bool> * curStateMap = new std::map<uint32_t,bool>();
+	std::vector<bool> * prevKB = new std::vector<bool>();
+	std::vector<bool> * curKB = new std::vector<bool>();
+*/
+	
+	
 	sf::Keyboard::Key dummy;
 
 	
@@ -271,21 +278,22 @@ int main(int argc, char* argv[])
 		//swap input states to modernize this input cycle. 
 	//	delete prevState; //throw away the garbage. 
 
-	
-		delete prevStateMap;
-		prevStateMap = curStateMap;
+		delete prevState; //take out the garbage. 
+		prevState = curState;
+		curState = new std::vector<uint32_t>();
+		
 		//curStateMap = prevStateMap;
 		//curStateMap->erase(curStateMap->begin(), curStateMap->end());
-		curStateMap = new std::map<uint32_t, bool>();
+		
 	//	prevState = curState; // swap the input containers
 	//	curState = new std::vector<uint32_t>(); // create a new one. 
 		
 	// capture all user input. TODO[ ] delegate userinput processing to function. 
 		// iterating through sfml keyboard enums - captures entire keyboard state. 
-		for (uint32_t curEnum = (uint32_t)sf::Keyboard::A; curEnum != sf::Keyboard::F15; curEnum++) {
+		for (int curEnum = (uint32_t)sf::Keyboard::A; curEnum != sf::Keyboard::Numpad0; curEnum++) {
 			if (sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(curEnum))) {
-	//			curState->push_back(curEnum);
-				curStateMap->insert(std::pair<uint32_t, bool>(curEnum, true));
+				curState->push_back(curEnum);
+	//			curKB->at(curEnum) = true;
 			}
 			//else curStateMap[curEnum] = false; //this seems to violate the refactor goal... 
 		}
@@ -302,37 +310,38 @@ int main(int argc, char* argv[])
 	//
 	// 
 
-/*
+
 		// Escape Key pressed
-		if ( cState && !pState){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)(sf::Keyboard::Escape)) != curState->end()){
 			inGame = false;
 		}
+
 		
 
 		// Left Key pressed
-		if (curStateMap->at((uint32_t)(sf::Keyboard::Left)) && // debouncing feature;
-			!prevStateMap->at((uint32_t)(sf::Keyboard::Left)) ){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)(sf::Keyboard::Left)) != curState->end() && 
+		std::find(prevState->begin(), prevState->end(), (uint32_t)(sf::Keyboard::Left)) == prevState->end()){
 			if (numGameBlocks[0] >= 0) {
 				if ( (curArena->getPiece())->lBoundCheck(arenaOffset-1, curArena->getGrid())){ //delegate specifics to the class.
 					(curArena->getPiece())->move(-1, 0); // TODO [x] begin delegating responsibilities to other aspects of the project. 
 				}
 			}
 		}
+
+
 		//Right key pressed
-		if (curStateMap->at((uint32_t)(sf::Keyboard::Right)) && // debouncing feature;
-			!prevStateMap->at((uint32_t)(sf::Keyboard::Right)) ){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)(sf::Keyboard::Right)) != curState->end() && 
+		std::find(prevState->begin(), prevState->end(), (uint32_t)(sf::Keyboard::Right)) == prevState->end()){
 
 			if ( numGameBlocks[0] >= 0 ) {
 				if ( (curArena->getPiece())->rBoundCheck(arenaOffset + arenaWidth, curArena->getGrid())) {
 					(curArena->getPiece())->move(1, 0); 
 				}
 			}
-		}
-		
+		}	
 		// Down key pressed
-		if (curStateMap->at((uint32_t)(sf::Keyboard::Down)) && // debouncing feature;
-			!prevStateMap->at((uint32_t)(sf::Keyboard::Down)) 
-){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)(sf::Keyboard::Down)) != curState->end() && 
+		std::find(prevState->begin(), prevState->end(), (uint32_t)(sf::Keyboard::Down)) == prevState->end()) {
 			if ( numGameBlocks[0] >= 0 ) {
 				
 				dropTimer = dropTrigger;
@@ -340,20 +349,19 @@ int main(int argc, char* argv[])
 		}
 
 		// Space key pressed
-		if (curStateMap->at((uint32_t)(sf::Keyboard::Space)) && // debouncing feature;
-			!prevStateMap->at((uint32_t)(sf::Keyboard::Space)) ){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)(sf::Keyboard::Space)) != curState->end() && 
+		std::find(prevState->begin(), prevState->end(), (uint32_t)(sf::Keyboard::Space)) == prevState->end()){
 			
 			if ( numGameBlocks[0] >= 0 ) {
 				(curArena->getPiece())->morph(curArena->getGrid());
-				std::cout << "Spacebar pressed\n";
 			}
 		}
 
 // ========================================PLAYER TWO CODE TO REMOVE IN NEXT ITERATION==============
 
 		// A  Key pressed
-		if (curStateMap->at((uint32_t)(sf::Keyboard::A)) && // debouncing feature;
-			!prevStateMap->at((uint32_t)(sf::Keyboard::A)) ){
+		if (std::find(curState->begin(), curState->end(), (uint32_t)sf::Keyboard::A) != curState->end() && // debouncing feature;
+			std::find(prevState->begin(), prevState->end(), (uint32_t)sf::Keyboard::A) == prevState->end())  {
 			if (numGameBlocks[1] >= 0) {
 
 				if ( (playerTwoArena->getPiece())->lBoundCheck(arenaOffset-1, playerTwoArena->getGrid())){ //delegate specifics to the class.
@@ -379,7 +387,7 @@ int main(int argc, char* argv[])
 
 
 
-
+/*
 		// S key pressed
 		if (curStateMap->at((uint32_t)(sf::Keyboard::S)) && // debouncing feature;
 			!prevStateMap->at((uint32_t)(sf::Keyboard::S)) ){
