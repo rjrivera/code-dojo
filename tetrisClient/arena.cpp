@@ -175,6 +175,14 @@ void arena::clearPiece() { delete actPiece_;}
 
 //TODO[ ] make bool and return false if failed assignment??? MAYBE afer i migrate to a more complicatd system. 
 void arena::definePiece(tetShape * newDef) { actPiece_ = newDef;}
+		
+/* name: definePenPiece
+ * params: tetShape *
+ * purpose: amend a game's penalty pieces container. 
+ * use: competing clients queue a new piece to be amended when clearing a row. 
+ *
+ */
+void arena::definePenPiece(tetShape * newDef) { penPieces_.push_back(newDef);}
 
 tetShape * arena::getPiece(){
 	return actPiece_;
@@ -188,4 +196,8 @@ std::vector<std::vector<bool>>& arena::getGrid(){
 std::vector<std::vector<sf::Sprite>>& arena::getGridSprites() {
 	return gridSprites;
 
+}
+
+std::vector<tetShape*>& arena::getPenPieces() {
+	return penPieces_;
 }

@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = clientv4.cpp tetSquare.cpp tetShape.cpp tetLine.cpp tetL.cpp arena.cpp
+OBJS = clientv5.cpp tetSquare.cpp tetShape.cpp tetLine.cpp tetL.cpp arena.cpp
 
 
 #CC specifies which compiler we're using 

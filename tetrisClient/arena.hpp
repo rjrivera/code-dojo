@@ -11,6 +11,7 @@ class arena {
 
 	private:
 		tetShape * actPiece_;		
+		std::vector<tetShape*> penPieces_;
 		std::vector<std::vector<bool>> grid;
 		double offSet, gridSize;
 		std::vector<sf::Sprite> arenaSprites; 
@@ -28,7 +29,9 @@ class arena {
 		void clearDropRows(std::vector<double>& fullRows) ;
 		void clearPiece();
 		void definePiece(tetShape * newDef);
+		void definePenPiece(tetShape * newDef);
 		tetShape * getPiece();
+		std::vector<tetShape*>& getPenPieces();
 
 };
 

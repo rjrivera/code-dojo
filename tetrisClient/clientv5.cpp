@@ -135,14 +135,14 @@ int main(int argc, char* argv[])
 	bool loadLevel = true;
 	bool spawnPiece = true;
 	bool pl2spawnPiece = true;
+	bool pl2spawnPenPiece = false;
 	auto deltaTime = std::chrono::high_resolution_clock::now();
 	auto lastCycle = std::chrono::high_resolution_clock::now();
 	auto now = std::chrono::high_resolution_clock::now();
 	std::chrono::nanoseconds spawnTimer; 
-	std::chrono::nanoseconds dropTimer;
-
-	std::chrono::nanoseconds pl2spawnTimer; 
-	std::chrono::nanoseconds pl2dropTimer;
+	std::chrono::nanoseconds dropTimer{1000};
+	std::chrono::nanoseconds pl2spawnTimer;
+	std::chrono::nanoseconds pl2dropTimer{1000};
 
 	// ==============================================================
 	// input paradigm, track previous inputs via a container.
@@ -186,6 +186,8 @@ int main(int argc, char* argv[])
 		dropTimer += now - lastCycle; // TODO[ ] place all timers and triggers into containers. reduce LoC and improve readability.
 		pl2spawnTimer += now - lastCycle;
 		pl2dropTimer += now - lastCycle;
+		std::cout << "dropTimer = " << std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).count() << 
+			" Drop Trigger = " << std::chrono::duration_cast<std::chrono::nanoseconds>(dropTrigger).count() << std::endl;
 		// ============================begin update gamelogic. update all game logic before handling user input. TODO[ ]  move to an update(Timing tObject) method ala desu engine. 
 		
 		//check if we need to drop a new game piece. 
@@ -222,6 +224,8 @@ int main(int argc, char* argv[])
 					if (fullRows.size() >0) { 
 						try{
 							curArena->clearDropRows(fullRows);   
+							//DESU multiplayer punPiece logic trigger
+							pl2spawnPenPiece = true;
 						}
 						catch(...){
 							 std::cout << "bug in clearDropRows\n";
@@ -232,7 +236,7 @@ int main(int argc, char* argv[])
 			dropTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(dropTimer).zero();
 		}
 
-		if ( pl2spawnTimer > pl2spawnTrigger  && pl2spawnPiece == true) {
+		if ( pl2spawnTimer > pl2spawnTrigger  && pl2spawnPiece) {
 			pl2spawnPiece = false;
 			numGameBlocks[1] +=1; //potentially remove
 			blockType = distribution(generator);
@@ -246,9 +250,18 @@ int main(int argc, char* argv[])
  			// reset spawn timer. 
 			pl2spawnTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(pl2spawnTimer).zero();
 		}
+	
+		if ( pl2spawnPenPiece )  {
+			pl2spawnPenPiece = false;
+			blockType = distribution(generator);
+			if (blockType == 0) playerTwoArena->definePenPiece(new tetSquare(9, 3, &(blocks[1])));
+			else if (blockType == 1) playerTwoArena->definePenPiece(new tetL(9, 3, &(blocks[1])));
+			else if (blockType == 2)  playerTwoArena->definePenPiece(new tetLine(9, 3, &(blocks[1])));		
+
+		}
 
 		if ( pl2dropTimer > pl2dropTrigger ) { 
-			
+			std::cout << "dropping player two once\n";
 			// TODO [x] implement tracking mechanism for floor. 
 			// TODO [x] simplify to bool call.
 			// TODO [ ] revisit how the board hands off info to it's constituent pieces. 
@@ -495,10 +508,19 @@ int main(int argc, char* argv[])
 	if ( !((playerTwoArena->getPiece())->onFloor()) ) {
 		for (auto& sprite : (playerTwoArena->getPiece())->getSprites()) {
 			tempSprite = sprite;
-			tempSprite.move(400,0);
+			tempSprite.move(400,0);//400 right shift is a quick&dirty demo trick to do split screen. 
 			window.draw(tempSprite);
 		}
-	}		
+	}
+
+	for (auto& piece : (playerTwoArena->getPenPieces())) 		{
+		for(auto& sprite: piece->getSprites()) {
+			tempSprite = sprite;
+			tempSprite.move(400,0);
+			window.draw(tempSprite);		
+		}
+
+	}
 	
 	for (uint32_t i = 0; i < arenaWidth; i++) 	{
 		for (uint32_t j = 0; j < arenaHeight; j++) { // -1 because you don't draw the floor
