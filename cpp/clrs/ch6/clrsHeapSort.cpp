@@ -3,6 +3,8 @@
 
 using namespace std;
 
+//readers note - these definitions seem to work for 1-based heaps
+//NOT zero- based...which is odd so ok. 
 //as per clrs - best implemented as an inline function. 
 inline int parent(int i) {
 	return i/2; //return i/2
