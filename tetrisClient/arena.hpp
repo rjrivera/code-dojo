@@ -5,7 +5,7 @@
 #include <tetShape.hpp>
 #include <SFML/Graphics.hpp>
 #include <string>
-
+#include <chrono>
 
 class arena {
 
@@ -16,6 +16,8 @@ class arena {
 		double offSet, gridSize;
 		std::vector<sf::Sprite> arenaSprites; 
 		std::vector<std::vector<sf::Sprite>> gridSprites;
+		std::chrono::milliseconds dropTrigger;
+		std::chrono::milliseconds spawnTrigger;
 
 	public:
 		arena();
@@ -30,6 +32,7 @@ class arena {
 		void clearPiece();
 		void definePiece(tetShape * newDef);
 		void definePenPiece(tetShape * newDef);
+		void update(std::chrono::milliseconds deltaTime);
 		tetShape * getPiece();
 		std::vector<tetShape*>& getPenPieces();
 
