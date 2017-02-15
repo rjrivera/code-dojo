@@ -175,6 +175,106 @@ void printNextBigSmall(int num){
 	cout << "   next Smallest => " << nSmall << endl;
 }
 
+/* explain what the following code does:
+ *
+ * so firstly - the final operator is an equivalancy check.
+ * The expected value is either a true or false, or in this case,
+ * a 1 or 0 where 1 == true and 0 == false;
+ *
+ * Heuristically I wish to say that it seems relevant to a two-s 
+ * compliment operation of some sort, but lets give it a look.
+ *
+ * given: 0100
+ * you subtract 1 and are left with 0011
+ *
+ * now a logical AND operator will return a new int, which compares to zero
+ *
+ * 0100 & 0011 => 0 which in turn yields a true for our final output.
+ *
+ * given 0101, you get 0100
+ *
+ * 0101&0100 => 0100 => false (4 != 0)
+ *
+ * As to what it pragmatically provides for us, I think it tests if 
+ * a value is a power of 2.
+ *
+ * [x] tested, and confirmed my observations and suspicions. SHAQ ATTACK
+ */
+bool isPowTwo(int n) {
+	return ((n & (n-1)) == 0);
+}
+
+/*
+ * Write a function to determine the number of bits required to convert
+ * integer A to integer B.
+ * I: 31, 14
+ * O: 2
+ *
+ * ok lets take a look. 
+ * it sounds rather easy honestly, do a XOR to determine the deltas 
+ * on a bit level and the shift right counting the presence of a 
+ * '1' on the least sig bit, tracking it.
+ * 
+ * [x] checked against init case, seems good enough for now.
+ * hate my lack of thorough testing? don't worry, I'm giving more
+ * thorough checks off the record. 
+ */
+
+int diffBits(int a, int b)  {
+	int index = 0;
+	int temp = (a^b);
+	while (temp > 0) {
+		if (temp%2 == 1) index++;
+		temp >>= 1; 
+	}
+	return index;
+
+}
+
+/*
+ * write a program to swap odd and even bits in an integer with 
+ * as few OPS as possible
+ *
+ * let's look at some cases to soak it in:
+ *
+ * 0101 => 1010  ,  5 => 6
+ * 1111 => 1111  ,  15 => 15
+ * 1100 => 1100  ,  12 => 12
+ *
+ * so off the cuff, a change only occurs when a delta is present
+ * in neighboring bits, and an ordering must be considered, easiest to iterate
+ * right to left.
+ *
+ * initial thoughts indicate the use of a XOR operator and a bit-mask
+ * scheme to track the 'active bits' for comparison.
+ * if (activebit^activebit<<1) == 1, perform an operatioal swap,
+ * else nop
+ * active <<= 2 ; ///I think i just did it off the top of my head lol. 
+ *
+ *
+ */
+
+void swapBits(int& n) {
+	int activeBit = 1;
+	//signed 32-bit ints (YAY LACK OF PORTABILITY).
+	while (activeBit > 0){
+		if (((activeBit&n) ^ ((activeBit<<1)&n))) {
+			if ((activeBit&n)) { 
+				n += (activeBit<<1);
+				n -= activeBit;
+			}
+			else {
+				n += activeBit;
+				n -= (activeBit<<1);
+			}
+				
+		}
+		activeBit <<= 2;
+	}
+	return;
+
+}
+
 int main( int argc, char** argv ) {
 	// 5.1 simple test ========
 	cout << " pingy ping again \n";
@@ -190,5 +290,23 @@ int main( int argc, char** argv ) {
 	printNextBigSmall(16);
 	
 
+	//=======5.4
+	for (int i = 0; i < 128; i++) {
+		if (isPowTwo(i)) cout << i << " is a power of two\n";
+		else cout << i << " is NOT a power of two\n"; 
+	}
+	//=======
+	//
+	//======5.5
+	cout << "expected bit diff in 31 & 14 => 2\n";
+	cout << diffBits(31, 14) << endl;
+	// 5.6 ==========
+	int count = 0;
+	for (int i = 0; i < 10; i++) {
+		count = i;
+		cout << "original num: " << count << endl;
+		swapBits(count);		
+		cout << "swaped bits => " << count << endl;
+	}
 	return 0;
 }
