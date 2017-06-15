@@ -69,6 +69,8 @@ double SimpleMCPut(	double b,
 	return kurt*Nd2 - sert*Nd1;
 }
 
+
+
 double putParity(double C, double Strike, 
 			double r, double Expiry, double Spot){
 	double kurt = Strike * exp(-1*r*Expiry);
@@ -134,6 +136,18 @@ double putParity(double C, OptionData d, double Spot){
 
 }
 
+//formula for Black-Scholes PDES
+//-dC/dt + rSpotC/dSpot + 0.5VarianceSpot^2*d^2C/dSpot^2 = rC = 0
+double finiteCall(double Spot, double t) {
+	double ans = 0;
+	double dt = 0.1;
+
+	
+
+
+	return ans;
+}
+
 int main()
 {
 	double Expiry;
@@ -159,7 +173,11 @@ int main()
 	OptionData one(0.25, 65.0, 0.30, 0.08);
 	OptionData two(1.0, 100.0, 0.2, 0.00);
 	OptionData three(1.0, 100.0, 0.2, 0.00);
-	OptionData four(1.0, 100.0, 0.2, 0.00);
+	/*double Expiry;
+	double Strike;
+	double Vol;
+	double r;*/
+	OptionData four(1.5, 120.0, 0.4, 0.04);
 	vector<OptionData> batches;
 	batches.push_back(one);
 	batches.push_back(two);
@@ -217,9 +235,9 @@ int main()
 	}
 
 	cout << "Rerunning tests using put-call parity relationship" << endl;
-
-	for (int i = 0; i < batches.size(); i++) 	{
 /*
+	for (int i = 0; i < batches.size(); i++) 	{
+
 		double resultCall = SimpleMCCall(boost::get<4>(batches[i]),
 				 boost::get<0>(batches[i]),
 				 boost::get<1>(batches[i]),
@@ -227,7 +245,7 @@ int main()
 				 boost::get<3>(batches[i]),
 				 boost::get<4>(batches[i]),
 				 boost::get<5>(batches[i]));
-*/
+
 
 
 		double resultCall = SimpleMCCall(batches[i], spots[i]);
@@ -293,6 +311,6 @@ int main()
 				<< " for the put\n";
 	}
 	
-
+*/
 	return 0;
 }

@@ -12,6 +12,8 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <gsl_min.h>
+
 
 #include "TMinuit.h"
 #include "TCanvas.h"

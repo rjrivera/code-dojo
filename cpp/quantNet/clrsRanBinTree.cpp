@@ -21,6 +21,8 @@ using namespace std;
  * 	Figure 13.4 walks through the operation very well. 
  * 	
  *	Motivation for the hassle: guarentee a balanced tree with minimal cost. 
+ *
+ *	TODO[ ] Delete-Fix analogue operation to preserve R-B features after deletion. 
  */
 
 struct tNode {
@@ -101,9 +103,8 @@ private:
 	void inOrderTraversalHelper(tNode * cNode) {
 		if (cNode == sentinel) return; 
 		inOrderTraversalHelper(cNode->lC);
+		cout << ", " << cNode->val;
 		inOrderTraversalHelper(cNode->rC);
-		cout << cNode->val << ", ";
-	  	
 
 	}
 	/* see CLRS Figure 13.2
@@ -212,8 +213,8 @@ public:
 	};
 	void insertVal(int32_t value){
 		tNode * temp;
-		//insertHelper(root, value);
-		rbInsertFix(insertHelper(root, value));//performs the insertion
+		insertHelper(root, value);
+		//rbInsertFix(insertHelper(root, value));//performs the insertion
 
 	}
 	void deleteVal(int32_t value){

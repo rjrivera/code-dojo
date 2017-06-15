@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = clrsRanBinTree.cpp
+OBJS = harby3.cpp
 
 
 #CC specifies which compiler we're using 

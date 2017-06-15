@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = Random1.cpp SimpleMCMain1.cpp
+OBJS = Random1.cpp PayOff1.cpp SimpleMC.cpp SimpleMCMain2.cpp
 
 #CC specifies which compiler we're using 
 CC = g++

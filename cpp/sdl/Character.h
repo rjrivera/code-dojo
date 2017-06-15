@@ -11,8 +11,11 @@ public:
         virtual Character* clone() const=0;
 	//virtual void update();
 
+protected:
+
         Rectangle destRect;
-private:
+
+
 };
 
 class CharacterRed : public Character

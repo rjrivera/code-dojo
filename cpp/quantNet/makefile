@@ -1,5 +1,6 @@
-#OBJS specifies which files to compile as part of project
-OBJS = clrsRanBinTree.cpp
+#
+#BJS specifies which files to compile as part of project
+OBJS = htgisubString.cpp
 
 
 #CC specifies which compiler we're using 

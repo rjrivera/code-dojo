@@ -3,6 +3,8 @@ requires PayOff1.cpp, Random1.cpp, SimpleMC.cpp,
 */
 
 #include"SimpleMC.h"
+#include "PayOff1.h"
+#include "Random1.h"
 #include<iostream>
 using namespace std;
 
@@ -33,7 +35,7 @@ int main()
 	cout << "\nNumber of paths\n";
 	cin >> NumberOfPaths;
 
-	PayOff callPayOff(Stike, PayOff::call);
+	PayOff callPayOff(Strike, PayOff::call);
 	PayOff putPayOff(Strike, PayOff::put);
 
 	double resultCall = SimpleMonteCarlo2(callPayOff,
@@ -42,6 +44,15 @@ int main()
 				Vol,
 				r,
 				NumberOfPaths);
+
+	double resultPut = SimpleMonteCarlo2(putPayOff,
+				Expiry,
+				Spot,
+				Vol,
+				r,
+				NumberOfPaths);
+
+
 
 	cout << "the prices are " << resultCall
 				<< " for the call and"
