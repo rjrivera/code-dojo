@@ -105,6 +105,14 @@ int main( int argc, char** argv ) {
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);
+
+// Terrain info PoC, move to object
+	sf::Texture * plainsInfo = new sf::Texture();
+	plainsInfo->loadFromFile("textures/plainsInfo.png");
+	sf::Sprite * plSprite = new sf::Sprite();
+	plSprite->setTexture(*plainsInfo);
+	plSprite->setPosition(0,0);
+
 	while(inGame) {
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
@@ -164,6 +172,8 @@ int main( int argc, char** argv ) {
 		for(baseTerrain * obj : board) window.draw(obj->tileSprite);	
 		window.draw(myC->tileSprite);
 		
+		if (curInputState == terrainInfo) window.draw(*plSprite); 
+
 		window.display();
 		
 	}
