@@ -19,6 +19,8 @@
 
 //todo - work on an x,y tracking schema
 //todo - work on a content pipeline leveraging a json
+//todo - work on statemachine to toggle between user_input options (in game only)
+//todo - draft and demo display objects for terrain information 
 //personal notes - migrate newGame to an instantiable client object that can sync with a Server.
 
 using namespace rapidjson;
@@ -66,8 +68,10 @@ void bar(std::vector<baseTerrain *>& board, std::vector<sf::Texture*>& terrainTe
 //prototyping function
 //provides initial content load of terrain art assetts
 
+enum inputState {terrainSelect, terrainInfo, unitInfo};
 
 void foo(std::vector<sf::Texture *>& text_container) {
+	
 	for (int i = 0 ; i < maxTerrain_const; i++) {
 		std::string textName = "textures/plain" + std::to_string(i)  + ".png";
 		sf::Texture * tempText = new sf::Texture();
@@ -100,6 +104,7 @@ int main( int argc, char** argv ) {
 	cursor * myC = new cursor(cursText);
 
 	bool inGame = true;
+	inputState curInputState(terrainSelect);
 	while(inGame) {
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
@@ -119,24 +124,34 @@ int main( int argc, char** argv ) {
 		// ===================================================
 
 		// Escape Key pressed
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-			inGame = false;
-		}	 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-			myC->movePosX(16);
-		}
+		switch(curInputState){
+			case(terrainSelect):
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+				inGame = false;
+			}	 
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+				myC->movePosX(16);
+			}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-			myC->movePosX(-16);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-			myC->movePosY(16);
-		}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+				myC->movePosX(-16);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+				myC->movePosY(16);
+			}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-			myC->movePosY(-16);
-		}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+				myC->movePosY(-16);
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) curInputState = terrainInfo;
+			break;
 
+			case(terrainInfo):
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+				curInputState = terrainSelect;
+			}
+			break; 
+		}
 
 
 
