@@ -86,7 +86,7 @@ void foo(std::vector<sf::Texture *>& text_container) {
 
 //MAPGENERATOR
 //PROTOTYPING FUNCTION
-void mapGen(std::vector<baseTerrain *>& board_) {
+void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terrainTexts) {
 	FILE* fp = fopen("map1.json", "rb");
 	char readBuffer[65536];
 	FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -109,7 +109,33 @@ void mapGen(std::vector<baseTerrain *>& board_) {
 	std::cout << data.Size() << std::endl;
 	std::cout << "height is: " << height.GetInt() << std::endl;
 	std::cout << "width is: " << width.GetInt() << std::endl;
+	int count=0;
+	for(int i = 0; i < height.GetInt(); i++) {
+		for (int j = 0; j < width.GetInt(); j++) {
+			switch(data[count].GetInt()){
+				case plainTerrain_const :
+					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
+					break;
+				case mountTerrain_const :
+					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					break;
+				case waterTerrain_const :
+					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					break;
+				case roadTerrain_const :
+					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
+					break;
+				case forestTerrain_const :
+					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					break;
+			}
+			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			count++;
+//			std::cout <<  << std::endl;
+		}
+	}
 }
+
 
 int main( int argc, char** argv ) {
 
@@ -121,8 +147,8 @@ int main( int argc, char** argv ) {
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	
 	std::vector<baseTerrain * > board = std::vector<baseTerrain *>();
-	bar(board, terrainTexts);
-	mapGen(board);
+	//bar(board, terrainTexts);
+	mapGen(board, terrainTexts);
 	// testing posix_time libraries
 
 	auto deltaTime = std::chrono::high_resolution_clock::now();
