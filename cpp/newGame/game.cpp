@@ -9,6 +9,7 @@
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
+#include "rapidjson/include/rapidjson/filereadstream.h"
 #include <SFML/Graphics.hpp>
 #include "Project_Constants.h"
 //#include <boost/date_time/posix_time/posix_time.hpp>
@@ -16,10 +17,12 @@
 
 #define WIDTH 384
 #define HEIGHT 352
-
-//todo - work on an x,y tracking schema
+//todo - work on an x,y tracking schema - leverag the same back, cur (x,y) scheme, but abstract to a higher layer of client GUI
+//	> keep the core game logic data to a minimum
 //todo - work on a content pipeline leveraging a json
+//	> develop the core functional logic than transition to an appropriate place after some thought. 
 //todo - work on statemachine to toggle between user_input options (in game only)
+//	>initial PoC accomplished, looking promising
 //todo - draft and demo display objects for terrain information 
 //personal notes - migrate newGame to an instantiable client object that can sync with a Server.
 
@@ -81,16 +84,45 @@ void foo(std::vector<sf::Texture *>& text_container) {
 
 }
 
+//MAPGENERATOR
+//PROTOTYPING FUNCTION
+void mapGen(std::vector<baseTerrain *>& board_) {
+	FILE* fp = fopen("map1.json", "rb");
+	char readBuffer[65536];
+	FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
+	Document doc;
+	doc.ParseStream(is);
+
+	fclose(fp);
+
+	// Using a reference for consecutive access is handy and faster
+	const Value& data = doc["data"];
+	const Value& height = doc["height"];
+	const Value& width = doc["width"];
+
+	assert(data.IsArray());
+	assert(height.IsInt());
+	assert(width.IsInt());
+	
+	std::cout << "data is read\n";
+	std::cout << data.Size() << std::endl;
+	std::cout << "height is: " << height.GetInt() << std::endl;
+	std::cout << "width is: " << width.GetInt() << std::endl;
+}
 
 int main( int argc, char** argv ) {
 
+	// ====================
+	// INITIALIZATION 
+	// ====================
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	foo(terrainTexts);
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	
 	std::vector<baseTerrain * > board = std::vector<baseTerrain *>();
 	bar(board, terrainTexts);
+	mapGen(board);
 	// testing posix_time libraries
 
 	auto deltaTime = std::chrono::high_resolution_clock::now();
@@ -119,7 +151,6 @@ int main( int argc, char** argv ) {
 //		deltaTime = now - lastCycle;
 		myTimer = now - lastCycle;
  //		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime).count() << std::endl;
-		std::cout << myC->posX << std::endl;
 //		myTime += deltaTime;
 		// ===================================================
 		// UPDATE TIMING
