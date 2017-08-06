@@ -19,6 +19,12 @@
 
 #define WIDTH 384
 #define HEIGHT 352
+//todo - finish PoC on infantry unit 
+//	> attache the unit to the board properly and move it on the board.
+//	> develop a pathfinding algorithm
+//	> implement a [move unit] functionality
+//	> transition PoC to a Systematic scheme. to be added to the board
+//
 //todo - work on an x,y tracking schema - leverag the same back, cur (x,y) scheme, but abstract to a higher layer of client GUI
 //	> keep the core game logic data to a minimum
 //todo - work on a content pipeline leveraging a json
@@ -30,42 +36,16 @@
 
 using namespace rapidjson;
 
+//needs to move somewhere, not allowing classwide vars in this class. 
+uint64_t height = 0;
+uint64_t width = 0;
 
-// board construction prototyping function
-// used to populate the board container. 
-// as-is, does it manually. 
-
-void bar(std::vector<baseTerrain *>& board, std::vector<sf::Texture*>& terrainTexts) {
-	//const char * json = "{\"project\":\"json\",\"fucks\":\"none\"}";
-	std::cout << map_const << std::endl; 
-
-	Document myD;
-	ParseResult myRes = myD.Parse(map_const.c_str());
-
-	std::cerr << myRes.Code() << std::endl;
-	Value& copyVal = myD["height"];
-
-	std::cout <<  copyVal.GetDouble() << std::endl;
-
-	//stringify the value objects in Document
-	StringBuffer buffer;
-	Writer<StringBuffer> writer(buffer);
-	myD.Accept(writer);
-	
-	// parsing DOM for necessary information to construct level
-	//Value& layOne = myD;
-	//int mapWidth = copyVal["layers"]["width"].GetInt();
-	//int mapHeight = copyVal["layers"]["height"].GetInt();
-
-	//std::cout << "height " << mapHeight << " Width " << mapWidth << std::endl;
-	// constructing level
-	board.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
-	board.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
-	board.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
-	
-	board[1]->tileSprite.setPosition(32, 32);
-	board[2]->tileSprite.setPosition(64, 32);
-	
+//given a cursors raw x,y coord. extrapolate which slot of the board container is associated with the cursors pos. 
+uint64_t getBSlot(uint64_t posX_, uint64_t posY_) {
+	uint64_t scaledX, scaledY;
+	scaledX = posX_/tilesize_const;
+	scaledY = posY_/tilesize_const;
+	return ((scaledY*width) + scaledX);
 
 }
 
@@ -100,20 +80,22 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 
 	// Using a reference for consecutive access is handy and faster
 	const Value& data = doc["data"];
-	const Value& height = doc["height"];
-	const Value& width = doc["width"];
+	const Value& h = doc["height"];
+	const Value& w = doc["width"];
 
 	assert(data.IsArray());
-	assert(height.IsInt());
-	assert(width.IsInt());
+	assert(h.IsInt());
+	assert(w.IsInt());
 	
 	std::cout << "data is read\n";
 	std::cout << data.Size() << std::endl;
-	std::cout << "height is: " << height.GetInt() << std::endl;
-	std::cout << "width is: " << width.GetInt() << std::endl;
+	std::cout << "height is: " << h.GetInt() << std::endl;
+	std::cout << "width is: " << w.GetInt() << std::endl;
+	height = h.GetInt();
+	width = w.GetInt();
 	int count=0;
-	for(int i = 0; i < height.GetInt(); i++) {
-		for (int j = 0; j < width.GetInt(); j++) {
+	for(int i = 0; i < h.GetInt(); i++) {
+		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
 				case plainTerrain_const :
 					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
@@ -144,6 +126,7 @@ int main( int argc, char** argv ) {
 	// INITIALIZATION 
 	// ====================
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
+	baseUnit * curUnit;
 	foo(terrainTexts);
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	window.setFramerateLimit(35);
@@ -207,27 +190,34 @@ int main( int argc, char** argv ) {
 					inGame = false;
 				}	 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-					myC->movePosX(16);
+					myC->movePosX(tilesize_const);
 				}
 	
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-					myC->movePosX(-16);
+					myC->movePosX(-tilesize_const);
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-					myC->movePosY(16);
+					myC->movePosY(tilesize_const);
 				}
-	
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-					myC->movePosY(-16);
+					myC->movePosY(-tilesize_const);
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) curInputState = terrainInfo;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr) {
+					curInputState = unitSelected;
+					curUnit = board[getBSlot(myC->posX, myC->posY)]->attachedUnit;
+					std::cout << getBSlot(myC->posX, myC->posY) << std::endl;
+				}
 				break;
 
 			case(terrainInfo):
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-				curInputState = terrainSelect;
-			}
-			break; 
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+					curInputState = terrainSelect;
+				}
+				break;
+			case(unitSelected):
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) curInputState = terrainSelect; 
+				break; 
 		}
 
 
@@ -240,7 +230,6 @@ int main( int argc, char** argv ) {
 //		if ( frameTimer >= frameTrigger)   {
 //			frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
 		
-			std::cout << "new frame\n";
 			window.clear();
 			// note, blocks is simply a repo of texture. 
 			// should iterate through a collection of sprites, not texutres. 
