@@ -3,6 +3,7 @@
 
 baseTerrain::baseTerrain()  	{
 	std::cout << "baseTerrain instatiated\n";
+	attachedUnit = nullptr;
 	
 }
 baseTerrain::~baseTerrain(){

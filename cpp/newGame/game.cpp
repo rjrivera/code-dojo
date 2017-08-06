@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <chrono>
 #include "baseTerrain.cpp"
+#include "baseUnit.cpp"
+#include "infantry.cpp"
 #include "plainTerrain.cpp"
 #include "cursor.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
@@ -71,7 +73,7 @@ void bar(std::vector<baseTerrain *>& board, std::vector<sf::Texture*>& terrainTe
 //prototyping function
 //provides initial content load of terrain art assetts
 
-enum inputState {terrainSelect, terrainInfo, unitInfo};
+enum inputState {terrainSelect, terrainInfo, unitInfo, unitSelected};
 
 void foo(std::vector<sf::Texture *>& text_container) {
 	
@@ -131,7 +133,6 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 			}
 			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			count++;
-//			std::cout <<  << std::endl;
 		}
 	}
 }
@@ -145,7 +146,9 @@ int main( int argc, char** argv ) {
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	foo(terrainTexts);
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
-	
+	window.setFramerateLimit(35);
+	std::chrono::milliseconds frameTrigger{35};
+
 	std::vector<baseTerrain * > board = std::vector<baseTerrain *>();
 	//bar(board, terrainTexts);
 	mapGen(board, terrainTexts);
@@ -155,11 +158,19 @@ int main( int argc, char** argv ) {
 	auto lastCycle = std::chrono::high_resolution_clock::now();
 	auto now = std::chrono::high_resolution_clock::now();
 	std::chrono::nanoseconds myTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(myTimer).zero();
+	std::chrono::nanoseconds frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
 	
 //CURSOR PoC --- migrate code appropriately when done demonstrating TODO [ ]
 	sf::Texture * cursText = new sf::Texture();
 	cursText->loadFromFile("textures/cursor.png");
 	cursor * myC = new cursor(cursText);
+//INFANTRY POC -- migrate code appropriately when done demonstrating TODO [ ]
+	sf::Texture * infText = new sf::Texture();
+	infText->loadFromFile("textures/unit0.png");
+	infantry * myI = new infantry(infText);
+	//now lets attach this unit to a board slot...
+	board[1]->attachedUnit = myI;
+	board[1]->attachedUnit->print();
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);
@@ -175,7 +186,8 @@ int main( int argc, char** argv ) {
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
 //		deltaTime = now - lastCycle;
-		myTimer = now - lastCycle;
+		frameTimer += myTimer = now - lastCycle;
+		
  //		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime).count() << std::endl;
 //		myTime += deltaTime;
 		// ===================================================
@@ -191,25 +203,25 @@ int main( int argc, char** argv ) {
 		// Escape Key pressed
 		switch(curInputState){
 			case(terrainSelect):
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-				inGame = false;
-			}	 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-				myC->movePosX(16);
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-				myC->movePosX(-16);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-				myC->movePosY(16);
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-				myC->movePosY(-16);
-			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) curInputState = terrainInfo;
-			break;
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+					inGame = false;
+				}	 
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+					myC->movePosX(16);
+				}
+	
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+					myC->movePosX(-16);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+					myC->movePosY(16);
+				}
+	
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+					myC->movePosY(-16);
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) curInputState = terrainInfo;
+				break;
 
 			case(terrainInfo):
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
@@ -223,15 +235,26 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// sprite draw logic
 		// ===================================================
-		window.clear();
-		// note, blocks is simply a repo of texture. 
-		// should iterate through a collection of sprites, not texutres. 
-		for(baseTerrain * obj : board) window.draw(obj->tileSprite);	
-		window.draw(myC->tileSprite);
-		
-		if (curInputState == terrainInfo) window.draw(*plSprite); 
+		// needs a framerate
 
-		window.display();
+//		if ( frameTimer >= frameTrigger)   {
+//			frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
+		
+			std::cout << "new frame\n";
+			window.clear();
+			// note, blocks is simply a repo of texture. 
+			// should iterate through a collection of sprites, not texutres. 
+			for(baseTerrain * obj : board) 	{
+				window.draw(obj->tileSprite);
+				if (obj->attachedUnit != nullptr) window.draw(obj->attachedUnit->unitSprite); 
+			}
+
+			window.draw(myC->tileSprite);
+			
+			if (curInputState == terrainInfo) window.draw(*plSprite); 
+
+			window.display();
+//		}
 		
 	}
 	return 0;
