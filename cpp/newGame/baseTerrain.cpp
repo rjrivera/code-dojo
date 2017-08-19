@@ -11,5 +11,21 @@ baseTerrain::~baseTerrain(){
 
 }
 
+void baseTerrain::attachUnit(baseUnit * unit) {
+	attachedUnit = unit;
+	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
+}
 
+void baseTerrain::setGridPos(uint32_t x, uint32_t y){
+	gridX = x;
+	gridY = y;
+}
 
+void baseTerrain::setUnitSize(uint32_t size) {
+	unitSize = size;
+
+}
+
+baseUnit * baseTerrain::getUnit(){
+	return attachedUnit;
+}

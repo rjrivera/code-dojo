@@ -12,11 +12,14 @@ baseUnit::~baseUnit(){
 
 void baseUnit::movePosX(uint64_t moveX) {
 //nop
-
+	posX += moveX;
+	unitSprite.setPosition(posX, posY);
 }
 
 void baseUnit::movePosY(uint64_t moveY) {
 //nop
-
+	posY += moveY;
+	unitSprite.setPosition(posX, posY);
 }
+
 

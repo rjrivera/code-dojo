@@ -18,6 +18,8 @@ class cursor {
 		void updateTimer(std::chrono::nanoseconds timer);
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveX);
+		bool getCooldown();
+		bool burnCooldown();
 
 		
 		

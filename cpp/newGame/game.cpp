@@ -19,6 +19,7 @@
 
 #define WIDTH 384
 #define HEIGHT 352
+//recent update - cleaned up userinput and leveraged cursor attached cooldown mechanism to the uinput handling
 //todo - finish PoC on infantry unit 
 //	> attache the unit to the board properly and move it on the board.
 //	> develop a pathfinding algorithm
@@ -114,6 +115,9 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 					break;
 			}
 			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			board_[count]->setUnitSize(tilesize_const);
+			board_[count]->setGridPos(j, i);
+
 			count++;
 		}
 	}
@@ -129,7 +133,7 @@ int main( int argc, char** argv ) {
 	baseUnit * curUnit;
 	foo(terrainTexts);
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
-	window.setFramerateLimit(35);
+	//window.setFramerateLimit(35);
 	std::chrono::milliseconds frameTrigger{35};
 
 	std::vector<baseTerrain * > board = std::vector<baseTerrain *>();
@@ -152,8 +156,8 @@ int main( int argc, char** argv ) {
 	infText->loadFromFile("textures/unit0.png");
 	infantry * myI = new infantry(infText);
 	//now lets attach this unit to a board slot...
-	board[1]->attachedUnit = myI;
-	board[1]->attachedUnit->print();
+	board[1]->attachUnit(myI);// = myI;
+//	board[1]->attachedUnit->print();
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);
@@ -166,6 +170,8 @@ int main( int argc, char** argv ) {
 	plSprite->setPosition(0,0);
 
 	while(inGame) {
+		sf::Event event;	
+		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
 		lastCycle = now;
 		now = std::chrono::high_resolution_clock::now();
 //		deltaTime = now - lastCycle;
@@ -182,44 +188,56 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
+		//debounce input.
+		if (myC->getCooldown() ) {
+			switch(curInputState){
+				case(terrainSelect):
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+						inGame = false;
+						myC->burnCooldown();
+					}	 
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+						myC->movePosX(tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+						myC->movePosX(-tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+						myC->movePosY(tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+						myC->movePosY(-tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) {
+						curInputState = terrainInfo;
+						myC->burnCooldown();
+						}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr) {
+						myC->burnCooldown();
+						curInputState = unitSelected;
+						curUnit = board[getBSlot(myC->posX, myC->posY)]->attachedUnit;
+						std::cout << getBSlot(myC->posX, myC->posY) << std::endl;
+					}
+					break;
 
-		// Escape Key pressed
-		switch(curInputState){
-			case(terrainSelect):
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-					inGame = false;
-				}	 
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-					myC->movePosX(tilesize_const);
-				}
-	
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-					myC->movePosX(-tilesize_const);
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-					myC->movePosY(tilesize_const);
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-					myC->movePosY(-tilesize_const);
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) curInputState = terrainInfo;
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr) {
-					curInputState = unitSelected;
-					curUnit = board[getBSlot(myC->posX, myC->posY)]->attachedUnit;
-					std::cout << getBSlot(myC->posX, myC->posY) << std::endl;
-				}
-				break;
-
-			case(terrainInfo):
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
-					curInputState = terrainSelect;
-				}
-				break;
-			case(unitSelected):
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) curInputState = terrainSelect; 
-				break; 
+				case(terrainInfo):
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+						curInputState = terrainSelect;
+						myC->burnCooldown();
+					}
+					break;
+				case(unitSelected):
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
+						curInputState = terrainSelect; 
+						myC->burnCooldown();
+					}
+					break; 
+			}
 		}
-
 
 
 		// ===================================================

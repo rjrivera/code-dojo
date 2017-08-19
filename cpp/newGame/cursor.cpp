@@ -25,13 +25,21 @@ void cursor::print() {
 
 }
 
+bool cursor::getCooldown() {
+	return movCooldown;
+}
+
+bool cursor::burnCooldown() {
+	movCooldown = false;
+	cursTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(cursTimer).zero();
+
+}
 void cursor::movePosX(uint64_t moveX) {
 	uint64_t newX = moveX + posX;
 	if (movCooldown && newX >= 0 && newX <= 384-16) {  
 		tileSprite.setPosition(newX, posY);
 		posX += moveX;
-		movCooldown = false;
-		cursTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(cursTimer).zero();
+		burnCooldown();
 	}
 
 }
@@ -41,8 +49,7 @@ void cursor::movePosY(uint64_t moveY) {
 	if (movCooldown && newY >= 0 && newY <= 384-16) {  
 		tileSprite.setPosition(posX, newY);
 		posY = newY;
-		movCooldown = false;
-		cursTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(cursTimer).zero();
+		burnCooldown();
 	}
 
 }
