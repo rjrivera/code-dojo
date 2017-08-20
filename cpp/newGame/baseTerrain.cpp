@@ -16,6 +16,11 @@ void baseTerrain::attachUnit(baseUnit * unit) {
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
 }
 
+void baseTerrain::detachUnit(){
+	attachedUnit = nullptr;
+
+}
+
 void baseTerrain::setGridPos(uint32_t x, uint32_t y){
 	gridX = x;
 	gridY = y;

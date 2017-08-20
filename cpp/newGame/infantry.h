@@ -9,6 +9,9 @@ class infantry : public baseUnit{
 		infantry(const sf::Texture * image_);
 		~infantry();
 		void print() override;
+		void initMoveGrids(uint32_t mvtRemaining) override;
+		void defineGridSprite(const sf::Texture image);
+
 };
 
 

@@ -5,8 +5,10 @@
 #include <chrono>
 #include "baseTerrain.cpp"
 #include "baseUnit.cpp"
+#include "baseGFX.cpp"
 #include "infantry.cpp"
 #include "plainTerrain.cpp"
+#include "moveGrid.cpp"
 #include "cursor.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
@@ -131,6 +133,9 @@ int main( int argc, char** argv ) {
 	// ====================
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	baseUnit * curUnit;
+	//control unit for board manipulation operations TODO[ ] move to cursor class.
+	uint32_t sourceBSlot = 0;
+	uint32_t destBSlot = 0;
 	foo(terrainTexts);
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	//window.setFramerateLimit(35);
@@ -218,10 +223,13 @@ int main( int argc, char** argv ) {
 						}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr) {
 						myC->burnCooldown();
-						curInputState = unitSelected;
-						curUnit = board[getBSlot(myC->posX, myC->posY)]->attachedUnit;
-						std::cout << getBSlot(myC->posX, myC->posY) << std::endl;
-					}
+						  
+
+						sourceBSlot = getBSlot(myC->posX, myC->posY);
+						curUnit = board[sourceBSlot]->attachedUnit;
+						// only alter the inputState if a unit is stationed on that board slot. 
+						if (curUnit != nullptr) curInputState = unitSelected;
+					}				
 					break;
 
 				case(terrainInfo):
@@ -231,10 +239,35 @@ int main( int argc, char** argv ) {
 					}
 					break;
 				case(unitSelected):
+					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
+						destBSlot = getBSlot(myC->posX, myC->posY);
+						if ( destBSlot != sourceBSlot )  {
+							board[destBSlot]->attachUnit(curUnit);
+							board[sourceBSlot]->detachUnit();	
+						}
 						curInputState = terrainSelect; 
 						myC->burnCooldown();
+
 					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+						myC->movePosX(tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+						myC->movePosX(-tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+						myC->movePosY(tilesize_const);
+						myC->burnCooldown();
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+						myC->movePosY(-tilesize_const);
+						myC->burnCooldown();
+					}
+	
+					//a -- exit unit with no action
 					break; 
 			}
 		}
