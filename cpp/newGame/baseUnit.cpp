@@ -22,7 +22,7 @@ void baseUnit::movePosY(uint64_t moveY) {
 	unitSprite.setPosition(posX, posY);
 }
 
-void baseUnit::initMoveGrids(uint32_t mvtRemaining) {
+void baseUnit::initMoveGrids(uint32_t mvtRemaining, uint32_t curX, uint32_t curY) {
 //nop
 
 }

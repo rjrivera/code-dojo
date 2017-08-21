@@ -9,7 +9,8 @@ class baseUnit {
 		baseUnit(); 	
 		~baseUnit();
 		virtual void print() = 0;
-		sf::Sprite unitSprite, gridSprite;
+		sf::Sprite unitSprite;
+		const sf::Texture * gridSprite;
 		bool movCooldown;
 		uint64_t posX, posY, hp, atk, mvt;
 		std::vector<moveGrid * > * validMoves;
@@ -19,7 +20,7 @@ class baseUnit {
 //		void updateTimer(std::chrono::nanoseconds timer);
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
-		virtual void initMoveGrids(uint32_t mvtRemaining);
+		virtual void initMoveGrids(uint32_t mvtRemaining, uint32_t curX, uint32_t curY);
 
 
 

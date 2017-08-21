@@ -9,10 +9,9 @@ moveGrid::moveGrid()  	{
 }
 
 moveGrid::moveGrid(const sf::Texture * image_, uint32_t initX, uint32_t initY) {
-	gFXSprite = sf::Sprite();
+	gFXSprite = *(new sf::Sprite());
 	gFXSprite.setTexture(*image_);
 	gFXSprite.setPosition(initX, initY);
-
 }
 
 moveGrid::~moveGrid(){

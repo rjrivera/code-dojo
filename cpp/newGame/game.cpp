@@ -160,6 +160,10 @@ int main( int argc, char** argv ) {
 	sf::Texture * infText = new sf::Texture();
 	infText->loadFromFile("textures/unit0.png");
 	infantry * myI = new infantry(infText);
+//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
+	sf::Texture * movText = new sf::Texture();
+	movText->loadFromFile("textures/moveGrid.png");
+	myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
 	board[1]->attachUnit(myI);// = myI;
 //	board[1]->attachedUnit->print();
@@ -287,6 +291,11 @@ int main( int argc, char** argv ) {
 			for(baseTerrain * obj : board) 	{
 				window.draw(obj->tileSprite);
 				if (obj->attachedUnit != nullptr) window.draw(obj->attachedUnit->unitSprite); 
+			}
+			if (curInputState == unitSelected)  {
+				for(auto mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
+					window.draw(mGrid->gFXSprite);
+				}
 			}
 
 			window.draw(myC->tileSprite);

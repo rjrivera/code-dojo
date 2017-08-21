@@ -1,4 +1,5 @@
 #include "baseTerrain.h";
+#include "moveGrid.h";
 #include <iostream>;
 
 baseTerrain::baseTerrain()  	{
@@ -14,6 +15,8 @@ baseTerrain::~baseTerrain(){
 void baseTerrain::attachUnit(baseUnit * unit) {
 	attachedUnit = unit;
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
+	attachedUnit->validMoves = new std::vector<moveGrid * >(); //TODO[ ] destroy the container after PoC.
+	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize);
 }
 
 void baseTerrain::detachUnit(){

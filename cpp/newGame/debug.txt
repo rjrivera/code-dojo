@@ -1,0 +1,2 @@
+g++ game.cpp -I. -w -std=c++11 -lboost_system -lpthread -lsfml-graphics -lsfml-window -lsfml-system -o ex1
+makefile:19: recipe for target 'all' failed

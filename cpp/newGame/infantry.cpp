@@ -33,32 +33,34 @@ void infantry::initMoveGrids(uint32_t mvtRemaining, uint32_t curX, uint32_t curY
 	mvtRemaining--;
 	//initMoveGrids(mvtRemaining);
 	//up 
-	if ( (posY - (1*tileConstSize)) >=0  )  {
-		validMoves->push_back(new moveGrid( gridSprite ), posX, posY-(1*tileConstSize) );
-		initMoveGrids(mvtRemaining, posX, posY - (1*tileConstSize));
+	if ( (curY - (1*tilesize_const)) >=0  )  {
+		validMoves->push_back(new moveGrid( gridSprite, curX, curY-(1*tilesize_const)) );
+		initMoveGrids(mvtRemaining, curX, curY - (1*tilesize_const));
 		
 	}
 	//down...determine if we need to filter this here or on board...should filter here...make mapsize universally accessible
-	if ( (posY + (1*tileConstSize)) <=0  )  {
-		validMoves->push_back(new moveGrid( gridSprite ), posX, posY+(1*tileConstSize) );
-		initMoveGrids(mvtRemaining, posX, posY + (1*tileConstSize));
+	//for now...magic num ber :S
+	if ( (curY + (1*tilesize_const)) <= tilesize_const * 30 )  {
+		validMoves->push_back(new moveGrid( gridSprite, curX, curY+(1*tilesize_const)) );
+		initMoveGrids(mvtRemaining, curX, curY + (1*tilesize_const));
 	}
 	//right...determine if we need to filter this here or on board...should filter here...make mapsize universally accessible
-	if ( (posX + (1*tileConstSize)) <=0  )  {
-		validMoves->push_back(new moveGrid( gridSprite ), posX+(1*tileConstSize), posY );
-		initMoveGrids(mvtRemaining, posX + (1*tileConstSize), posY);
+	//same as above
+	if ( (curX + (1*tilesize_const)) <= tilesize_const * 30  )  {
+		validMoves->push_back(new moveGrid( gridSprite, curX+(1*tilesize_const), curY) );
+		initMoveGrids(mvtRemaining, curX + (1*tilesize_const), curY);
 	}
 	//left 
-	if ( (posX - (1*tileConstSize)) >=0  )  {
-		validMoves->push_back(new moveGrid( gridSprite ), posX-(1*tileConstSize), posY );
-		initMoveGrids(mvtRemaining, posX - (1*tileConstSize), posY);
+	if ( (curX - (1*tilesize_const)) >=0  )  {
+		validMoves->push_back(new moveGrid( gridSprite, curX-(1*tilesize_const), curY) );
+		initMoveGrids(mvtRemaining, curX - (1*tilesize_const), curY);
 		
 	}
 
 }
 
 //temporary sprite - redefine with better software architecture. 
-void defineGridSprite(const sf::Texture image) {
+void infantry::defineGridSprite(const sf::Texture * image) {
 	gridSprite = image;
 }
 
