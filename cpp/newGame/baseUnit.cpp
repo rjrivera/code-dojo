@@ -2,7 +2,6 @@
 #include <iostream>;
 
 baseUnit::baseUnit()  	{
-	std::cout << "baseUnit instatiated\n";
 	
 }
 baseUnit::~baseUnit(){
@@ -22,7 +21,7 @@ void baseUnit::movePosY(uint64_t moveY) {
 	unitSprite.setPosition(posX, posY);
 }
 
-void baseUnit::initMoveGrids(uint32_t mvtRemaining, uint32_t curX, uint32_t curY) {
+void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY) {
 //nop
 
 }

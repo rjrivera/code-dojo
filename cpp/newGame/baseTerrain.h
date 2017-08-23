@@ -11,7 +11,7 @@ class baseTerrain {
 		virtual void print() = 0;
 		sf::Sprite tileSprite;
 		baseUnit * attachedUnit;
-		uint32_t gridX, gridY, unitSize;
+		uint32_t gridX, gridY, unitSize, cost;
 		void attachUnit(baseUnit * unit);
 		void detachUnit();
 		void setGridPos(uint32_t x, uint32_t y);

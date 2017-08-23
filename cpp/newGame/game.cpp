@@ -3,11 +3,13 @@
 #include <vector>
 #include <algorithm>
 #include <chrono>
+#include "Project_Constants.h"
 #include "baseTerrain.cpp"
 #include "baseUnit.cpp"
 #include "baseGFX.cpp"
 #include "infantry.cpp"
 #include "plainTerrain.cpp"
+#include "mountTerrain.cpp"
 #include "moveGrid.cpp"
 #include "cursor.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
@@ -15,7 +17,6 @@
 #include "rapidjson/include/rapidjson/stringbuffer.h"
 #include "rapidjson/include/rapidjson/filereadstream.h"
 #include <SFML/Graphics.hpp>
-#include "Project_Constants.h"
 //#include <boost/date_time/posix_time/posix_time.hpp>
 //#include <boost/date_time/posix_time/posix_time_types.hpp>
 
@@ -104,16 +105,16 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
 					break;
 				case mountTerrain_const :
-					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
 					break;
 				case waterTerrain_const :
-					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
 					break;
 				case roadTerrain_const :
 					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
 					break;
 				case forestTerrain_const :
-					board_.push_back(new plainTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
 					break;
 			}
 			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
@@ -131,6 +132,7 @@ int main( int argc, char** argv ) {
 	// ====================
 	// INITIALIZATION 
 	// ====================
+	///*	std::vector<baseTerrain * >*/ board = std::vector<baseTerrain *>();
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	baseUnit * curUnit;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
@@ -141,7 +143,6 @@ int main( int argc, char** argv ) {
 	//window.setFramerateLimit(35);
 	std::chrono::milliseconds frameTrigger{35};
 
-	std::vector<baseTerrain * > board = std::vector<baseTerrain *>();
 	//bar(board, terrainTexts);
 	mapGen(board, terrainTexts);
 	// testing posix_time libraries
@@ -164,9 +165,12 @@ int main( int argc, char** argv ) {
 	sf::Texture * movText = new sf::Texture();
 	movText->loadFromFile("textures/moveGrid.png");
 	myI->defineGridSprite(movText);
+//	myI->board_ = &board;
 	//now lets attach this unit to a board slot...
-	board[1]->attachUnit(myI);// = myI;
+	board[1]->attachUnit(myI);// = myI;	
+	
 //	board[1]->attachedUnit->print();
+//
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);

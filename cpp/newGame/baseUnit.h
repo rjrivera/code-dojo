@@ -2,6 +2,9 @@
 #define BASEUNIT_H
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
+//#include "baseTerrain.h"
+
+
 
 class baseUnit {
 
@@ -20,7 +23,7 @@ class baseUnit {
 //		void updateTimer(std::chrono::nanoseconds timer);
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
-		virtual void initMoveGrids(uint32_t mvtRemaining, uint32_t curX, uint32_t curY);
+		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
 
 
 
