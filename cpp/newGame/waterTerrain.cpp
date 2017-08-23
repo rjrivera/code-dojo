@@ -1,0 +1,28 @@
+#include "waterTerrain.h"
+#include "Project_Constants.h"
+#include <iostream>
+
+waterTerrain::waterTerrain()  	{
+	std::cout << "waterTerrain instatiated\n";
+	
+}
+
+waterTerrain::waterTerrain(const sf::Texture * image_) {
+	tileSprite = sf::Sprite();
+	tileSprite.setTexture(*image_);
+	tileSprite.setPosition(0, 0);
+	cost = 20;
+}
+
+waterTerrain::~waterTerrain(){
+	std::cout << "waterTerrain destroyed\n";
+
+}
+
+void waterTerrain::print() {
+	std::cout << "waterTerrain printed\n";
+
+}
+
+
+

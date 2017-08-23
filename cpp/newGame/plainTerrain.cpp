@@ -11,7 +11,7 @@ plainTerrain::plainTerrain(const sf::Texture * image_) {
 	tileSprite = sf::Sprite();
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);
-	cost = 1;
+	cost = 2;
 }
 
 plainTerrain::~plainTerrain(){

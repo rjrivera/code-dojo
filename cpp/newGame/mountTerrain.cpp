@@ -11,7 +11,7 @@ mountTerrain::mountTerrain(const sf::Texture * image_) {
 	tileSprite = sf::Sprite();
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);
-	cost = 3;
+	cost = 4;
 }
 
 mountTerrain::~mountTerrain(){

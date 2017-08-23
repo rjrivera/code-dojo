@@ -10,6 +10,8 @@
 #include "infantry.cpp"
 #include "plainTerrain.cpp"
 #include "mountTerrain.cpp"
+#include "roadTerrain.cpp"
+#include "waterTerrain.cpp"
 #include "moveGrid.cpp"
 #include "cursor.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
@@ -108,10 +110,10 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
 					break;
 				case waterTerrain_const :
-					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new waterTerrain(terrainTexts[waterTerrain_const]));
 					break;
 				case roadTerrain_const :
-					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
+					board_.push_back(new roadTerrain(terrainTexts[roadTerrain_const]));
 					break;
 				case forestTerrain_const :
 					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
