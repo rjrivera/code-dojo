@@ -252,7 +252,8 @@ int main( int argc, char** argv ) {
 					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
 						destBSlot = getBSlot(myC->posX, myC->posY);
-						if ( destBSlot != sourceBSlot )  {
+						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
+						if ( destBSlot != sourceBSlot && valMove)  {
 							board[destBSlot]->attachUnit(curUnit);
 							board[sourceBSlot]->detachUnit();	
 						}

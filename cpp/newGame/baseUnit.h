@@ -24,6 +24,7 @@ class baseUnit {
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
+		bool isValMove(uint32_t destX, uint32_t destY);
 
 
 
