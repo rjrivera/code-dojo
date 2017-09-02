@@ -1,33 +1,32 @@
-#include "infantry.h"
+#include "tank.h"
 #include "Project_Constants.h"
 #include <iostream>
 
-
-infantry::infantry()  	{
+tank::tank()  	{
 	std::cout << "plainTerrain instatiated\n";
 	
 }
 
-infantry::infantry(const sf::Texture * image_) {
+tank::tank(const sf::Texture * image_) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
-	mvt = 6;
+	mvt = 8;
 	validMoves = new std::vector<moveGrid *>();
 }
 
-infantry::~infantry(){
-	std::cout << "plainTerrain destroyed\n";
+tank::~tank(){
+	std::cout << "tank destroyed\n";
 
 }
 
-void infantry::print() {
-	std::cout << "plainTerrain printed\n";
+void tank::print() {
+	std::cout << "tank printed\n";
 
 }
 
 //simple BFS to generate default move grid objects.
-void infantry::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
+void tank::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	if (curX < 0 || curY < 0 || curX > 30*tilesize_const || curY > 30*tilesize_const) return; 
 	//mvtRemaining--;
 	mvtRemaining -= board[(getBSlot(curX, curY))]->cost;

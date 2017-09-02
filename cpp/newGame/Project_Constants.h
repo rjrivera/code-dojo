@@ -12,6 +12,13 @@ const int waterTerrain_const = 2;
 const int roadTerrain_const = 3; 
 const int forestTerrain_const = 4;
 
+//unit textures
+const int maxUnit_const = 3;
+const int infantryUnit_const = 0;
+const int tankUnit_const = 1;
+const int planeUnit_const = 2;
+const int boatUnit_const = 3;
+
 const int tilesize_const = 16;
 
 //board container

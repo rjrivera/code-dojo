@@ -8,6 +8,8 @@
 #include "baseUnit.cpp"
 #include "baseGFX.cpp"
 #include "infantry.cpp"
+#include "tank.cpp"
+#include "plane.cpp"
 #include "plainTerrain.cpp"
 #include "mountTerrain.cpp"
 #include "roadTerrain.cpp"
@@ -61,10 +63,15 @@ uint64_t getBSlot(uint64_t posX_, uint64_t posY_) {
 
 enum inputState {terrainSelect, terrainInfo, unitInfo, unitSelected};
 
-void foo(std::vector<sf::Texture *>& text_container) {
-	
-	for (int i = 0 ; i < maxTerrain_const; i++) {
-		std::string textName = "textures/plain" + std::to_string(i)  + ".png";
+void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
+	uint32_t numTexts = 0;
+	std::string texturePath = "textures/";
+	texturePath += textType_;
+	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
+	else if (textType_ == "unit" ) numTexts = maxUnit_const; 
+	else return;
+	for (int i = 0 ; i < numTexts; i++) {
+		std::string textName = texturePath + std::to_string(i)  + ".png";
 		sf::Texture * tempText = new sf::Texture();
 		tempText->loadFromFile(textName);
 		text_container.push_back(tempText);
@@ -128,6 +135,21 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	}
 }
 
+baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_ ) {
+	switch(unit_){
+		case infantryUnit_const :
+			return new infantry(unitTexts_[infantryUnit_const]);
+
+		case tankUnit_const  :
+			return new tank(unitTexts_[tankUnit_const]);
+		case planeUnit_const :
+			return new plane(unitTexts_[planeUnit_const]);
+//		case boatUnit_const :
+//			return new boat(unitTexts_[boatUnit_const]);
+		default : 
+			break;
+		}
+}
 
 int main( int argc, char** argv ) {
 
@@ -136,11 +158,13 @@ int main( int argc, char** argv ) {
 	// ====================
 	///*	std::vector<baseTerrain * >*/ board = std::vector<baseTerrain *>();
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
+	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
 	baseUnit * curUnit;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	uint32_t sourceBSlot = 0;
 	uint32_t destBSlot = 0;
-	foo(terrainTexts);
+	foo(terrainTexts, "plain");
+	foo(unitTexts, "unit");
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	//window.setFramerateLimit(35);
 	std::chrono::milliseconds frameTrigger{35};
@@ -159,17 +183,27 @@ int main( int argc, char** argv ) {
 	sf::Texture * cursText = new sf::Texture();
 	cursText->loadFromFile("textures/cursor.png");
 	cursor * myC = new cursor(cursText);
-//INFANTRY POC -- migrate code appropriately when done demonstrating TODO [ ]
-	sf::Texture * infText = new sf::Texture();
-	infText->loadFromFile("textures/unit0.png");
-	infantry * myI = new infantry(infText);
+//INFANTRY POC -- migrate code appropriately when done demonstrating TODO [X]
+
 //GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	sf::Texture * movText = new sf::Texture();
 	movText->loadFromFile("textures/moveGrid.png");
-	myI->defineGridSprite(movText);
-//	myI->board_ = &board;
+	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
-	board[1]->attachUnit(myI);// = myI;	
+	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const);
+	tUnit->defineGridSprite(movText);
+	board[1]->attachUnit(tUnit);// = myI;	
+//	board[1]->attachedUnit->defineGridSprite(movText);
+	tUnit = unitBuilder(unitTexts, tankUnit_const);
+	tUnit->defineGridSprite(movText);
+	board[9]->attachUnit(tUnit);// = myI;	
+//	board[9]->attachedUnit->defineGridSprite(movText);
+	tUnit = unitBuilder(unitTexts, planeUnit_const);
+	tUnit->defineGridSprite(movText);
+	board[21]->attachUnit(tUnit);// = myI;	
+//	board[21]->attachedUnit->defineGridSprite(movText);
+//	board[40]->attachUnit(unitBuilder(unitTexts, planeUnit_const));// = myI;	
+//	board[40]->attachedUnit->defineGridSprite(movText);
 	
 //	board[1]->attachedUnit->print();
 //
@@ -237,6 +271,8 @@ int main( int argc, char** argv ) {
 
 						sourceBSlot = getBSlot(myC->posX, myC->posY);
 						curUnit = board[sourceBSlot]->attachedUnit;
+						std::cout << board[sourceBSlot]->attachedUnit->posX << std::endl;
+						std::cout << myC->posX << std::endl;
 						// only alter the inputState if a unit is stationed on that board slot. 
 						if (curUnit != nullptr) curInputState = unitSelected;
 					}				
@@ -253,6 +289,7 @@ int main( int argc, char** argv ) {
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
 						destBSlot = getBSlot(myC->posX, myC->posY);
 						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
+						std::cout << "cursor x: " << myC->posX << std::endl;
 						if ( destBSlot != sourceBSlot && valMove)  {
 							board[destBSlot]->attachUnit(curUnit);
 							board[sourceBSlot]->detachUnit();	

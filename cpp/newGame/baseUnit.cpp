@@ -29,9 +29,17 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 
 bool baseUnit::isValMove(uint32_t destX, uint32_t destY){
 //simple linear traversal as it's a cheap operation.
-	for (moveGrid*& mG : *validMoves) {
-		if ((destX*tilesize_const) == mG->posX && (destY*tilesize_const) == mG->posY) return true;
+	for (auto mG : *validMoves) {
+		if (destX == mG->posX && destY == mG->posY) return true;
+		std::cout << mG->posX << std::endl;
 	}
 	return false;
 
 }
+//temporary sprite - redefine with better software architecture. 
+void baseUnit::defineGridSprite(const sf::Texture * image) {
+	gridSprite = image;
+}
+
+
+

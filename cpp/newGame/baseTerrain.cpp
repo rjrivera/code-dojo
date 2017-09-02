@@ -3,7 +3,6 @@
 #include <iostream>;
 
 baseTerrain::baseTerrain()  	{
-	std::cout << "baseTerrain instatiated\n";
 	attachedUnit = nullptr;
 	
 }
@@ -14,6 +13,8 @@ baseTerrain::~baseTerrain(){
 
 void baseTerrain::attachUnit(baseUnit * unit) {
 	attachedUnit = unit;
+	unit->posX = gridX*unitSize;
+	unit->posY = gridY*unitSize;
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
 	attachedUnit->validMoves = new std::vector<moveGrid * >(); //TODO[ ] destroy the container after PoC.
 	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize);
