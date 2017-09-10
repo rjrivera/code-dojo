@@ -57,6 +57,28 @@ uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
 
 }
 
+void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_) {
+	// init stat calcs
+	uint32_t DefA, DefD, AtkA, AtkD, DmgA, DmgD;
+	DefA = board_[attackerInd_]->defBonus + board_[attackerInd_]->attachedUnit->def;
+	DefD = board_[defenderInd_]->defBonus + board_[defenderInd_]->attachedUnit->def;
+	AtkA = (board_[attackerInd_]->attachedUnit->atk * board_[attackerInd_]->attachedUnit->hp) / 10;
+
+	// attack phase
+	DmgD = AtkA - ( DefD * 2);
+	std::cout << "attacker deals " << DmgD << " to defender\n";
+	board_[defenderInd_]->attachedUnit->hp-= DmgD;
+
+	// recalc stats for defense.
+	AtkD = (board_[defenderInd_]->attachedUnit->atk * board_[defenderInd_]->attachedUnit->hp) / 10;
+	DmgA = AtkD - (DefA * 2);
+	std::cout << "defender retaliates " << DmgA << " to attacker\n";
+
+	board_[attackerInd_]->attachedUnit->hp-= DmgA;
+	// defense phase
+
+}
+
 //foo 
 //prototyping function
 //provides initial content load of terrain art assetts
@@ -136,15 +158,15 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	}
 }
 
-baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_ ) {
+baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_, uint32_t player_) {
 	switch(unit_){
 		case infantryUnit_const :
-			return new infantry(unitTexts_[infantryUnit_const]);
+			return new infantry(unitTexts_[infantryUnit_const], player_);
 
 		case tankUnit_const  :
-			return new tank(unitTexts_[tankUnit_const]);
+			return new tank(unitTexts_[tankUnit_const], player_);
 		case planeUnit_const :
-			return new plane(unitTexts_[planeUnit_const]);
+			return new plane(unitTexts_[planeUnit_const], player_);
 //		case boatUnit_const :
 //			return new boat(unitTexts_[boatUnit_const]);
 		default : 
@@ -161,6 +183,7 @@ int main( int argc, char** argv ) {
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
 	baseUnit * curUnit;
+	bool draw = false;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	uint32_t sourceBSlot = 0;
 	uint32_t destBSlot = 0;
@@ -191,15 +214,15 @@ int main( int argc, char** argv ) {
 	movText->loadFromFile("textures/moveGrid.png");
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
-	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const);
+	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	board[1]->attachUnit(tUnit);// = myI;	
 //	board[1]->attachedUnit->defineGridSprite(movText);
-	tUnit = unitBuilder(unitTexts, tankUnit_const);
+	tUnit = unitBuilder(unitTexts, tankUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	board[9]->attachUnit(tUnit);// = myI;	
 //	board[9]->attachedUnit->defineGridSprite(movText);
-	tUnit = unitBuilder(unitTexts, planeUnit_const);
+	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
 	//tUnit->defineGridSprite(movText);
 	board[21]->attachUnit(tUnit);// = myI;	
 //	board[21]->attachedUnit->defineGridSprite(movText);
@@ -329,7 +352,8 @@ int main( int argc, char** argv ) {
 
 //		if ( frameTimer >= frameTrigger)   {
 //			frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
-		
+		if (draw) {
+			draw = false; 
 			window.clear();
 			// note, blocks is simply a repo of texture. 
 			// should iterate through a collection of sprites, not texutres. 
@@ -348,7 +372,8 @@ int main( int argc, char** argv ) {
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
 
 			window.display();
-//		}
+		}
+		else draw = true;
 		
 	}
 	return 0;

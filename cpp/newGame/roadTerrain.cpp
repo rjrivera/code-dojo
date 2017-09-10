@@ -12,6 +12,7 @@ roadTerrain::roadTerrain(const sf::Texture * image_, const sf::Texture * hlImage
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);
 	cost = 1;
+	defBonus = 0;
 }
 
 roadTerrain::~roadTerrain(){

@@ -27,5 +27,5 @@ extern std::vector<baseTerrain*> board = std::vector<baseTerrain*>();
 
 //board index calculator function
 uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
-
+void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_);
 #endif

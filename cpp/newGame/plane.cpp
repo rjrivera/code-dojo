@@ -8,11 +8,13 @@ plane::plane()  	{
 	
 }
 
-plane::plane(const sf::Texture * image_) {
+plane::plane(const sf::Texture * image_, uint32_t player_) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
 	mvt = 8;
+	atk = 30;
+	def = 3;
 	validMoves = new std::vector<uint32_t>();
 }
 

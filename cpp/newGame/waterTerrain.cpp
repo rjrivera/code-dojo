@@ -12,6 +12,7 @@ waterTerrain::waterTerrain(const sf::Texture * image_, const sf::Texture * hlIma
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);
 	cost = 20;
+	defBonus = 1;
 }
 
 waterTerrain::~waterTerrain(){

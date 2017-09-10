@@ -7,12 +7,14 @@ tank::tank()  	{
 	
 }
 
-tank::tank(const sf::Texture * image_) {
+tank::tank(const sf::Texture * image_, uint32_t player_) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
 	mvt = 8;
 	validMoves = new std::vector<uint32_t>();
+	atk = 14;
+	def = 4;
 }
 
 tank::~tank(){

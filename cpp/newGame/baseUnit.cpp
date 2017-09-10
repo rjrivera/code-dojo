@@ -5,6 +5,11 @@
 baseUnit::baseUnit()  	{
 	
 }
+
+baseUnit::baseUnit(uint32_t player_)  	{
+	player = player_;
+	hp = 100;
+}
 baseUnit::~baseUnit(){
 	std::cout << "baseUnit destroyed\n";
 
@@ -59,13 +64,13 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 
 bool baseUnit::isValMove(uint32_t destX, uint32_t destY){
 //simple linear traversal as it's a cheap operation.
-/*
-	for (auto mG : *validMoves) {
-		if (destX == mG->posX && destY == mG->posY) return true;
-		std::cout << mG->posX << std::endl;
+	uint32_t destSlot = getBSlot(destX, destY);
+	for (uint32_t mG : *validMoves) {
+		if (destSlot == mG) return true;
+		std::cout << destSlot << std::endl;
 	}
-	*/
-	return true;
+	
+	return false;
 
 }
 /*

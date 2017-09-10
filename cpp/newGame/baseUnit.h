@@ -11,12 +11,13 @@ class baseUnit {
 
 	public:
 		baseUnit(); 	
+		baseUnit(uint32_t player_); 	
 		~baseUnit();
 		virtual void print() = 0;
 		sf::Sprite unitSprite;
 		const sf::Texture * gridSprite;
 		bool movCooldown;
-		uint64_t posX, posY, hp, atk, mvt;
+		uint64_t posX, posY, hp, atk, mvt, def, player;
 		std::vector<uint32_t> *validMoves;
 // !!! TODO[ ] implement sprite timer after core PoC phase.
 //		std::chrono::nanoseconds spriteTimer;
