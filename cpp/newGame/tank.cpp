@@ -12,7 +12,7 @@ tank::tank(const sf::Texture * image_) {
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
 	mvt = 8;
-	validMoves = new std::vector<moveGrid *>();
+	validMoves = new std::vector<uint32_t>();
 }
 
 tank::~tank(){
@@ -24,7 +24,7 @@ void tank::print() {
 	std::cout << "tank printed\n";
 
 }
-
+/*
 //simple BFS to generate default move grid objects.
 void tank::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	if (curX < 0 || curY < 0 || curX > 30*tilesize_const || curY > 30*tilesize_const) return; 
@@ -58,5 +58,5 @@ void tank::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	}
 
 }
-
+*/
 

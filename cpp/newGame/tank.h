@@ -9,7 +9,7 @@ class tank : public baseUnit{
 		tank(const sf::Texture * image_);
 		~tank();
 		void print() override;
-		void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY) override;
+	//	void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY) override;
 };
 
 

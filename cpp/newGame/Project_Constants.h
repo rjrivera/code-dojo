@@ -5,13 +5,13 @@
 #include "baseTerrain.h"
 
 //terrain textures
-const int maxTerrain_const = 5;
+const int maxTerrain_const = 6;
 const int plainTerrain_const = 0;
 const int mountTerrain_const = 1; 
 const int waterTerrain_const = 2; 
 const int roadTerrain_const = 3; 
 const int forestTerrain_const = 4;
-
+const int moveTerrain_const = 5;
 //unit textures
 const int maxUnit_const = 3;
 const int infantryUnit_const = 0;
@@ -24,7 +24,8 @@ const int tilesize_const = 16;
 //board container
 extern std::vector<baseTerrain*> board = std::vector<baseTerrain*>();
 
+
 //board index calculator function
-uint64_t getBSlot(uint64_t posX_, uint64_t posY_);
+uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
 
 #endif

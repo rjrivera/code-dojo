@@ -7,7 +7,7 @@ plainTerrain::plainTerrain()  	{
 	
 }
 
-plainTerrain::plainTerrain(const sf::Texture * image_) {
+plainTerrain::plainTerrain(const sf::Texture * image_, const sf::Texture * hlImage_) : baseTerrain(hlImage_) {
 	tileSprite = sf::Sprite();
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);

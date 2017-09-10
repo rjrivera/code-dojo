@@ -7,9 +7,10 @@ class baseTerrain {
 
 	public:
 		baseTerrain(); 	
+		baseTerrain(const sf::Texture * highlightTexture);
 		~baseTerrain();
 		virtual void print() = 0;
-		sf::Sprite tileSprite;
+		sf::Sprite tileSprite, highlightSprite;
 		baseUnit * attachedUnit;
 		uint32_t gridX, gridY, unitSize, cost;
 		void attachUnit(baseUnit * unit);

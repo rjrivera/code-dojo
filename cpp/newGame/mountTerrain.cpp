@@ -7,7 +7,7 @@ mountTerrain::mountTerrain()  	{
 	
 }
 
-mountTerrain::mountTerrain(const sf::Texture * image_) {
+mountTerrain::mountTerrain(const sf::Texture * image_, const sf::Texture * hlImage_) : baseTerrain(hlImage_) {
 	tileSprite = sf::Sprite();
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);

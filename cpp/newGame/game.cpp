@@ -49,8 +49,8 @@ uint64_t height = 0;
 uint64_t width = 0;
 
 //given a cursors raw x,y coord. extrapolate which slot of the board container is associated with the cursors pos. 
-uint64_t getBSlot(uint64_t posX_, uint64_t posY_) {
-	uint64_t scaledX, scaledY;
+uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
+	uint32_t scaledX, scaledY;
 	scaledX = posX_/tilesize_const;
 	scaledY = posY_/tilesize_const;
 	return ((scaledY*width) + scaledX);
@@ -111,25 +111,26 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
 				case plainTerrain_const :
-					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const]));
+					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case mountTerrain_const :
-					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case waterTerrain_const :
-					board_.push_back(new waterTerrain(terrainTexts[waterTerrain_const]));
+					board_.push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case roadTerrain_const :
-					board_.push_back(new roadTerrain(terrainTexts[roadTerrain_const]));
+					board_.push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case forestTerrain_const :
-					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const]));
+					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 			}
+				//TODO[ ] put this logic in the class...it belongs there. 
 			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			board_[count]->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			board_[count]->setUnitSize(tilesize_const);
 			board_[count]->setGridPos(j, i);
-
 			count++;
 		}
 	}
@@ -191,15 +192,15 @@ int main( int argc, char** argv ) {
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
 	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const);
-	tUnit->defineGridSprite(movText);
+	//tUnit->defineGridSprite(movText);
 	board[1]->attachUnit(tUnit);// = myI;	
 //	board[1]->attachedUnit->defineGridSprite(movText);
 	tUnit = unitBuilder(unitTexts, tankUnit_const);
-	tUnit->defineGridSprite(movText);
+	//tUnit->defineGridSprite(movText);
 	board[9]->attachUnit(tUnit);// = myI;	
 //	board[9]->attachedUnit->defineGridSprite(movText);
 	tUnit = unitBuilder(unitTexts, planeUnit_const);
-	tUnit->defineGridSprite(movText);
+	//tUnit->defineGridSprite(movText);
 	board[21]->attachUnit(tUnit);// = myI;	
 //	board[21]->attachedUnit->defineGridSprite(movText);
 //	board[40]->attachUnit(unitBuilder(unitTexts, planeUnit_const));// = myI;	
@@ -337,8 +338,8 @@ int main( int argc, char** argv ) {
 				if (obj->attachedUnit != nullptr) window.draw(obj->attachedUnit->unitSprite); 
 			}
 			if (curInputState == unitSelected)  {
-				for(auto mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
-					window.draw(mGrid->gFXSprite);
+				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
+					window.draw(board[mGrid]->highlightSprite);
 				}
 			}
 

@@ -12,8 +12,8 @@ plane::plane(const sf::Texture * image_) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
-	mvt = 10;
-	validMoves = new std::vector<moveGrid *>();
+	mvt = 8;
+	validMoves = new std::vector<uint32_t>();
 }
 
 plane::~plane(){
@@ -25,7 +25,7 @@ void plane::print() {
 	std::cout << "plane printed\n";
 
 }
-
+/*
 //simple BFS to generate default move grid objects.
 void plane::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	if (curX < 0 || curY < 0 || curX > 30*tilesize_const || curY > 30*tilesize_const) return; 
@@ -59,5 +59,5 @@ void plane::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	}
 
 }
-
+*/
 

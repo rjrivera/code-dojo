@@ -6,7 +6,7 @@ class roadTerrain : public baseTerrain{
 
 	public:
 		roadTerrain(); 	
-		roadTerrain(const sf::Texture * image_);
+		roadTerrain(const sf::Texture * image_, const sf::Texture * hlImage_);
 		~roadTerrain();
 		void print() override;
 };

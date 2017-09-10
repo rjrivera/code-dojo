@@ -4,8 +4,14 @@
 
 baseTerrain::baseTerrain()  	{
 	attachedUnit = nullptr;
-	
 }
+
+baseTerrain::baseTerrain(const sf::Texture * highlightTexture)  	{
+	attachedUnit = nullptr;
+	highlightSprite = sf::Sprite();
+	highlightSprite.setTexture(*highlightTexture);
+}
+
 baseTerrain::~baseTerrain(){
 	std::cout << "baseTerrain destroyed\n";
 
@@ -16,7 +22,7 @@ void baseTerrain::attachUnit(baseUnit * unit) {
 	unit->posX = gridX*unitSize;
 	unit->posY = gridY*unitSize;
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
-	attachedUnit->validMoves = new std::vector<moveGrid * >(); //TODO[ ] destroy the container after PoC.
+	attachedUnit->validMoves->clear();
 	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize);
 }
 

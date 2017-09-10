@@ -6,7 +6,7 @@ class plainTerrain : public baseTerrain{
 
 	public:
 		plainTerrain(); 	
-		plainTerrain(const sf::Texture * image_);
+		plainTerrain(const sf::Texture * image_, const sf::Texture * hlImage_);
 		~plainTerrain();
 		void print() override;
 };

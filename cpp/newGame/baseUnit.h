@@ -2,6 +2,7 @@
 #define BASEUNIT_H
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
+#include <vector>
 //#include "baseTerrain.h"
 
 
@@ -16,7 +17,7 @@ class baseUnit {
 		const sf::Texture * gridSprite;
 		bool movCooldown;
 		uint64_t posX, posY, hp, atk, mvt;
-		std::vector<moveGrid * > * validMoves;
+		std::vector<uint32_t> *validMoves;
 // !!! TODO[ ] implement sprite timer after core PoC phase.
 //		std::chrono::nanoseconds spriteTimer;
 //		std::chrono::milliseconds cursTrigger{250};
@@ -24,7 +25,7 @@ class baseUnit {
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
-		void defineGridSprite(const sf::Texture * image);
+		//void defineGridSprite(const sf::Texture * image);
 		bool isValMove(uint32_t destX, uint32_t destY);
 
 

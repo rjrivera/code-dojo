@@ -13,7 +13,7 @@ infantry::infantry(const sf::Texture * image_) {
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
 	mvt = 6;
-	validMoves = new std::vector<moveGrid *>();
+	validMoves = new std::vector<uint32_t>();
 }
 
 infantry::~infantry(){
@@ -25,14 +25,14 @@ void infantry::print() {
 	std::cout << "plainTerrain printed\n";
 
 }
-
+/*
 //simple BFS to generate default move grid objects.
 void infantry::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)  {
 	if (curX < 0 || curY < 0 || curX > 30*tilesize_const || curY > 30*tilesize_const) return; 
 	//mvtRemaining--;
 	mvtRemaining -= board[(getBSlot(curX, curY))]->cost;
 	if (mvtRemaining <0 ) return;
-	validMoves->push_back(new moveGrid( gridSprite, curX, curY)); 
+	validMoves->push_back((getBSlot(curX, curY))); 
 	//up 
 	if ( (curY - (1*tilesize_const)) >=0  )  {
 //		validMoves->push_back(new moveGrid( gridSprite, curX, curY-(1*tilesize_const)) );
@@ -59,5 +59,5 @@ void infantry::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 	}
 
 }
-
+*/
 
