@@ -90,12 +90,14 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	std::string texturePath = "textures/";
 	texturePath += textType_;
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
-	else if (textType_ == "unit" ) numTexts = maxUnit_const; 
+	else if (textType_ == "unit" ) numTexts = (maxUnit_const * maxPlayers_const); 
 	else return;
-	for (int i = 0 ; i < numTexts; i++) {
+	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
+	for (int i = 1 ; i <= numTexts; i++) {
 		std::string textName = texturePath + std::to_string(i)  + ".png";
 		sf::Texture * tempText = new sf::Texture();
 		tempText->loadFromFile(textName);
+		std::cout << "pushing texture " << textName << " into container at index " << text_container.size() << std::endl;
 		text_container.push_back(tempText);
 	}		
 
@@ -161,12 +163,12 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_, uint32_t player_) {
 	switch(unit_){
 		case infantryUnit_const :
-			return new infantry(unitTexts_[infantryUnit_const], player_);
+			return new infantry(unitTexts_[infantryUnit_const * player_], player_);
 
 		case tankUnit_const  :
-			return new tank(unitTexts_[tankUnit_const], player_);
+			return new tank(unitTexts_[tankUnit_const * player_], player_);
 		case planeUnit_const :
-			return new plane(unitTexts_[planeUnit_const], player_);
+			return new plane(unitTexts_[planeUnit_const * player_], player_);
 //		case boatUnit_const :
 //			return new boat(unitTexts_[boatUnit_const]);
 		default : 
@@ -225,6 +227,10 @@ int main( int argc, char** argv ) {
 	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
 	//tUnit->defineGridSprite(movText);
 	board[21]->attachUnit(tUnit);// = myI;	
+	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
+	board[3]->attachUnit(tUnit);	
+	tUnit = unitBuilder(unitTexts, tankUnit_const, 2);
+	board[5]->attachUnit(tUnit);
 //	board[21]->attachedUnit->defineGridSprite(movText);
 //	board[40]->attachUnit(unitBuilder(unitTexts, planeUnit_const));// = myI;	
 //	board[40]->attachedUnit->defineGridSprite(movText);

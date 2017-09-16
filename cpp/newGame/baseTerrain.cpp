@@ -18,6 +18,10 @@ baseTerrain::~baseTerrain(){
 }
 
 void baseTerrain::attachUnit(baseUnit * unit) {
+	if (attachedUnit!=nullptr) {
+		std::cout << "cannot attach Unit, slot already occupied\n";
+		return;
+	}
 	attachedUnit = unit;
 	unit->posX = gridX*unitSize;
 	unit->posY = gridY*unitSize;
