@@ -33,7 +33,7 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 	//mvtRemaining--;
 	mvtRemaining -= board[(getBSlot(curX, curY))]->cost;
 	if (mvtRemaining <0 ) return;
-	validMoves->push_back((getBSlot(curX, curY))); 
+	validMoves->push_back((getBSlot(curX, curY)));   
 	//up 
 	if ( (curY - (1*tilesize_const)) >=0  )  {
 //		validMoves->push_back(new moveGrid( gridSprite, curX, curY-(1*tilesize_const)) );
@@ -58,6 +58,21 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 		initMoveGrids(mvtRemaining, curX - (1*tilesize_const), curY);
 		
 	}
+
+
+}
+
+//do a simple implementation away from the board's border for PoC, dig deep when refining soon. 
+int32_t baseUnit::findFirstNeighbor() {
+	int32_t sourceSlot = (int32_t)getBSlot(posX, posY);
+	int32_t above = getAboveBSlot(sourceSlot);
+	int32_t below = getBelowBSlot(sourceSlot);
+	if (board[sourceSlot+1]->attachedUnit != nullptr ) return sourceSlot+1;
+	else if (board[sourceSlot-1]->attachedUnit != nullptr) return sourceSlot-1;
+	else if (board[above] >= 0 && board[above]->attachedUnit != nullptr ) return above;   
+	else if (board[below] >= 0 && board[below]->attachedUnit != nullptr ) return below; 
+	return -1;
+	
 
 
 }

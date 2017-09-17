@@ -17,7 +17,8 @@ class baseUnit {
 		sf::Sprite unitSprite;
 		const sf::Texture * gridSprite;
 		bool movCooldown;
-		uint64_t posX, posY, hp, atk, mvt, def, player;
+		uint32_t posX, posY, atk, mvt, def, player;
+		int32_t hp;
 		std::vector<uint32_t> *validMoves;
 // !!! TODO[ ] implement sprite timer after core PoC phase.
 //		std::chrono::nanoseconds spriteTimer;
@@ -26,6 +27,8 @@ class baseUnit {
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
+		//prototyping function which will migrate to unit classes (direct fire units will use baseUnit definition, indirect will override)
+		int32_t findFirstNeighbor(); 
 		//void defineGridSprite(const sf::Texture * image);
 		bool isValMove(uint32_t destX, uint32_t destY);
 

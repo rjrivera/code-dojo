@@ -56,25 +56,52 @@ uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
 	return ((scaledY*width) + scaledX);
 
 }
+// must be signed to indicate when outside of bounds
+int32_t getAboveBSlot(int32_t sourceBSlot) {
+	return sourceBSlot - width;
+}
 
+// must be signed to indicate when outside of bounds
+int32_t getBelowBSlot(int32_t sourceBSlot) {
+	if ((sourceBSlot + width) > (height * width)) return -1; 
+	else return (sourceBSlot + width);
+}
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_) {
 	// init stat calcs
-	uint32_t DefA, DefD, AtkA, AtkD, DmgA, DmgD;
+	int32_t DefA, DefD, AtkA, AtkD, DmgA, DmgD;
 	DefA = board_[attackerInd_]->defBonus + board_[attackerInd_]->attachedUnit->def;
 	DefD = board_[defenderInd_]->defBonus + board_[defenderInd_]->attachedUnit->def;
 	AtkA = (board_[attackerInd_]->attachedUnit->atk * board_[attackerInd_]->attachedUnit->hp) / 10;
 
 	// attack phase
 	DmgD = AtkA - ( DefD * 2);
-	std::cout << "attacker deals " << DmgD << " to defender\n";
-	board_[defenderInd_]->attachedUnit->hp-= DmgD;
-
+	if (DmgD > 0 ) { 
+		std::cout << "attacker deals " << DmgD << " to defender\n";
+		board_[defenderInd_]->attachedUnit->hp-= DmgD;
+		if (board_[defenderInd_]->attachedUnit->hp <= 0)  {
+			//kill unit
+			delete board_[defenderInd_]->attachedUnit;
+			board_[defenderInd_]->attachedUnit = nullptr;
+			std::cout << "DEFENDER DESTROYED!!!\n";
+			return;
+		}
+	}
+	else std::cout << "attacker deals zero damage\n";
 	// recalc stats for defense.
 	AtkD = (board_[defenderInd_]->attachedUnit->atk * board_[defenderInd_]->attachedUnit->hp) / 10;
 	DmgA = AtkD - (DefA * 2);
-	std::cout << "defender retaliates " << DmgA << " to attacker\n";
-
-	board_[attackerInd_]->attachedUnit->hp-= DmgA;
+	if (DmgA > 0 ) { 
+		std::cout << "defender retaliates " << DmgA << " to attacker\n";
+		board_[attackerInd_]->attachedUnit->hp-= DmgA;
+		if (board_[attackerInd_]->attachedUnit->hp <= 0)  {
+			//kill unit
+			delete board_[attackerInd_]->attachedUnit;
+			board_[attackerInd_]->attachedUnit = nullptr;
+			std::cout << "ATTACKER DESTROYED!!!\n";
+			return;
+		}
+	}
+	else std::cout << "defender deals zero damage\n";
 	// defense phase
 
 }
@@ -104,7 +131,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 }
 
 //MAPGENERATOR
-//PROTOTYPING FUNCTION
+//PROTOTYPING FUNCTION TODO[ ] update the json to reflect the new const scheme for terrains and remove the + 1 offset in below funct
 void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terrainTexts) {
 	FILE* fp = fopen("map1.json", "rb");
 	char readBuffer[65536];
@@ -134,19 +161,19 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	for(int i = 0; i < h.GetInt(); i++) {
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
-				case plainTerrain_const :
+				case (plainTerrain_const -1) :
 					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
-				case mountTerrain_const :
+				case (mountTerrain_const - 1) :
 					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
-				case waterTerrain_const :
+				case (waterTerrain_const - 1):
 					board_.push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
-				case roadTerrain_const :
+				case (roadTerrain_const - 1) :
 					board_.push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
-				case forestTerrain_const :
+				case (forestTerrain_const - 1) :
 					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 			}
@@ -224,7 +251,7 @@ int main( int argc, char** argv ) {
 	//tUnit->defineGridSprite(movText);
 	board[9]->attachUnit(tUnit);// = myI;	
 //	board[9]->attachedUnit->defineGridSprite(movText);
-	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
+	tUnit = unitBuilder(unitTexts, planeUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	board[21]->attachUnit(tUnit);// = myI;	
 	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
@@ -323,6 +350,9 @@ int main( int argc, char** argv ) {
 						if ( destBSlot != sourceBSlot && valMove)  {
 							board[destBSlot]->attachUnit(curUnit);
 							board[sourceBSlot]->detachUnit();	
+						 	int32_t neighbor = curUnit->findFirstNeighbor();
+							std::cout << "first Neighbor " << neighbor << std::endl;
+							if (neighbor >= 0) battle(destBSlot, neighbor, board);
 						}
 						curInputState = terrainSelect; 
 						myC->burnCooldown();
