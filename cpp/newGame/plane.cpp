@@ -12,6 +12,11 @@ plane::plane(const sf::Texture * image_, uint32_t player_) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
+	numSprites = 1;
+	spriteOffset = 0; 
+	spriteTimer = 0;
+	spriteTrigger = 10;
+
 	mvt = 8;
 	atk = 30;
 	def = 3;

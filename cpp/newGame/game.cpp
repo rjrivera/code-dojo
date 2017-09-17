@@ -66,6 +66,7 @@ int32_t getBelowBSlot(int32_t sourceBSlot) {
 	if ((sourceBSlot + width) > (height * width)) return -1; 
 	else return (sourceBSlot + width);
 }
+
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_) {
 	// init stat calcs
 	int32_t DefA, DefD, AtkA, AtkD, DmgA, DmgD;
@@ -103,7 +104,6 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 	}
 	else std::cout << "defender deals zero damage\n";
 	// defense phase
-
 }
 
 //foo 
@@ -126,8 +126,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 		tempText->loadFromFile(textName);
 		std::cout << "pushing texture " << textName << " into container at index " << text_container.size() << std::endl;
 		text_container.push_back(tempText);
-	}		
-
+	}
 }
 
 //MAPGENERATOR
@@ -192,7 +191,6 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_, ui
 	switch(unit_){
 		case infantryUnit_const :
 			return new infantry(unitTexts_[infantryUnit_const * player_], player_);
-
 		case tankUnit_const  :
 			return new tank(unitTexts_[tankUnit_const * player_], player_);
 		case planeUnit_const :
@@ -399,7 +397,19 @@ int main( int argc, char** argv ) {
 			// should iterate through a collection of sprites, not texutres. 
 			for(baseTerrain * obj : board) 	{
 				window.draw(obj->tileSprite);
-				if (obj->attachedUnit != nullptr) window.draw(obj->attachedUnit->unitSprite); 
+				if (obj->attachedUnit != nullptr) {
+					window.draw(obj->attachedUnit->unitSprite); 
+//					if (objj->attachedUnit is  ) everthing below in this else loop needs to be in the unit class. 
+					obj->attachedUnit->spriteTimer++;
+					if (obj->attachedUnit->spriteTimer >= obj->attachedUnit->spriteTrigger) {
+						obj->attachedUnit->spriteOffset++; 
+						obj->attachedUnit->spriteTimer = 0;
+						obj->attachedUnit->unitSprite.setTextureRect(sf::IntRect(obj->attachedUnit->spriteOffset*16, 0, 16, 16));
+						if (obj->attachedUnit->spriteOffset == obj->attachedUnit->numSprites)  {
+							obj->attachedUnit->spriteOffset = 0;
+						}
+					}
+				}
 			}
 			if (curInputState == unitSelected)  {
 				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {

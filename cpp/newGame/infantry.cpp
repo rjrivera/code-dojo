@@ -10,8 +10,12 @@ infantry::infantry()  	{
 
 infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(player_){
 	unitSprite = sf::Sprite();
-	unitSprite.setTexture(*image_);
+	unitSprite.setTexture(*(image_));
 	unitSprite.setPosition(0, 0);
+	numSprites = 3;
+	spriteOffset = 0; 
+	spriteTimer = 0;
+	spriteTrigger = 10;
 	mvt = 6;
 	std::cout << "constructor sees this player value: " << player_ << std::endl;
 	validMoves = new std::vector<uint32_t>();

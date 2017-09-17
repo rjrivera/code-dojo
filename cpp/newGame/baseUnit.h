@@ -17,7 +17,7 @@ class baseUnit {
 		sf::Sprite unitSprite;
 		const sf::Texture * gridSprite;
 		bool movCooldown;
-		uint32_t posX, posY, atk, mvt, def, player;
+		uint32_t posX, posY, atk, mvt, def, player, spriteOffset, numSprites, spriteTimer, spriteTrigger;
 		int32_t hp;
 		std::vector<uint32_t> *validMoves;
 		std::vector<int32_t> *enemyNeighbors;
