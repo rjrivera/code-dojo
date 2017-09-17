@@ -16,6 +16,7 @@ plane::plane(const sf::Texture * image_, uint32_t player_) {
 	atk = 30;
 	def = 3;
 	validMoves = new std::vector<uint32_t>();
+	enemyNeighbors = new std::vector<int32_t>();
 }
 
 plane::~plane(){

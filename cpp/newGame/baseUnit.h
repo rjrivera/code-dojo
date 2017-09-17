@@ -20,6 +20,7 @@ class baseUnit {
 		uint32_t posX, posY, atk, mvt, def, player;
 		int32_t hp;
 		std::vector<uint32_t> *validMoves;
+		std::vector<int32_t> *enemyNeighbors;
 // !!! TODO[ ] implement sprite timer after core PoC phase.
 //		std::chrono::nanoseconds spriteTimer;
 //		std::chrono::milliseconds cursTrigger{250};
@@ -28,7 +29,7 @@ class baseUnit {
 		void movePosY(uint64_t moveY);
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
 		//prototyping function which will migrate to unit classes (direct fire units will use baseUnit definition, indirect will override)
-		int32_t findFirstNeighbor(); 
+		void findEnemyNeighbors(); 
 		//void defineGridSprite(const sf::Texture * image);
 		bool isValMove(uint32_t destX, uint32_t destY);
 

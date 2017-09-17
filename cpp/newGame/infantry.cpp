@@ -8,12 +8,14 @@ infantry::infantry()  	{
 	
 }
 
-infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(player_) {
+infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(player_){
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);
 	mvt = 6;
+	std::cout << "constructor sees this player value: " << player_ << std::endl;
 	validMoves = new std::vector<uint32_t>();
+	enemyNeighbors = new std::vector<int32_t>();
 	def = 1;
 	atk = 10;
 

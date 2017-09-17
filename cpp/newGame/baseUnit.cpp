@@ -3,13 +3,14 @@
 #include "Project_Constants.h";
 
 baseUnit::baseUnit()  	{
-	
-}
-
-baseUnit::baseUnit(uint32_t player_)  	{
-	player = player_;
 	hp = 100;
 }
+
+baseUnit::baseUnit(uint32_t player_) {
+	player = 1;
+	hp = 100;
+}
+
 baseUnit::~baseUnit(){
 	std::cout << "baseUnit destroyed\n";
 
@@ -63,18 +64,23 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 }
 
 //do a simple implementation away from the board's border for PoC, dig deep when refining soon. 
-int32_t baseUnit::findFirstNeighbor() {
+void baseUnit::findEnemyNeighbors() {
+	enemyNeighbors->clear();
 	int32_t sourceSlot = (int32_t)getBSlot(posX, posY);
 	int32_t above = getAboveBSlot(sourceSlot);
 	int32_t below = getBelowBSlot(sourceSlot);
-	if (board[sourceSlot+1]->attachedUnit != nullptr ) return sourceSlot+1;
-	else if (board[sourceSlot-1]->attachedUnit != nullptr) return sourceSlot-1;
-	else if (board[above] >= 0 && board[above]->attachedUnit != nullptr ) return above;   
-	else if (board[below] >= 0 && board[below]->attachedUnit != nullptr ) return below; 
-	return -1;
-	
-
-
+	if (board[sourceSlot + 1]->attachedUnit != nullptr && board[sourceSlot + 1]->attachedUnit->player != player) 
+		enemyNeighbors->push_back(sourceSlot + 1);  
+	else if (board[sourceSlot - 1]->attachedUnit != nullptr && board[sourceSlot - 1]->attachedUnit->player != player) 
+		enemyNeighbors->push_back(sourceSlot - 1);
+	else if (above >= 0 && board[above]->attachedUnit != nullptr && board[above]->attachedUnit->player != player)
+		 enemyNeighbors->push_back(above);   
+	else if (below >= 0 && board[below]->attachedUnit != nullptr && board[below]->attachedUnit->player != player)
+		 enemyNeighbors->push_back(below); 
+	//for debugging - remove when done [ ] TODO
+	for (auto& enemy : *enemyNeighbors) std::cout << "enemy neighbor at: " << enemy << std::endl;
+	std::cout << "size of enemy neighbor vector: " << enemyNeighbors->size() << std::endl;
+	std::cout << "curUnit player number: " << player << std::endl;
 }
 
 bool baseUnit::isValMove(uint32_t destX, uint32_t destY){

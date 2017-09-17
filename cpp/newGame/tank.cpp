@@ -13,6 +13,7 @@ tank::tank(const sf::Texture * image_, uint32_t player_) {
 	unitSprite.setPosition(0, 0);
 	mvt = 8;
 	validMoves = new std::vector<uint32_t>();
+	enemyNeighbors = new std::vector<int32_t>();
 	atk = 14;
 	def = 4;
 }

@@ -188,6 +188,7 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 }
 
 baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_, uint32_t player_) {
+	std::cout << "building unit for player " << player_ << std::endl;
 	switch(unit_){
 		case infantryUnit_const :
 			return new infantry(unitTexts_[infantryUnit_const * player_], player_);
@@ -245,7 +246,12 @@ int main( int argc, char** argv ) {
 	//now lets attach this unit to a board slot...
 	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
+	std::cout << "tUnit player num: " << tUnit->player << std::endl;
 	board[1]->attachUnit(tUnit);// = myI;	
+	std::cout << "unit attached\n";
+	std::cout << "attached unit player num is: " << board[1]->attachedUnit->player << std::endl;
+	board[1]->attachedUnit->player = 1;
+	std::cout << "attached unit player num is: " << board[1]->attachedUnit->player << std::endl;
 //	board[1]->attachedUnit->defineGridSprite(movText);
 	tUnit = unitBuilder(unitTexts, tankUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
@@ -347,12 +353,10 @@ int main( int argc, char** argv ) {
 						destBSlot = getBSlot(myC->posX, myC->posY);
 						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
 						std::cout << "cursor x: " << myC->posX << std::endl;
-						if ( destBSlot != sourceBSlot && valMove)  {
+						if ( destBSlot != sourceBSlot && valMove && board[destBSlot]->attachedUnit == nullptr )  {
 							board[destBSlot]->attachUnit(curUnit);
 							board[sourceBSlot]->detachUnit();	
-						 	int32_t neighbor = curUnit->findFirstNeighbor();
-							std::cout << "first Neighbor " << neighbor << std::endl;
-							if (neighbor >= 0) battle(destBSlot, neighbor, board);
+						 	curUnit->findEnemyNeighbors();
 						}
 						curInputState = terrainSelect; 
 						myC->burnCooldown();
