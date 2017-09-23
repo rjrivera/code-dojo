@@ -222,6 +222,7 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds frameTrigger{35};
 
 	//bar(board, terrainTexts);
+
 	mapGen(board, terrainTexts);
 	// testing posix_time libraries
 
@@ -232,9 +233,14 @@ int main( int argc, char** argv ) {
 	std::chrono::nanoseconds frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
 	
 //CURSOR PoC --- migrate code appropriately when done demonstrating TODO [ ]
+//sfml::Sprite uses copy constructors - leverage accordingly
 	sf::Texture * cursText = new sf::Texture();
 	cursText->loadFromFile("textures/cursor.png");
 	cursor * myC = new cursor(cursText);
+	cursor * tmpMyC = nullptr; //used to permit multi-state usage of same sprite object while tracking old
+	//TODO[ ] consider a stack of tmpMyC's to track multiple layers of state machine cursor usage *like as needed for submenus.
+	
+
 //INFANTRY POC -- migrate code appropriately when done demonstrating TODO [X]
 
 //GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
@@ -371,7 +377,10 @@ int main( int argc, char** argv ) {
 						 	curUnit->findEnemyNeighbors();
 						}
 						curInputState = terrainSelect;
+						//delete myC;
+						//myC = tmpMyC;
 						myC->burnCooldown();
+						
 					}
 					break;
 				case(unitSelected):
@@ -379,6 +388,12 @@ int main( int argc, char** argv ) {
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 						curInputState = actionMenu;
 						myC->burnCooldown();
+						tmpMyC = myC->clone();
+						//myC = tmpMyC->clone();
+						std::cout << "Moving to action menu\n";
+						myC->movePosYAbs(16);
+						myC->movePosXAbs(16);
+						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
 	
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
@@ -441,7 +456,10 @@ int main( int argc, char** argv ) {
 			window.draw(myC->tileSprite);
 			
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
-			if (curInputState == actionMenu) window.draw(*actionSprite); 
+			if (curInputState == actionMenu) {
+				window.draw(*actionSprite); 
+				window.draw(myC->tileSprite);
+			}
 
 			window.display();
 		}

@@ -16,8 +16,21 @@ cursor::cursor(const sf::Texture * image_){
 	movCooldown = true;
 }
 
+cursor::cursor(const cursor& A) {
+	tileSprite = A.tileSprite;
+	posX = A.posX;
+	posY = A.posY;
+	movCooldown = A.movCooldown;
+	cursTimer = A.cursTimer;
+	cursTrigger = A.cursTrigger;
+}
+
 cursor::~cursor(){
 	std::cout << "cursor deletion called\n";
+}
+
+cursor * cursor::clone() {
+	return new cursor(*this);
 }
 
 void cursor::print() {
@@ -52,6 +65,23 @@ void cursor::movePosY(uint64_t moveY) {
 		burnCooldown();
 	}
 
+}
+
+// an absolute variant to be used by buisness logic, not ui directly as it doesnt use cooldowns.
+void cursor::movePosXAbs(uint64_t moveX) {
+	if(moveX >= 0) {
+		posX = moveX;
+		tileSprite.setPosition(posX, posY);
+		}
+}
+
+//an absolute variant
+void cursor::movePosYAbs(uint64_t moveY) {
+	if(moveY >= 0) {
+		posY = moveY;
+		tileSprite.setPosition(posX, posY);
+		
+	}
 }
 
 void cursor::updateTimer(std::chrono::nanoseconds timer) {
