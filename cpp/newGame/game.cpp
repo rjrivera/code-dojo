@@ -377,8 +377,7 @@ int main( int argc, char** argv ) {
 						 	curUnit->findEnemyNeighbors();
 						}
 						curInputState = terrainSelect;
-						//delete myC;
-						//myC = tmpMyC;
+						delete tmpMyC;
 						myC->burnCooldown();
 						
 					}
@@ -391,8 +390,8 @@ int main( int argc, char** argv ) {
 						tmpMyC = myC->clone();
 						//myC = tmpMyC->clone();
 						std::cout << "Moving to action menu\n";
-						myC->movePosYAbs(16);
-						myC->movePosXAbs(16);
+						tmpMyC->movePosYAbs(64);
+						tmpMyC->movePosXAbs(64);
 						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
 	
 					}
@@ -458,7 +457,7 @@ int main( int argc, char** argv ) {
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
 			if (curInputState == actionMenu) {
 				window.draw(*actionSprite); 
-				window.draw(myC->tileSprite);
+				window.draw(tmpMyC->tileSprite);
 			}
 
 			window.display();
