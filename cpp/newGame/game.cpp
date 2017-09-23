@@ -110,7 +110,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 //prototyping function
 //provides initial content load of terrain art assetts
 
-enum inputState {terrainSelect, terrainInfo, unitInfo, unitSelected};
+enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, unitSelected, actionMenu};
 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
@@ -278,6 +278,13 @@ int main( int argc, char** argv ) {
 	sf::Sprite * plSprite = new sf::Sprite();
 	plSprite->setTexture(*plainsInfo);
 	plSprite->setPosition(0,0);
+// actionmenu info PoC, move to object
+	sf::Texture * menuInfo = new sf::Texture();
+	menuInfo->loadFromFile("textures/menuInfo.png");
+	sf::Sprite * actionSprite = new sf::Sprite();
+	actionSprite->setTexture(*menuInfo);
+	actionSprite->setPosition(0,0);
+
 
 	while(inGame) {
 		sf::Event event;	
@@ -322,32 +329,39 @@ int main( int argc, char** argv ) {
 						myC->movePosY(-tilesize_const);
 						myC->burnCooldown();
 					}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) {
-						curInputState = terrainInfo;
-						myC->burnCooldown();
-						}
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr) {
-						myC->burnCooldown();
-						  
+/*					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) {
 
-						sourceBSlot = getBSlot(myC->posX, myC->posY);
-						curUnit = board[sourceBSlot]->attachedUnit;
-						std::cout << board[sourceBSlot]->attachedUnit->posX << std::endl;
-						std::cout << myC->posX << std::endl;
+						}
+*/
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
+						if ( board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr ) { 
+							myC->burnCooldown();
+							sourceBSlot = getBSlot(myC->posX, myC->posY);
+							curUnit = board[sourceBSlot]->attachedUnit;
+							curInputState = unitSelected;
+						//std::cout << board[sourceBSlot]->attachedUnit->posX << std::endl;
+						//std::cout << myC->posX << std::endl;
+						}
 						// only alter the inputState if a unit is stationed on that board slot. 
-						if (curUnit != nullptr) curInputState = unitSelected;
+						//if (curUnit != nullptr) curInputState = unitSelected;
+						else {
+							curInputState = terrainInfo;
+							myC->burnCooldown();
+						}
+						
 					}				
 					break;
 
 				case(terrainInfo):
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::B)) {
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 						curInputState = terrainSelect;
 						myC->burnCooldown();
 					}
 					break;
-				case(unitSelected):
-					//s -- move unit
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
+				case(actionMenu):
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+						
 						destBSlot = getBSlot(myC->posX, myC->posY);
 						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
 						std::cout << "cursor x: " << myC->posX << std::endl;
@@ -356,9 +370,16 @@ int main( int argc, char** argv ) {
 							board[sourceBSlot]->detachUnit();	
 						 	curUnit->findEnemyNeighbors();
 						}
-						curInputState = terrainSelect; 
+						curInputState = terrainSelect;
 						myC->burnCooldown();
-
+					}
+					break;
+				case(unitSelected):
+					//s -- move unit
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
+						curInputState = actionMenu;
+						myC->burnCooldown();
+	
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
 						myC->movePosX(tilesize_const);
@@ -420,6 +441,7 @@ int main( int argc, char** argv ) {
 			window.draw(myC->tileSprite);
 			
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
+			if (curInputState == actionMenu) window.draw(*actionSprite); 
 
 			window.display();
 		}
