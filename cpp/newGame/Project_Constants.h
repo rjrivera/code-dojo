@@ -28,7 +28,7 @@ const int planeUnit_const = 3;
 //const int boatUnit_const = 3;
 
 const int tilesize_const = 16;
-
+const int menusize_const = tilesize_const * 2;
 //board container
 extern std::vector<baseTerrain*> board = std::vector<baseTerrain*>();
 

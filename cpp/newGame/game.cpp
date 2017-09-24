@@ -111,6 +111,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 //provides initial content load of terrain art assetts
 
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, unitSelected, actionMenu};
+enum actionMenuState {move, atk, back};
 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
@@ -285,7 +286,7 @@ int main( int argc, char** argv ) {
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);
-
+	actionMenuState curActionMenuState(move);
 // Terrain info PoC, move to object
 	sf::Texture * plainsInfo = new sf::Texture();
 	plainsInfo->loadFromFile("textures/plainsInfo.png");
@@ -374,34 +375,73 @@ int main( int argc, char** argv ) {
 					break;
 				case(actionMenu):
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-						////delete tmpMyC
-						std::cout << "Old cursor informaiton:\n" <<
-							"stackInd ==> " << myC->stackInd << std::endl << 
-							"x, y => " << myC->posX << ", " << myC->posY << std::endl;
-						myC = cursorStack[myC->stackInd - 1];
-						std::cout << "New cursor informaiton:\n" <<
-							"stackInd ==> " << myC->stackInd << std::endl << 
-							"x, y => " << myC->posX << ", " << myC->posY << std::endl;
-						myC->burnCooldown();
-						
-						destBSlot = getBSlot(myC->posX, myC->posY);
-						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
-						std::cout << "cursor x: " << myC->posX << std::endl;
-						if ( destBSlot != sourceBSlot && valMove && board[destBSlot]->attachedUnit == nullptr )  {
-							board[destBSlot]->attachUnit(curUnit);
-							board[sourceBSlot]->detachUnit();	
-						 	curUnit->findEnemyNeighbors();
+						switch(curActionMenuState) { 
+							case(move) : {
+								myC = cursorStack[myC->stackInd - 1];					
+								myC->burnCooldown();
+								destBSlot = getBSlot(myC->posX, myC->posY);
+								bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
+							if ( destBSlot != sourceBSlot && valMove &&
+									 board[destBSlot]->attachedUnit == nullptr )  {
+									board[destBSlot]->attachUnit(curUnit);
+									board[sourceBSlot]->detachUnit();	
+								 	curUnit->findEnemyNeighbors();
+							}
+								curInputState = terrainSelect;
+								break;
+								}
+							case(atk) : {
+								myC = cursorStack[myC->stackInd - 1];
+								myC->burnCooldown();
+								curInputState = terrainSelect;
+								break;
+								}
+							case(back) : {
+								myC = cursorStack[myC->stackInd - 1];
+								myC->burnCooldown();
+								curInputState = terrainSelect;
+								break;
+								}
 						}
-						curInputState = terrainSelect;
-
 						
+					}				
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+						if (curActionMenuState != back ) { 
+							myC->movePosY(menusize_const);
+							myC->burnCooldown();
+							switch(curActionMenuState) {
+								case(move) :
+									curActionMenuState = atk;
+									break;
+								case(atk) :
+									curActionMenuState = back;
+									break;
+
+							}
+						}
 					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+						if (curActionMenuState != move ) {
+							myC->movePosY(-menusize_const);
+							myC->burnCooldown();
+							switch(curActionMenuState) {
+								case(back) :
+									curActionMenuState = atk;
+									break;
+								case(atk) :
+									curActionMenuState = move;
+									break;
+							}
+	
+						}
+					}
+
 					break;
 				case(unitSelected):
 					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 						curInputState = actionMenu;
-
+						curActionMenuState = move;
 						std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
 						myC = cursorStack[myC->stackInd + 1];
 						std::cout << "action menu cursor stack index: " << myC->stackInd << std::endl;
