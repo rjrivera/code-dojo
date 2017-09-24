@@ -14,7 +14,7 @@ class cursor {
 		void print();
 		sf::Sprite tileSprite;
 		bool movCooldown;
-		uint64_t posX, posY;
+		uint64_t posX, posY, stackInd;
 		std::chrono::nanoseconds cursTimer;
 		std::chrono::milliseconds cursTrigger{250};
 		void updateTimer(std::chrono::nanoseconds timer);

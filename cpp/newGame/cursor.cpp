@@ -14,6 +14,7 @@ cursor::cursor(const sf::Texture * image_){
 	posX = posY = 0;
 	tileSprite.setPosition(posX, posY);
 	movCooldown = true;
+	stackInd = 0;
 }
 
 cursor::cursor(const cursor& A) {
@@ -23,6 +24,7 @@ cursor::cursor(const cursor& A) {
 	movCooldown = A.movCooldown;
 	cursTimer = A.cursTimer;
 	cursTrigger = A.cursTrigger;
+	stackInd = A.stackInd;
 }
 
 cursor::~cursor(){

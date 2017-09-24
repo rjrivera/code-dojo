@@ -237,9 +237,17 @@ int main( int argc, char** argv ) {
 	sf::Texture * cursText = new sf::Texture();
 	cursText->loadFromFile("textures/cursor.png");
 	cursor * myC = new cursor(cursText);
-	cursor * tmpMyC = nullptr; //used to permit multi-state usage of same sprite object while tracking old
+	//cursor * tmpMyC = nullptr; //used to permit multi-state usage of same sprite object while tracking old
 	//TODO[ ] consider a stack of tmpMyC's to track multiple layers of state machine cursor usage *like as needed for submenus.
-	
+	std::vector<cursor *> cursorStack = std::vector<cursor *>();
+	for (int i = 0; i < maxMenuDepth; i++) {
+		cursorStack.push_back(myC->clone());
+		cursorStack[i]->stackInd = i;
+	}
+	myC = cursorStack[0];
+
+
+
 
 //INFANTRY POC -- migrate code appropriately when done demonstrating TODO [X]
 
@@ -366,7 +374,15 @@ int main( int argc, char** argv ) {
 					break;
 				case(actionMenu):
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-
+						////delete tmpMyC
+						std::cout << "Old cursor informaiton:\n" <<
+							"stackInd ==> " << myC->stackInd << std::endl << 
+							"x, y => " << myC->posX << ", " << myC->posY << std::endl;
+						myC = cursorStack[myC->stackInd - 1];
+						std::cout << "New cursor informaiton:\n" <<
+							"stackInd ==> " << myC->stackInd << std::endl << 
+							"x, y => " << myC->posX << ", " << myC->posY << std::endl;
+						myC->burnCooldown();
 						
 						destBSlot = getBSlot(myC->posX, myC->posY);
 						bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
@@ -377,8 +393,7 @@ int main( int argc, char** argv ) {
 						 	curUnit->findEnemyNeighbors();
 						}
 						curInputState = terrainSelect;
-						delete tmpMyC;
-						myC->burnCooldown();
+
 						
 					}
 					break;
@@ -386,13 +401,17 @@ int main( int argc, char** argv ) {
 					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 						curInputState = actionMenu;
-						myC->burnCooldown();
-						tmpMyC = myC->clone();
+
+						std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
+						myC = cursorStack[myC->stackInd + 1];
+						std::cout << "action menu cursor stack index: " << myC->stackInd << std::endl;
+						//tmpMyC = myC->clone();
 						//myC = tmpMyC->clone();
 						std::cout << "Moving to action menu\n";
-						tmpMyC->movePosYAbs(64);
-						tmpMyC->movePosXAbs(64);
+						myC->movePosYAbs(64);//tmpMyC
+						myC->movePosXAbs(64);//tmpMyC
 						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
+						myC->burnCooldown();
 	
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
@@ -456,8 +475,10 @@ int main( int argc, char** argv ) {
 			
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
 			if (curInputState == actionMenu) {
+				window.draw(cursorStack[myC->stackInd-1]->tileSprite);
 				window.draw(*actionSprite); 
-				window.draw(tmpMyC->tileSprite);
+				window.draw(myC->tileSprite);
+	//			window.draw(tmpMyC->tileSprite);
 			}
 
 			window.display();

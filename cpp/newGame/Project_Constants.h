@@ -6,6 +6,8 @@
 
 const int maxPlayers_const = 2;
 
+// utility setup
+const int maxMenuDepth = 3;
 
 //terrain textures
 const int maxTerrain_const = 6;
