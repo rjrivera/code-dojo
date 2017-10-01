@@ -29,7 +29,7 @@ class baseUnit {
 		void movePosY(uint64_t moveY);
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
 		//prototyping function which will migrate to unit classes (direct fire units will use baseUnit definition, indirect will override)
-		void findEnemyNeighbors(); 
+		void findEnemyNeighbors(int32_t posX_, int32_t posY_); 
 		//void defineGridSprite(const sf::Texture * image);
 		bool isValMove(uint32_t destX, uint32_t destY);
 

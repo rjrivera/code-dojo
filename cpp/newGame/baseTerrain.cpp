@@ -17,6 +17,11 @@ baseTerrain::~baseTerrain(){
 
 }
 
+void baseTerrain::setAtkSprite(const sf::Texture * atkSprite_) {
+	atkSprite = sf::Sprite();
+	atkSprite.setTexture(*atkSprite_);
+}
+
 void baseTerrain::attachUnit(baseUnit*& unit) {
 	if (attachedUnit!=nullptr) {
 		std::cout << "cannot attach Unit, slot already occupied\n";
@@ -31,7 +36,6 @@ void baseTerrain::attachUnit(baseUnit*& unit) {
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
 	attachedUnit->validMoves->clear();
 	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize);
-	attachedUnit->findEnemyNeighbors();
 }
 
 void baseTerrain::detachUnit(){

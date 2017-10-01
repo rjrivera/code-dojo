@@ -45,8 +45,8 @@
 using namespace rapidjson;
 
 //needs to move somewhere, not allowing classwide vars in this class. 
-uint64_t height = 0;
-uint64_t width = 0;
+//uint64_t height = 0;
+//uint64_t width = 0;
 
 //given a cursors raw x,y coord. extrapolate which slot of the board container is associated with the cursors pos. 
 uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
@@ -182,6 +182,8 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 			board_[count]->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			board_[count]->setUnitSize(tilesize_const);
 			board_[count]->setGridPos(j, i);
+			board_[count]->setAtkSprite(terrainTexts[atkTerrain_const]);
+			board_[count]->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			count++;
 		}
 	}
@@ -253,8 +255,6 @@ int main( int argc, char** argv ) {
 //INFANTRY POC -- migrate code appropriately when done demonstrating TODO [X]
 
 //GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
-	sf::Texture * movText = new sf::Texture();
-	movText->loadFromFile("textures/moveGrid.png");
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
 	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const, 1);
@@ -382,10 +382,10 @@ int main( int argc, char** argv ) {
 								destBSlot = getBSlot(myC->posX, myC->posY);
 								bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
 							if ( destBSlot != sourceBSlot && valMove &&
-									 board[destBSlot]->attachedUnit == nullptr )  {
+									board[destBSlot]->attachedUnit == nullptr )  {
 									board[destBSlot]->attachUnit(curUnit);
 									board[sourceBSlot]->detachUnit();	
-								 	curUnit->findEnemyNeighbors();
+								 
 							}
 								curInputState = terrainSelect;
 								break;
@@ -440,6 +440,8 @@ int main( int argc, char** argv ) {
 				case(unitSelected):
 					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
+						//use the cursor's current location to calc potential attacks
+						curUnit->findEnemyNeighbors(myC->posX, myC->posY);
 						curInputState = actionMenu;
 						curActionMenuState = move;
 						std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
@@ -452,6 +454,7 @@ int main( int argc, char** argv ) {
 						myC->movePosXAbs(64);//tmpMyC
 						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
 						myC->burnCooldown();
+						
 	
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
@@ -518,6 +521,12 @@ int main( int argc, char** argv ) {
 				window.draw(cursorStack[myC->stackInd-1]->tileSprite);
 				window.draw(*actionSprite); 
 				window.draw(myC->tileSprite);
+				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
+					window.draw(board[mGrid]->highlightSprite);
+				}
+				for(uint32_t atkGrid : *(board[sourceBSlot]->attachedUnit->enemyNeighbors)) {
+					window.draw(board[atkGrid]->atkSprite);
+				}
 	//			window.draw(tmpMyC->tileSprite);
 			}
 

@@ -64,18 +64,18 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 }
 
 //do a simple implementation away from the board's border for PoC, dig deep when refining soon. 
-void baseUnit::findEnemyNeighbors() {
+void baseUnit::findEnemyNeighbors(int32_t posX_, int32_t posY_) {
 	enemyNeighbors->clear();
-	int32_t sourceSlot = (int32_t)getBSlot(posX, posY);
+	int32_t sourceSlot = (int32_t)getBSlot(posX_, posY_);
 	int32_t above = getAboveBSlot(sourceSlot);
 	int32_t below = getBelowBSlot(sourceSlot);
 	if (board[sourceSlot + 1]->attachedUnit != nullptr && board[sourceSlot + 1]->attachedUnit->player != player) 
 		enemyNeighbors->push_back(sourceSlot + 1);  
-	else if (board[sourceSlot - 1]->attachedUnit != nullptr && board[sourceSlot - 1]->attachedUnit->player != player) 
+	if (board[sourceSlot - 1]->attachedUnit != nullptr && board[sourceSlot - 1]->attachedUnit->player != player) 
 		enemyNeighbors->push_back(sourceSlot - 1);
-	else if (above >= 0 && board[above]->attachedUnit != nullptr && board[above]->attachedUnit->player != player)
+	if (above >= 0 && board[above]->attachedUnit != nullptr && board[above]->attachedUnit->player != player)
 		 enemyNeighbors->push_back(above);   
-	else if (below >= 0 && board[below]->attachedUnit != nullptr && board[below]->attachedUnit->player != player)
+	if (below >= 0 && board[below]->attachedUnit != nullptr && board[below]->attachedUnit->player != player)
 		 enemyNeighbors->push_back(below); 
 	//for debugging - remove when done [ ] TODO
 	for (auto& enemy : *enemyNeighbors) std::cout << "enemy neighbor at: " << enemy << std::endl;
