@@ -56,6 +56,21 @@ uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
 	return ((scaledY*width) + scaledX);
 
 }
+
+int32_t getScaledPosX(uint32_t bSlot_) {
+	if ( bSlot_ >= width*height || bSlot_ < 0  ) return -1;
+	return ( bSlot_ % width ) * tilesize_const;
+
+}
+
+int32_t getScaledPosY(uint32_t bSlot_) {
+	if ( bSlot_ >= width*height || bSlot_ < 0  ) return -1;
+	return ( (bSlot_ + 1) / width ) * tilesize_const;
+}
+
+
+
+
 // must be signed to indicate when outside of bounds
 int32_t getAboveBSlot(int32_t sourceBSlot) {
 	return sourceBSlot - width;
@@ -110,7 +125,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 //prototyping function
 //provides initial content load of terrain art assetts
 
-enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, unitSelected, actionMenu};
+enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu};
 enum actionMenuState {move, atk, back};
 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
@@ -299,8 +314,10 @@ int main( int argc, char** argv ) {
 	sf::Sprite * actionSprite = new sf::Sprite();
 	actionSprite->setTexture(*menuInfo);
 	actionSprite->setPosition(0,0);
-
-
+//	simple reusable vector<uint32_t> for navigating through potential enemies...great because NOW simply altering a unit's findEnemyNeighbors function. 
+//	No need to declare this explicitly
+	std::vector<int32_t> * enemyNeighbors;	
+	int32_t enemyNeighborIndex = 0;
 	while(inGame) {
 		sf::Event event;	
 		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
@@ -393,7 +410,11 @@ int main( int argc, char** argv ) {
 							case(atk) : {
 								myC = cursorStack[myC->stackInd - 1];
 								myC->burnCooldown();
-								curInputState = terrainSelect;
+								curInputState = atkSelect;
+								//redefine the enemyNeighbors pointer.
+								enemyNeighbors = board[sourceBSlot]->attachedUnit->enemyNeighbors;
+								if (enemyNeighbors->size() == 0) enemyNeighborIndex = -1;
+								else enemyNeighborIndex = 0;
 								break;
 								}
 							case(back) : {
@@ -435,27 +456,60 @@ int main( int argc, char** argv ) {
 	
 						}
 					}
-
 					break;
-				case(unitSelected):
-					//s -- move unit
+				case(atkSelect):
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 						//use the cursor's current location to calc potential attacks
-						curUnit->findEnemyNeighbors(myC->posX, myC->posY);
-						curInputState = actionMenu;
-						curActionMenuState = move;
+						curInputState = terrainSelect;
 						std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
-						myC = cursorStack[myC->stackInd + 1];
-						std::cout << "action menu cursor stack index: " << myC->stackInd << std::endl;
-						//tmpMyC = myC->clone();
-						//myC = tmpMyC->clone();
-						std::cout << "Moving to action menu\n";
-						myC->movePosYAbs(64);//tmpMyC
-						myC->movePosXAbs(64);//tmpMyC
+						myC = cursorStack[myC->stackInd - 1];
+						std::cout << "Moving to terrain select\n";
 						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
 						myC->burnCooldown();
-						
+						//TODO[ ] initiate battle sequence.
 	
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || 
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && enemyNeighborIndex >= 0) {
+						
+						enemyNeighborIndex++;
+						if (enemyNeighborIndex == enemyNeighbors->size() ) enemyNeighborIndex = 0; 
+						uint32_t atkBSlot = enemyNeighbors->at(enemyNeighborIndex);
+						int32_t absX = getScaledPosX(atkBSlot);
+						int32_t absY = getScaledPosY(atkBSlot);
+						if (absX >= 0 && absY >= 0) { 
+							myC->movePosXAbs(absX);
+							myC->movePosXAbs(absY);
+							myC->burnCooldown();
+						}
+					}
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
+						sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && enemyNeighborIndex >= 0 ) {
+						
+						enemyNeighborIndex--;
+						if (enemyNeighborIndex < 0 ) enemyNeighborIndex = enemyNeighbors->size() - 1; 
+						uint32_t atkBSlot = enemyNeighbors->at(enemyNeighborIndex);
+						int32_t absX = getScaledPosX(atkBSlot);
+						int32_t absY = getScaledPosY(atkBSlot);
+						
+						if (absX >= 0 && absY >= 0) { 
+							myC->movePosXAbs(absX);
+							myC->movePosYAbs(absY);
+							myC->burnCooldown();
+						}					
+						
+					}
+					break; 
+			case(unitSelected):
+					//s -- move unit
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
+						curUnit->findEnemyNeighbors(myC->posX, myC->posY);
+						curInputState = actionMenu;
+						myC = cursorStack[myC->stackInd +1];
+						myC->movePosYAbs(96);
+						myC->movePosXAbs(64);
+						myC->burnCooldown();
+
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
 						myC->movePosX(tilesize_const);
@@ -476,6 +530,7 @@ int main( int argc, char** argv ) {
 	
 					//a -- exit unit with no action
 					break; 
+	
 			}
 		}
 
@@ -485,8 +540,6 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// needs a framerate
 
-//		if ( frameTimer >= frameTrigger)   {
-//			frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
 		if (draw) {
 			draw = false; 
 			window.clear();
@@ -511,23 +564,24 @@ int main( int argc, char** argv ) {
 			if (curInputState == unitSelected)  {
 				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
 					window.draw(board[mGrid]->highlightSprite);
+					if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
 				}
 			}
 
 			window.draw(myC->tileSprite);
 			
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
-			if (curInputState == actionMenu) {
+			if (curInputState == actionMenu || curInputState == atkSelect) {
 				window.draw(cursorStack[myC->stackInd-1]->tileSprite);
-				window.draw(*actionSprite); 
-				window.draw(myC->tileSprite);
 				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
 					window.draw(board[mGrid]->highlightSprite);
+					if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
 				}
 				for(uint32_t atkGrid : *(board[sourceBSlot]->attachedUnit->enemyNeighbors)) {
 					window.draw(board[atkGrid]->atkSprite);
 				}
-	//			window.draw(tmpMyC->tileSprite);
+				window.draw(*actionSprite); 
+				window.draw(myC->tileSprite);
 			}
 
 			window.display();
