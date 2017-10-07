@@ -408,11 +408,12 @@ int main( int argc, char** argv ) {
 								break;
 								}
 							case(atk) : {
-								myC = cursorStack[myC->stackInd - 1];
+								// get the attack menu cursor
+								myC = cursorStack[myC->stackInd + 1];
 								myC->burnCooldown();
+								myC->movePosXAbs(0);
+								myC->movePosYAbs(0);
 								curInputState = atkSelect;
-								//redefine the enemyNeighbors pointer.
-								enemyNeighbors = board[sourceBSlot]->attachedUnit->enemyNeighbors;
 								if (enemyNeighbors->size() == 0) enemyNeighborIndex = -1;
 								else enemyNeighborIndex = 0;
 								break;
@@ -462,7 +463,7 @@ int main( int argc, char** argv ) {
 						//use the cursor's current location to calc potential attacks
 						curInputState = terrainSelect;
 						std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
-						myC = cursorStack[myC->stackInd - 1];
+						myC = cursorStack[myC->stackInd - 2];
 						std::cout << "Moving to terrain select\n";
 						std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
 						myC->burnCooldown();
@@ -472,23 +473,27 @@ int main( int argc, char** argv ) {
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || 
 						sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && enemyNeighborIndex >= 0) {
 						
-						enemyNeighborIndex++;
-						if (enemyNeighborIndex == enemyNeighbors->size() ) enemyNeighborIndex = 0; 
+
+						if (enemyNeighborIndex == enemyNeighbors->size() - 1 ) enemyNeighborIndex = 0; 
+						else 	enemyNeighborIndex++;
 						uint32_t atkBSlot = enemyNeighbors->at(enemyNeighborIndex);
+						std::cout << "atkBslot from up/right input: " << atkBSlot << std::endl;
 						int32_t absX = getScaledPosX(atkBSlot);
 						int32_t absY = getScaledPosY(atkBSlot);
 						if (absX >= 0 && absY >= 0) { 
 							myC->movePosXAbs(absX);
-							myC->movePosXAbs(absY);
+							myC->movePosYAbs(absY);
 							myC->burnCooldown();
 						}
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
 						sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && enemyNeighborIndex >= 0 ) {
 						
-						enemyNeighborIndex--;
-						if (enemyNeighborIndex < 0 ) enemyNeighborIndex = enemyNeighbors->size() - 1; 
+						if (enemyNeighborIndex == 0 ) enemyNeighborIndex = enemyNeighbors->size() - 1; 
+						else	enemyNeighborIndex--;
+
 						uint32_t atkBSlot = enemyNeighbors->at(enemyNeighborIndex);
+						std::cout << "atkBslot from down/left input: " << atkBSlot << std::endl;
 						int32_t absX = getScaledPosX(atkBSlot);
 						int32_t absY = getScaledPosY(atkBSlot);
 						
@@ -504,10 +509,11 @@ int main( int argc, char** argv ) {
 					//s -- move unit
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
 						curUnit->findEnemyNeighbors(myC->posX, myC->posY);
+						enemyNeighbors = curUnit->enemyNeighbors;
 						curInputState = actionMenu;
 						myC = cursorStack[myC->stackInd +1];
-						myC->movePosYAbs(96);
-						myC->movePosXAbs(64);
+						myC->movePosYAbs(64);
+						myC->movePosXAbs(96);
 						myC->burnCooldown();
 
 					}
@@ -538,7 +544,8 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// sprite draw logic
 		// ===================================================
-		// needs a framerate
+		// needs a framerate TODO[ ] deal with rendering killing game timing ala space Invaders. 
+		// FOR TODO - consider drawing on a clock, not on a gameloop, cycle.
 
 		if (draw) {
 			draw = false; 
@@ -561,6 +568,7 @@ int main( int argc, char** argv ) {
 					}
 				}
 			}
+			//TODO[ ] this is apparently a resource hog. 
 			if (curInputState == unitSelected)  {
 				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
 					window.draw(board[mGrid]->highlightSprite);
@@ -577,7 +585,7 @@ int main( int argc, char** argv ) {
 					window.draw(board[mGrid]->highlightSprite);
 					if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
 				}
-				for(uint32_t atkGrid : *(board[sourceBSlot]->attachedUnit->enemyNeighbors)) {
+				for(uint32_t atkGrid : *(curUnit->enemyNeighbors)) {
 					window.draw(board[atkGrid]->atkSprite);
 				}
 				window.draw(*actionSprite); 
