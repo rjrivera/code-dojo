@@ -128,12 +128,15 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu};
 enum actionMenuState {move, atk, back};
 
+// provide texture container you wish to populate and the texture type you wish to populate it with. 
+// project_constants.h contains definitions to constants referenced here. 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
 	std::string texturePath = "textures/";
 	texturePath += textType_;
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
-	else if (textType_ == "unit" ) numTexts = (maxUnit_const * maxPlayers_const); 
+	else if (textType_ == "unit") numTexts = (maxUnit_const * maxPlayers_const); 
+	else if (textType_ == "unitInfo") numTexts = (maxUnit_const); 
 	else return;
 	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
 	for (int i = 1 ; i <= numTexts; i++) {
@@ -204,15 +207,23 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	}
 }
 
-baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_, uint32_t player_) {
+baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, std::vector<sf::Texture*>& unitInfoTexts_,
+				uint32_t unit_, uint32_t player_) {
 	std::cout << "building unit for player " << player_ << std::endl;
+	baseUnit * unit;
 	switch(unit_){
 		case infantryUnit_const :
-			return new infantry(unitTexts_[infantryUnit_const * player_], player_);
+			unit = new infantry(unitTexts_[infantryUnit_const * player_], player_);
+			unit->defineUnitInfoSprite(unitInfoTexts_[infantryUnit_const]);
+			return unit;
 		case tankUnit_const  :
-			return new tank(unitTexts_[tankUnit_const * player_], player_);
+			unit = new tank(unitTexts_[tankUnit_const * player_], player_);
+			unit->defineUnitInfoSprite(unitInfoTexts_[tankUnit_const]);
+			return unit;
 		case planeUnit_const :
-			return new plane(unitTexts_[planeUnit_const * player_], player_);
+			unit =  new plane(unitTexts_[planeUnit_const * player_], player_);
+			unit->defineUnitInfoSprite(unitInfoTexts_[planeUnit_const]);
+			return unit;
 //		case boatUnit_const :
 //			return new boat(unitTexts_[boatUnit_const]);
 		default : 
@@ -228,6 +239,7 @@ int main( int argc, char** argv ) {
 	///*	std::vector<baseTerrain * >*/ board = std::vector<baseTerrain *>();
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
+	std::vector<sf::Texture *> unitInfoTexts = std::vector<sf::Texture *>();
 	baseUnit * curUnit;
 	bool draw = false;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
@@ -235,6 +247,7 @@ int main( int argc, char** argv ) {
 	uint32_t destBSlot = 0;
 	foo(terrainTexts, "plain");
 	foo(unitTexts, "unit");
+	foo(unitInfoTexts, "unitInfo");
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	//window.setFramerateLimit(35);
 	std::chrono::milliseconds frameTrigger{35};
@@ -272,7 +285,7 @@ int main( int argc, char** argv ) {
 //GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
-	baseUnit * tUnit = unitBuilder(unitTexts, infantryUnit_const, 1);
+	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	std::cout << "tUnit player num: " << tUnit->player << std::endl;
 	board[1]->attachUnit(tUnit);// = myI;	
@@ -281,23 +294,17 @@ int main( int argc, char** argv ) {
 	board[1]->attachedUnit->player = 1;
 	std::cout << "attached unit player num is: " << board[1]->attachedUnit->player << std::endl;
 //	board[1]->attachedUnit->defineGridSprite(movText);
-	tUnit = unitBuilder(unitTexts, tankUnit_const, 1);
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	board[9]->attachUnit(tUnit);// = myI;	
 //	board[9]->attachedUnit->defineGridSprite(movText);
-	tUnit = unitBuilder(unitTexts, planeUnit_const, 1);
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	board[21]->attachUnit(tUnit);// = myI;	
-	tUnit = unitBuilder(unitTexts, planeUnit_const, 2);
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 2);
 	board[3]->attachUnit(tUnit);	
-	tUnit = unitBuilder(unitTexts, tankUnit_const, 2);
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
 	board[5]->attachUnit(tUnit);
-//	board[21]->attachedUnit->defineGridSprite(movText);
-//	board[40]->attachUnit(unitBuilder(unitTexts, planeUnit_const));// = myI;	
-//	board[40]->attachedUnit->defineGridSprite(movText);
-	
-//	board[1]->attachedUnit->print();
-//
 
 	bool inGame = true;
 	inputState curInputState(terrainSelect);
@@ -590,6 +597,7 @@ int main( int argc, char** argv ) {
 				}
 				window.draw(*actionSprite); 
 				window.draw(myC->tileSprite);
+				if (curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(board[enemyNeighbors->at(enemyNeighborIndex)]->attachedUnit->unitInfoSprite); 
 			}
 
 			window.display();

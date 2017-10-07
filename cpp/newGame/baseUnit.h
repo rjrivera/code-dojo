@@ -14,7 +14,7 @@ class baseUnit {
 		baseUnit(uint32_t player_); 	
 		~baseUnit();
 		virtual void print() = 0;
-		sf::Sprite unitSprite;
+		sf::Sprite unitSprite, unitInfoSprite;
 		const sf::Texture * gridSprite;
 		bool movCooldown;
 		uint32_t posX, posY, atk, mvt, def, player, spriteOffset, numSprites, spriteTimer, spriteTrigger;
@@ -30,7 +30,8 @@ class baseUnit {
 		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
 		//prototyping function which will migrate to unit classes (direct fire units will use baseUnit definition, indirect will override)
 		void findEnemyNeighbors(int32_t posX_, int32_t posY_); 
-		//void defineGridSprite(const sf::Texture * image);
+		void defineUnitInfoSprite(const sf::Texture * unitInfo_);
+	
 		bool isValMove(uint32_t destX, uint32_t destY);
 
 

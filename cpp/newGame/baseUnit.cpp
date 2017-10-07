@@ -37,33 +37,27 @@ void baseUnit::initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY)
 	validMoves->push_back((getBSlot(curX, curY)));   
 	//up 
 	if ( (curY - (1*tilesize_const)) >=0  )  {
-//		validMoves->push_back(new moveGrid( gridSprite, curX, curY-(1*tilesize_const)) );
 		initMoveGrids(mvtRemaining, curX, curY - (1*tilesize_const));
 		
 	}
 	//down...determine if we need to filter this here or on board...should filter here...make mapsize universally accessible
 	//for now...magic num ber :S
 	if ( (curY + (1*tilesize_const)) <= tilesize_const * 30 )  {
-//		validMoves->push_back(new moveGrid( gridSprite, curX, curY+(1*tilesize_const)) );
 		initMoveGrids(mvtRemaining, curX, curY + (1*tilesize_const));
 	}
 	//right...determine if we need to filter this here or on board...should filter here...make mapsize universally accessible
 	//same as above
 	if ( (curX + (1*tilesize_const)) <= tilesize_const * 30  )  {
-//		validMoves->push_back(new moveGrid( gridSprite, curX+(1*tilesize_const), curY) );
 		initMoveGrids(mvtRemaining, curX + (1*tilesize_const), curY);
 	}
 	//left 
 	if ( (curX - (1*tilesize_const)) >=0  )  {
-//		validMoves->push_back(new moveGrid( gridSprite, curX-(1*tilesize_const), curY) );
 		initMoveGrids(mvtRemaining, curX - (1*tilesize_const), curY);
-		
 	}
 
 
 }
 
-//do a simple implementation away from the board's border for PoC, dig deep when refining soon. 
 void baseUnit::findEnemyNeighbors(int32_t posX_, int32_t posY_) {
 	enemyNeighbors->clear();
 	int32_t sourceSlot = (int32_t)getBSlot(posX_, posY_);
@@ -94,11 +88,9 @@ bool baseUnit::isValMove(uint32_t destX, uint32_t destY){
 	return false;
 
 }
-/*
-//temporary sprite - redefine with better software architecture. 
-void baseUnit::defineGridSprite(const sf::Texture * image) {
-	gridSprite = image;
+
+void baseUnit::defineUnitInfoSprite(const sf::Texture * unitInfo_){
+	unitInfoSprite = sf::Sprite();
+	unitInfoSprite.setTexture(*(unitInfo_));
+	unitInfoSprite.setPosition(192, 0);
 }
-*/
-
-
