@@ -250,8 +250,8 @@ int main( int argc, char** argv ) {
 	foo(unitInfoTexts, "unitInfo");
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	//window.setFramerateLimit(35);
-	std::chrono::milliseconds frameTrigger{35};
-
+	std::chrono::milliseconds frameTrigger{70};
+	
 	//bar(board, terrainTexts);
 
 	mapGen(board, terrainTexts);
@@ -333,7 +333,9 @@ int main( int argc, char** argv ) {
 //		deltaTime = now - lastCycle;
 		frameTimer += myTimer = now - lastCycle;
 		
- //		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(deltaTime).count() << std::endl;
+// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
+
+
 //		myTime += deltaTime;
 		// ===================================================
 		// UPDATE TIMING
@@ -418,14 +420,26 @@ int main( int argc, char** argv ) {
 								// get the attack menu cursor
 								myC = cursorStack[myC->stackInd + 1];
 								myC->burnCooldown();
-								myC->movePosXAbs(0);
-								myC->movePosYAbs(0);
 								curInputState = atkSelect;
-								if (enemyNeighbors->size() == 0) enemyNeighborIndex = -1;
-								else enemyNeighborIndex = 0;
+								if (enemyNeighbors->size() == 0) {
+									enemyNeighborIndex = -1;
+									myC->movePosXAbs(0);
+									myC->movePosYAbs(0);
+								}
+								else {
+									enemyNeighborIndex = 0;
+									uint32_t atkBSlot = enemyNeighbors->at(enemyNeighborIndex);
+									int32_t absX = getScaledPosX(atkBSlot);
+									int32_t absY = getScaledPosY(atkBSlot);
+									if (absX >= 0 && absY >= 0) { 
+										myC->movePosXAbs(absX);
+										myC->movePosYAbs(absY);
+										myC->burnCooldown();
+									}
+								}
 								break;
 								}
-							case(back) : {
+							case(back) : { 
 								myC = cursorStack[myC->stackInd - 1];
 								myC->burnCooldown();
 								curInputState = terrainSelect;
@@ -522,7 +536,7 @@ int main( int argc, char** argv ) {
 						myC->movePosYAbs(64);
 						myC->movePosXAbs(96);
 						myC->burnCooldown();
-
+						curActionMenuState = move;
 					}
 					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
 						myC->movePosX(tilesize_const);
@@ -553,16 +567,20 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// needs a framerate TODO[ ] deal with rendering killing game timing ala space Invaders. 
 		// FOR TODO - consider drawing on a clock, not on a gameloop, cycle.
+		if (frameTimer > frameTrigger )  {
+	// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
+			frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
 
-		if (draw) {
-			draw = false; 
+			if (draw) draw = false;
+			else draw = true;
 			window.clear();
 			// note, blocks is simply a repo of texture. 
 			// should iterate through a collection of sprites, not texutres. 
 			for(baseTerrain * obj : board) 	{
 				window.draw(obj->tileSprite);
 				if (obj->attachedUnit != nullptr) {
-					window.draw(obj->attachedUnit->unitSprite); 
+					window.draw(obj->attachedUnit->unitSprite);
+					std::cout << obj->attachedUnit->spriteTimer << std::endl;
 //					if (objj->attachedUnit is  ) everthing below in this else loop needs to be in the unit class. 
 					obj->attachedUnit->spriteTimer++;
 					if (obj->attachedUnit->spriteTimer >= obj->attachedUnit->spriteTrigger) {
@@ -575,14 +593,15 @@ int main( int argc, char** argv ) {
 					}
 				}
 			}
-			//TODO[ ] this is apparently a resource hog. 
-			if (curInputState == unitSelected)  {
+			//TODO[ ] this is apparently a resource hog. must develop a way to draw all pixels EXACTLY ONCE or a make foreground draw far less. 
+			//use 'draw' for things you want to use even/odd drawing to reduce load. 
+			if (curInputState == unitSelected )  {
+
 				for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
 					window.draw(board[mGrid]->highlightSprite);
 					if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
 				}
 			}
-
 			window.draw(myC->tileSprite);
 			
 			if (curInputState == terrainInfo) window.draw(*plSprite); 
