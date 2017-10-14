@@ -12,10 +12,10 @@ int height = 0;
 int width = 0;
 //terrain textures
 const int maxTerrain_const =7;
-const int plainTerrain_const = 1;
+const int roadTerrain_const = 1; 
 const int mountTerrain_const = 2; 
 const int waterTerrain_const = 3; 
-const int roadTerrain_const = 4; 
+const int plainTerrain_const = 4;
 const int forestTerrain_const = 5;
 const int moveTerrain_const = 6;
 const int atkTerrain_const = 7;

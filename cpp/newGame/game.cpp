@@ -146,6 +146,8 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 		// loading sprite sheet to image for alpha handling
 		tempImg->loadFromFile(textName);
 		tempImg->createMaskFromColor(sf::Color(255,0,255),0);
+		tempImg->createMaskFromColor(sf::Color(0,0xff, 0xcd),100);
+		tempImg->createMaskFromColor(sf::Color(0xb8,0x00, 0x68),150);
 		tempText->loadFromImage(*tempImg);
 		std::cout << "pushing texture " << textName << " into container at index " << text_container.size() << std::endl;
 		text_container.push_back(tempText);
@@ -270,7 +272,10 @@ int main( int argc, char** argv ) {
 //CURSOR PoC --- migrate code appropriately when done demonstrating TODO [ ]
 //sfml::Sprite uses copy constructors - leverage accordingly
 	sf::Texture * cursText = new sf::Texture();
-	cursText->loadFromFile("textures/cursor.png");
+	sf::Image * cursImg = new sf::Image();
+	cursImg->loadFromFile("textures/cursor.png");
+	cursImg->createMaskFromColor(sf::Color(255,0,255), 0);
+	cursText->loadFromImage(*cursImg);
 	cursor * myC = new cursor(cursText);
 	//cursor * tmpMyC = nullptr; //used to permit multi-state usage of same sprite object while tracking old
 	//TODO[ ] consider a stack of tmpMyC's to track multiple layers of state machine cursor usage *like as needed for submenus.
