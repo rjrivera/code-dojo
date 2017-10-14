@@ -12,6 +12,7 @@ infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(play
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*(image_));
 	unitSprite.setPosition(0, 0);
+	//unitSprite.setColor(sf::Color(255,255,255,0));
 	numSprites = 2;
 	spriteOffset = 0; 
 	spriteTimer = 0;

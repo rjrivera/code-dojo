@@ -142,7 +142,11 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	for (int i = 1 ; i <= numTexts; i++) {
 		std::string textName = texturePath + std::to_string(i)  + ".png";
 		sf::Texture * tempText = new sf::Texture();
-		tempText->loadFromFile(textName);
+		sf::Image * tempImg = new sf::Image();
+		// loading sprite sheet to image for alpha handling
+		tempImg->loadFromFile(textName);
+		tempImg->createMaskFromColor(sf::Color(255,0,255),0);
+		tempText->loadFromImage(*tempImg);
 		std::cout << "pushing texture " << textName << " into container at index " << text_container.size() << std::endl;
 		text_container.push_back(tempText);
 	}
