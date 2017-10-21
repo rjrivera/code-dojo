@@ -19,9 +19,10 @@ baseUnit::~baseUnit(){
 void baseUnit::movePosX(int64_t moveX) {
 //nop
 	posX += moveX;
-	if ( moveX >0 ) 
+	if ( moveX >0 ) {
 		curState = unitState(right);
 		unitSprite = &(sprites->at(curState));
+	}
 	else {
 		curState = unitState(left);
 		unitSprite = &(sprites->at(curState));
@@ -43,7 +44,10 @@ bool baseUnit::isValMove(uint32_t destX, uint32_t destY){
 
 }
 
+void baseUnit::updateTiming(std::chrono::milliseconds deltaTime) {
 
+	//NOP
+}
 /*
 //temporary sprite - redefine with better software architecture. 
 void baseUnit::defineGridSprite(const sf::Texture * image) {

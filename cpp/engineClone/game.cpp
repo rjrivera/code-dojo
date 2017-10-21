@@ -141,10 +141,10 @@ int main( int argc, char** argv ) {
 	// testing stl time libraries
 
 	auto deltaTime = std::chrono::high_resolution_clock::now();
-	auto lastCycle = std::chrono::high_resolution_clock::now();
-	auto now = std::chrono::high_resolution_clock::now();
-	std::chrono::nanoseconds myTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(myTimer).zero();
-	std::chrono::nanoseconds frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
+	std::chrono::system_clock::time_point lastCycle = std::chrono::system_clock::now();
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	std::chrono::milliseconds myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(myTimer).zero();
+	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
 //GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	//myI->defineGridSprite(movText);
@@ -157,44 +157,42 @@ int main( int argc, char** argv ) {
 		sf::Event event;	
 		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
 		lastCycle = now;
-		now = std::chrono::high_resolution_clock::now();
-		frameTimer += myTimer = now - lastCycle;
+		now = std::chrono::system_clock::now();
+		frameTimer += myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCycle);
 		
 		// ===================================================
 		// UPDATE TIMING
 		// ==================================================		
 		//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
 
-		tUnit->updateTimer(myTimer);
+		tUnit->updateTiming(myTimer);
 
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
 		//debounce input.
-		
-	//	if (tUnit->getCooldown() ) {
+		//	if (tUnit->getCooldown() ) {
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 					inGame = false;
-//					myC->burnCooldown();
+//					tUnit->burnCooldown();
 				}	 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-					myC->movePosX(1);
-//					myC->burnCooldown();
+					tUnit->movePosX(1);
+//					tUnit->burnCooldown();
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-					myC->movePosX(-1);
-//					myC->burnCooldown();
+					tUnit->movePosX(-1);
+//					tUnit->burnCooldown();
 				}
 /*
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-					myC->movePosY(-1);
-					myC->burnCooldown();
+					tUnit->movePosY(-1);
+					tUnit->burnCooldown();
 				}
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-					myC->movePosY(1);
-					myC->burnCooldown();
+					tUnit->movePosY(1);
+					tUnit->burnCooldown();
 				}*/
-				break;
 	//	}
 		
 
@@ -203,7 +201,7 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// needs a framerate
 		if ( frameTimer >= frameTrigger ) { 
-			std::chrono::nanoseconds frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
+			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 			//std::cout << "draw some shit\n";
 			window.clear();
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'

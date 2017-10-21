@@ -24,7 +24,7 @@ class baseUnit {
 		void movePosX(int64_t moveX);
 		void movePosY(int64_t moveY);
 		bool isValMove(uint32_t destX, uint32_t destY);
-		virtual void updateTiming(std::chrono::milliseconds deltaTime) = 0;
+		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 
 
 
