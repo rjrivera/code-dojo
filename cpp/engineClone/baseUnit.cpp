@@ -16,7 +16,7 @@ baseUnit::~baseUnit(){
 
 }
 
-void baseUnit::movePosX(int64_t moveX) {
+void baseUnit::movePosX(int32_t moveX) {
 //nop
 	posX += moveX;
 	if ( moveX >0 ) {
@@ -32,10 +32,19 @@ void baseUnit::movePosX(int64_t moveX) {
 	//unitSprite.setPosition(posX, posY);
 }
 
-void baseUnit::movePosY(int64_t moveY) {
+void baseUnit::movePosY(int32_t moveY) {
 //nop
 	posY += moveY;
 	//unitSprite.setPosition(posX, posY);
+}
+
+void baseUnit::moveVelX(int32_t moveX) {
+
+	velX = moveX;
+}
+
+void baseUnit::moveVelY(int32_t moveY) {
+	velY = moveY;
 }
 
 bool baseUnit::isValMove(uint32_t destX, uint32_t destY){

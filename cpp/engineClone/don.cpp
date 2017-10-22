@@ -20,15 +20,20 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 		std::cout << "sprites texture set\n";
 		sprites->at(i).setPosition(0, 0);
 	}
+	posX = posY = velX = velY = 0;
 	numSprites = 6;
 	spriteOffset = 0; 
 	spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
-	spriteTrigger = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTrigger).zero();
+
+	spriteTrigger = std::chrono::milliseconds(25);
+	inputTrigger = std::chrono::milliseconds(35);
+
 	curState = unitState(idle);
 	unitSprite = &(sprites->at(curState));
 	unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
 	std::cout << "cur Don state: " << curState << std::endl;
+	movCooldown = true;
 }
 
 don::~don(){
@@ -43,14 +48,71 @@ void don::print() {
 
 void don::updateTiming(std::chrono::milliseconds deltaTime){
 	spriteTimer += deltaTime;
+	inputTimer += deltaTime;
+	std::cout << "spriteTimer, spriteTrigger >> " << std::chrono::duration_cast<std::chrono::milliseconds>(spriteTrigger).count() << std::endl;
 	if (spriteTimer >= spriteTrigger)  {
 		spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 		spriteOffset++;
 		if (spriteOffset>=numSprites) spriteOffset = 0; 
-		//update the sprite sheet nao.
 		unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
+		std::cout << "posX: " << posX << std::endl;
+//todo [ ] MOVE THIS TO A DIFFERENT TIMER
+		posX += velX;
+		posY += velY;
+	}
+	if (inputTimer >= inputTrigger)  {
+		movCooldown = true;
+		inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
+	}
+
+	//update the sprite sheet nao.
+	unitSprite->setPosition(posX, posY);
+}
+
+/*
+ * as is - this combines all buttons under the same cooldown
+ */
+
+void don::inputHandling(){
+	if (!getCooldown())  return;
+
+	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+		moveVelX(3);
+		curState = unitState(right);
+		unitSprite = &(sprites->at(curState));
 
 	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+		curState = unitState(left);
+		moveVelX(-3);
+		unitSprite = &(sprites->at(curState));
+	}
+	else {
+		curState = unitState(idle);
+		unitSprite = &(sprites->at(curState));
+		moveVelX(0);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+		moveVelY(3);
+
+	}
+	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+		moveVelY(-3);
+	}
+	else {
+		moveVelY(0);
+	}
+	burnCooldown(); 
+}
+
+bool don::getCooldown() {
+	return movCooldown;
+}
+
+bool don::burnCooldown() {
+	movCooldown = false;
+	inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(inputTimer).zero();
 
 }

@@ -10,6 +10,10 @@ class don : public baseUnit{
 		~don();
 		void print() override;
 		void updateTiming(std::chrono::milliseconds deltaTime) override;
+		void inputHandling() override;
+//	private:
+		bool getCooldown() override;
+		bool burnCooldown() override;
 
 };
 

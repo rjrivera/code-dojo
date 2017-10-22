@@ -170,31 +170,13 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
-		//debounce input.
-		//	if (tUnit->getCooldown() ) {
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-					inGame = false;
-//					tUnit->burnCooldown();
-				}	 
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-					tUnit->movePosX(1);
-//					tUnit->burnCooldown();
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-					tUnit->movePosX(-1);
-//					tUnit->burnCooldown();
-				}
-/*
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-					tUnit->movePosY(-1);
-					tUnit->burnCooldown();
-				}
-				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-					tUnit->movePosY(1);
-					tUnit->burnCooldown();
-				}*/
-	//	}
-		
+		// character control
+		tUnit->inputHandling();
+		// client control TODO[ ] abstract away to a client handling layer. 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+			inGame = false;
+		}	 
+
 
 		// ===================================================
 		// sprite draw logic

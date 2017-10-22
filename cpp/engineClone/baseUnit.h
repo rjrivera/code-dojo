@@ -16,15 +16,24 @@ class baseUnit {
 		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
-		bool movCooldown;
-		uint32_t posX, posY, hp, player, spriteOffset, numSprites;
-		std::chrono::milliseconds spriteTimer, spriteTrigger;
+		int32_t posX, posY, velX, velY,  hp; 
+		uint32_t player, spriteOffset, numSprites;
+		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger;
 		enum unitState {right, left, idle}; 
 		unitState curState;
-		void movePosX(int64_t moveX);
-		void movePosY(int64_t moveY);
 		bool isValMove(uint32_t destX, uint32_t destY);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
+		virtual void inputHandling() = 0;
+		bool movCooldown;
+
+//	private:
+		void movePosX(int32_t moveX);
+		void movePosY(int32_t moveY);
+		void moveVelX(int32_t moveX);
+		void moveVelY(int32_t moveY);
+
+		virtual bool getCooldown() = 0;
+		virtual bool burnCooldown() = 0;
 
 
 
