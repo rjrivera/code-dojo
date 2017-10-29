@@ -12,16 +12,12 @@
 #include "rapidjson/include/rapidjson/stringbuffer.h"
 #include "rapidjson/include/rapidjson/filereadstream.h"
 #include <SFML/Graphics.hpp>
-#include <boost/asio.hpp>
-#include <boost/asio/io_service.hpp>
-#include <cstdlib>
+
 #define WIDTH 384
 #define HEIGHT 352
 
 // major todo[ ]  migrate input handling to objects, not client - client just interfaces between input device and objects. 
 // enum actionMenuState {move, atk, back}; keeping for reference
-// I want this server to receive packets and use said packets as inputs 
-// First - I need to prepare a means for listening.
 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
@@ -131,10 +127,6 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 
 int main( int argc, char** argv ) {
 
-
-	bool server = true;
-	std::cout << "server up\n";
-
 	// ====================
 	// INITIALIZATION 
 	// ====================
@@ -143,7 +135,9 @@ int main( int argc, char** argv ) {
 
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	foo(unitTexts, "turtle");
+	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "TMNT Clone");
 	std::chrono::milliseconds frameTrigger{35};
+
 	// testing stl time libraries
 
 	auto deltaTime = std::chrono::high_resolution_clock::now();
@@ -152,63 +146,15 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(myTimer).zero();
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
-	//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
+//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
-	
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 
 	bool inGame = true;
-
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "TMNT Clone");
-	sf::Event event;				
-
-	// create an io_service  object to accept incoming client requests and run the boost::asio::io_service object
-	try { 
-/*
-		boost::asio::io_service io_service;
-		boost::asio::ip::udp::socket socket(io_service);
-		boost::asio::ip::udp::endpoint remote_endpoint;
-		boost::asio::ip::udp::endpoint local_endpoint;	
-	
-		io_service.run();
-
-		// the io_service object must be passed to the client.
-		local_endpoint = socket.local_endpoint();
-*/
-		pid_t pid = fork();
-		if (pid < 0)  {
-			exit(EXIT_FAILURE);
-		}
-		// server configs
-		if (pid>0) { 
-			window.close();
-//			socket.bind(local_endpoint);
-//			socket.open(boost::asio::ip::udp::v4());	
-		}
-		// client configs
-		else {
-			server = false;
-		//			remote_endpoint = local_endpoint; 
-			// create new socket for client
-//			socket = boost::asio::ip::udp::socket(io_service);
-//			local_endpoint = socket.local_endpoint();
-//			socket.bind(local_endpoint);
-//			socket.open(boost::asio::ip::udp::v4());
-			
-	//just need to communicate this information to the server, but for now...
-		}
-	
-
-	}
-	catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
-
-	
 	//inputState curInputState(terrainSelect);
-	while(inGame && !server) {
-
+	while(inGame) {
+		sf::Event event;	
 		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
 		lastCycle = now;
 		now = std::chrono::system_clock::now();
@@ -226,20 +172,11 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// character control
 		tUnit->inputHandling();
-
-
-		
 		// client control TODO[ ] abstract away to a client handling layer. 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 			inGame = false;
 		}	 
 
-		// =========netowkring component
-
-//		socket.send_to(buffer("Jane Doe", 8), remote_endpoint, 0, err);		
-
-
-		// ============================
 
 		// ===================================================
 		// sprite draw logic
@@ -251,43 +188,10 @@ int main( int argc, char** argv ) {
 			window.clear();
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			
-			std::cout << "client draws frame\n";		
+			
 
 			window.display();
 		}
-	}
-
-// SERVER LOGIC 
-	while(inGame && server) {
-	//	while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
-
-	
-		lastCycle = now;
-		now = std::chrono::system_clock::now();
-		frameTimer += myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCycle);
-		
-		// ===================================================
-		// UPDATE TIMING
-		// ==================================================		
-		//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
-
-		tUnit->updateTiming(myTimer);
-
-		// ===================================================
-		// INPUT HANDLING
-		// ===================================================
-		// character control
-			tUnit->inputHandling();	
-		// client control TODO[ ] abstract away to a client handling layer. 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
-			inGame = false;
-		}	 
-
-		// ==================== NETWORKING COMPONENT ========
-//		socket_.async_receive_from(boost::asio::buffer(recv_buffer_), 
-
-		
-		
 	}
 	return 0;
 }

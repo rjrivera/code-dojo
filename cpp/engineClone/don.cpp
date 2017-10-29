@@ -14,10 +14,8 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	for (int32_t i = 0; i < maxUnitState_const; i++) {
 		sprites->push_back(sf::Sprite());
 
-		std::cout << "vector<sf::sprite> pushed new sprite\n";
 		sprites->at(i).setTexture(*(images_[i]));
 
-		std::cout << "sprites texture set\n";
 		sprites->at(i).setPosition(0, 0);
 	}
 	posX = posY = velX = velY = 0;
@@ -32,7 +30,6 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	unitSprite = &(sprites->at(curState));
 	unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
-	std::cout << "cur Don state: " << curState << std::endl;
 	movCooldown = true;
 }
 
@@ -49,14 +46,12 @@ void don::print() {
 void don::updateTiming(std::chrono::milliseconds deltaTime){
 	spriteTimer += deltaTime;
 	inputTimer += deltaTime;
-	std::cout << "spriteTimer, spriteTrigger >> " << std::chrono::duration_cast<std::chrono::milliseconds>(spriteTrigger).count() << std::endl;
 	if (spriteTimer >= spriteTrigger)  {
 		spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 		spriteOffset++;
 		if (spriteOffset>=numSprites) spriteOffset = 0; 
 		unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
-		std::cout << "posX: " << posX << std::endl;
 //todo [ ] MOVE THIS TO A DIFFERENT TIMER
 		posX += velX;
 		posY += velY;
