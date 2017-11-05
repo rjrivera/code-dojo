@@ -6,6 +6,10 @@
 
 const int maxPlayers_const = 2;
 
+// networking =====================
+#define MYPORT 3490
+#define CLIENTPORT 3491
+
 // utility setup
 const int maxMenuDepth = 3;
 int height = 0;

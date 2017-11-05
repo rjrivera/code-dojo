@@ -16,7 +16,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <string.h>
 #include <cstdlib>
 #define WIDTH 384
 #define HEIGHT 352
@@ -162,30 +161,26 @@ int main( int argc, char** argv ) {
 	// Networking PoC scratch pad ==================
 	// make a socket system call - returns a socket descriptor or -1 error coded reportable to stderr.
 	int mySocketfd = socket(AF_INET, SOCK_DGRAM, 0);
-	std::cout << "debug output: mySocketfd ---> " << mySocketfd << std::endl;
-	int mySendSocket = socket(AF_INET, SOCK_DGRAM, 0);
-	std::cout << "debug output: mySendSocket ---> " << mySendSocket << std::endl;
-	
+	std::cout << "debugging -  mySocketfd ---> " << mySocketfd << std::endl;
 	// binding my socket
 	struct sockaddr_in mySockAddr;
 	mySockAddr.sin_family = AF_INET;
-	mySockAddr.sin_port = htons(CLIENTPORT); // automate getting an unused port by using '0'
-	mySockAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // use my IP address.
+	mySockAddr.sin_port = htons(MYPORT); // automate getting an unused port by using '0'
+	mySockAddr.sin_addr.s_addr = htonl(inet_addr("127.0.0.1")); // use my IP addressa.
+	struct sockaddr_in theirAddr;
+	memset(&(mySockAddr.sin_zero), '\0', 8);// zero out the rest of the struct.
 
-	struct sockaddr_in localServerAddr;
-	localServerAddr.sin_family = AF_INET;
- 	localServerAddr.sin_port = htons(MYPORT);
-	localServerAddr.sin_addr.s_addr = htonl(inet_addr("127.0.0.1")); // I know my server ip will be local. 
-	memset(&(localServerAddr.sin_zero), '\0', 8); //zero the rest of the struct.	
-	// mySocketfd is for listening
 	int myBind = bind(mySocketfd, (struct sockaddr *)&mySockAddr, sizeof(struct sockaddr));
-
-	std::cout << "checking my destination and source ip from inet_addr:\n";
-	std::cout << "destination ip ---> " << localServerAddr.sin_addr.s_addr << std::endl;
-	std::cout << "source ip ---> " << mySockAddr.sin_addr.s_addr << std::endl;
+	std::cout << "debugging - myBind ---> " << myBind << std::endl;
 	
+	// listening
+//	int myListen = listen(mySocketfd, 4);
+//	std::cout << "debugging - myListen ---> " << myListen << std::endl;
 
- 	int myConnect = 0;
+	int myNewFd = -1;
+	socklen_t sin_size = sizeof(struct sockaddr_in);
+
+	std::cout << "information on sockaddr * mySockAddr" << mySockAddr.sin_addr.s_addr << std::endl; 
 	// ==============================================	
 	while(inGame) {
 
@@ -204,39 +199,36 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
-		
+		// character control
+	//	tUnit->inputHandling();
+
+			
 		// client control TODO[ ] abstract away to a client handling layer. 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 			inGame = false;
 		}	 
 
-		// client control TODO[ ] abstract away to a client handling layer. 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tUnit->getCooldown()){
-		//	myConnect = connect(mySendSocket, (struct sockaddr *)&localServerAddr, sizeof(struct sockaddr));
-		//	std::cout << " attempting to connect to server local\n";a
-			char* msg = "HI SERVER!";
-			if (sendto(mySendSocket, msg, strlen(msg), 0, (struct sockaddr * )&localServerAddr, (socklen_t) sizeof(localServerAddr)) >= 0) {
-				std::cout << "send successful message\n" << msg << std::endl; 
-			}	 
+		// accept here 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) ) {
+			 //myNewFd = accept(mySocketfd, (struct sockaddr *)&theirAddr, &sin_size);
+			 //std::cout << "attempting to connect to a queued request\n";
+			//std::cout << "result of accept(): " << myNewFd << std::endl;
+			char buf[10];
+			int recvlen = recvfrom(mySocketfd, buf, strlen(buf), 0, (struct sockaddr *)&theirAddr, &sin_size);
+			if ( recvlen > 0 ) {
+				buf[recvlen] = 0;
+				printf("received message: \"%s\"\n", buf);
+			}					
 			else {
-				std::cout << "connection failed\n";
+				printf("error receiving message\n");
 			}
 		}
-
-		// client control TODO[ ] abstract away to a client handling layer. 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && myConnect != -1 && tUnit->getCooldown()){
-			char* msg = "HI SERVER!";
-			send(mySocketfd, msg, strlen(msg), 0);
-			std::cout << "sending msg: " << msg << std::endl;
+//		std::cout << "current value of file descriptor" << " myNewFd: " << myNewFd << std::endl;
+		if (myNewFd != -1)  {
+			char* buffer[10];
+			recv(myNewFd, buffer, 10, 0);
+		 	std::cout << "my Received message: " << buffer << std::endl;
 		}
-
-
-
-	
-		// character control
-		tUnit->inputHandling();
-
-
 
 		if ( frameTimer >= frameTrigger ) { 
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();

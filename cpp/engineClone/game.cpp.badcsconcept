@@ -14,9 +14,6 @@
 #include <SFML/Graphics.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <string.h>
 #include <cstdlib>
 #define WIDTH 384
 #define HEIGHT 352
@@ -135,6 +132,9 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 int main( int argc, char** argv ) {
 
 
+	bool server = false;
+	std::cout << "server up\n";
+
 	// ====================
 	// INITIALIZATION 
 	// ====================
@@ -152,42 +152,62 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(myTimer).zero();
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
+	//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
+	//myI->defineGridSprite(movText);
+	//now lets attach this unit to a board slot...
+	
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 
 	bool inGame = true;
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "TMNT Clone");
 	sf::Event event;				
+/*
+	// create an io_service  object to accept incoming client requests and run the boost::asio::io_service object
+	try { 
 
-	// Networking PoC scratch pad ==================
-	// make a socket system call - returns a socket descriptor or -1 error coded reportable to stderr.
-	int mySocketfd = socket(AF_INET, SOCK_DGRAM, 0);
-	std::cout << "debug output: mySocketfd ---> " << mySocketfd << std::endl;
-	int mySendSocket = socket(AF_INET, SOCK_DGRAM, 0);
-	std::cout << "debug output: mySendSocket ---> " << mySendSocket << std::endl;
+//		boost::asio::io_service io_service;
+//		boost::asio::ip::udp::socket socket(io_service);
+//		boost::asio::ip::udp::endpoint remote_endpoint;
+//		boost::asio::ip::udp::endpoint local_endpoint;	
 	
-	// binding my socket
-	struct sockaddr_in mySockAddr;
-	mySockAddr.sin_family = AF_INET;
-	mySockAddr.sin_port = htons(CLIENTPORT); // automate getting an unused port by using '0'
-	mySockAddr.sin_addr.s_addr = inet_addr("127.0.0.1"); // use my IP address.
+//		io_service.run();
 
-	struct sockaddr_in localServerAddr;
-	localServerAddr.sin_family = AF_INET;
- 	localServerAddr.sin_port = htons(MYPORT);
-	localServerAddr.sin_addr.s_addr = htonl(inet_addr("127.0.0.1")); // I know my server ip will be local. 
-	memset(&(localServerAddr.sin_zero), '\0', 8); //zero the rest of the struct.	
-	// mySocketfd is for listening
-	int myBind = bind(mySocketfd, (struct sockaddr *)&mySockAddr, sizeof(struct sockaddr));
+		// the io_service object must be passed to the client.
+//		local_endpoint = socket.local_endpoint();
 
-	std::cout << "checking my destination and source ip from inet_addr:\n";
-	std::cout << "destination ip ---> " << localServerAddr.sin_addr.s_addr << std::endl;
-	std::cout << "source ip ---> " << mySockAddr.sin_addr.s_addr << std::endl;
+		pid_t pid = fork();
+		if (pid < 0)  {
+			exit(EXIT_FAILURE);
+		}
+		// server configs
+		if (pid>0) { 
+			window.close();
+//			socket.bind(local_endpoint);
+//			socket.open(boost::asio::ip::udp::v4());	
+		}
+		// client configs
+		else {
+			server = false;
+		//			remote_endpoint = local_endpoint; 
+			// create new socket for client
+//			socket = boost::asio::ip::udp::socket(io_service);
+//			local_endpoint = socket.local_endpoint();
+//			socket.bind(local_endpoint);
+//			socket.open(boost::asio::ip::udp::v4());
+			
+	//just need to communicate this information to the server, but for now...
+		}
 	
 
- 	int myConnect = 0;
-	// ==============================================	
-	while(inGame) {
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
+*/
+	
+	//inputState curInputState(terrainSelect);
+	while(inGame && !server) {
 
 		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
 		lastCycle = now;
@@ -204,49 +224,70 @@ int main( int argc, char** argv ) {
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
+		// character control
+		tUnit->inputHandling();
+
+
 		
 		// client control TODO[ ] abstract away to a client handling layer. 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 			inGame = false;
 		}	 
 
-		// client control TODO[ ] abstract away to a client handling layer. 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tUnit->getCooldown()){
-		//	myConnect = connect(mySendSocket, (struct sockaddr *)&localServerAddr, sizeof(struct sockaddr));
-		//	std::cout << " attempting to connect to server local\n";a
-			char* msg = "HI SERVER!";
-			if (sendto(mySendSocket, msg, strlen(msg), 0, (struct sockaddr * )&localServerAddr, (socklen_t) sizeof(localServerAddr)) >= 0) {
-				std::cout << "send successful message\n" << msg << std::endl; 
-			}	 
-			else {
-				std::cout << "connection failed\n";
-			}
-		}
+		// =========netowkring component
 
-		// client control TODO[ ] abstract away to a client handling layer. 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && myConnect != -1 && tUnit->getCooldown()){
-			char* msg = "HI SERVER!";
-			send(mySocketfd, msg, strlen(msg), 0);
-			std::cout << "sending msg: " << msg << std::endl;
-		}
+//		socket.send_to(buffer("Jane Doe", 8), remote_endpoint, 0, err);		
 
 
+		// ============================
 
-	
-		// character control
-		tUnit->inputHandling();
-
-
-
+		// ===================================================
+		// sprite draw logic
+		// ===================================================
+		// needs a framerate
 		if ( frameTimer >= frameTrigger ) { 
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 			//std::cout << "draw some shit\n";
 			window.clear();
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			
+			std::cout << "client draws frame\n";		
+
 			window.display();
 		}
 	}
 
+// SERVER LOGIC 
+	while(inGame && server) {
+	//	while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
+
+	
+		lastCycle = now;
+		now = std::chrono::system_clock::now();
+		frameTimer += myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCycle);
+		
+		// ===================================================
+		// UPDATE TIMING
+		// ==================================================		
+		//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
+
+		tUnit->updateTiming(myTimer);
+
+		// ===================================================
+		// INPUT HANDLING
+		// ===================================================
+		// character control
+			tUnit->inputHandling();	
+		// client control TODO[ ] abstract away to a client handling layer. 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+			inGame = false;
+		}	 
+
+		// ==================== NETWORKING COMPONENT ========
+//		socket_.async_receive_from(boost::asio::buffer(recv_buffer_), 
+
+		
+		
+	}
 	return 0;
 }

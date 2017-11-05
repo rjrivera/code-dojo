@@ -13,7 +13,7 @@ LINKER_FLAGS =  -lboost_system -lpthread -lsfml-graphics -lsfml-window -lsfml-sy
 
 
 #OBJ_NAME specifies the name of our executable
-OBJ_NAME = ex1
+OBJ_NAME = client1
 
 all: $(OBJS)
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
