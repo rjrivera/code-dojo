@@ -19,8 +19,10 @@ const int maxTerrain_const =0;
 
 //unit textures
 const int maxUnit_const = 1;
-const int maxUnitState_const = 3; // all units need not use all 3
+const int maxUnitState_const = 4; // all units need not use all 3
 
 const int donUnit_const = 1;
+const int footPurpUnit_const = 2; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
+
 
 #endif

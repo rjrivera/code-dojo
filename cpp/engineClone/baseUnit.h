@@ -19,7 +19,7 @@ class baseUnit {
 		int32_t posX, posY, velX, velY,  hp; 
 		uint32_t player, spriteOffset, numSprites;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger;
-		enum unitState {right, left, idle}; 
+		enum unitState {right, left, idle, attack}; 
 		unitState curState;
 		bool isValMove(uint32_t destX, uint32_t destY);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);

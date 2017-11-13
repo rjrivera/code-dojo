@@ -7,6 +7,7 @@
 #include "baseUnit.cpp"
 #include "baseGFX.cpp"
 #include "don.cpp"
+#include "foot.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
@@ -25,16 +26,15 @@
 // enum actionMenuState {move, atk, back}; keeping for reference
 // I want this server to receive packets and use said packets as inputs 
 // First - I need to prepare a means for listening.
-
+// preconditiohn - all containers must start with a nullpointer
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
 	std::string texturePath = "textures/";
 	texturePath += textType_;
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
 	else if (textType_ == "turtle" ) numTexts = (maxUnit_const); 
+	else if (textType_ == "foot" ) numTexts = (maxUnit_const); 
 	else return;
-
-	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
 
 	for (int i = 1 ; i <= numTexts; i++) {	
 		char stateSprite = 'a';
@@ -126,6 +126,14 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 			std::cout << " don textures loaded in vector\n";
 			return new don(textures);
 			break;
+		case footPurpUnit_const :
+
+			// rev up those fryers
+			for (uint32_t i = 1; i <= maxUnitState_const; i++) textures.push_back(unitTexts_[i + (footPurpUnit_const-1)*maxUnitState_const]);
+
+			std::cout << "foot textures loaded in vector\n";
+			return new foot(textures);
+			break;
 		default : 
 			break;
 		}
@@ -140,9 +148,10 @@ int main( int argc, char** argv ) {
 	// ====================
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
-
+	unitTexts.push_back(nullptr);
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	foo(unitTexts, "turtle");
+	foo(unitTexts, "foot");
 	std::chrono::milliseconds frameTrigger{35};
 	// testing stl time libraries
 
@@ -153,6 +162,7 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
+	baseUnit * fUnit = unitBuilder(unitTexts, footPurpUnit_const);
 
 	bool inGame = true;
 
@@ -160,6 +170,7 @@ int main( int argc, char** argv ) {
 	sf::Event event;				
 
 	// Networking PoC scratch pad ==================
+	/* DELAY NETWORKING PATCH TO ACCOMODATE A RAPID VERTICAL SLICE DEVELOPMENT 
 	// make a socket system call - returns a socket descriptor or -1 error coded reportable to stderr.
 	int mySocketfd = socket(AF_INET, SOCK_DGRAM, 0);
 	std::cout << "debug output: mySocketfd ---> " << mySocketfd << std::endl;
@@ -186,6 +197,7 @@ int main( int argc, char** argv ) {
 	
 
  	int myConnect = 0;
+	*/
 	// ==============================================	
 	while(inGame) {
 
@@ -200,6 +212,7 @@ int main( int argc, char** argv ) {
 		//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
 
 		tUnit->updateTiming(myTimer);
+		fUnit->updateTiming(myTimer);
 
 		// ===================================================
 		// INPUT HANDLING
@@ -209,7 +222,7 @@ int main( int argc, char** argv ) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 			inGame = false;
 		}	 
-
+/*
 		// client control TODO[ ] abstract away to a client handling layer. 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tUnit->getCooldown()){
 		//	myConnect = connect(mySendSocket, (struct sockaddr *)&localServerAddr, sizeof(struct sockaddr));
@@ -230,11 +243,12 @@ int main( int argc, char** argv ) {
 			std::cout << "sending msg: " << msg << std::endl;
 		}
 
-
+*/
 
 	
 		// character control
 		tUnit->inputHandling();
+		fUnit->inputHandling();
 
 
 
@@ -243,6 +257,7 @@ int main( int argc, char** argv ) {
 			//std::cout << "draw some shit\n";
 			window.clear();
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
+			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			
 			window.display();
 		}

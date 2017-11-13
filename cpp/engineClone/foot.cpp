@@ -1,14 +1,14 @@
-#include "don.h"
+#include "foot.h"
 #include "Project_Constants.h"
 #include <iostream>
 #include <vector>
 
-don::don()  	{
-	std::cout << "don instatiated\n";
+foot::foot()  	{
+	std::cout << "foot instatiated\n";
 	
 }
 
-don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
+foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	sprites = new std::vector<sf::Sprite>();
 	std::cout << "vector<sf::sprite> built\n";
 	for (int32_t i = 0; i < maxUnitState_const; i++) {
@@ -19,7 +19,8 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 		sprites->at(i).setPosition(0, 0);
 	}
 	posX = posY = velX = velY = 0;
-	numSprites = 6;
+	posX = 128;
+	numSprites = 4;
 	spriteOffset = 0; 
 	spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 
@@ -29,21 +30,21 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	curState = unitState(idle);
 	unitSprite = &(sprites->at(curState));
 	unitSprite->setTextureRect(sf::IntRect(
-			spriteOffset*93,0,93,62));
+			spriteOffset*40,0,40,62));
 	movCooldown = true;
 }
 
-don::~don(){
-	std::cout << "don object destroyed\n";
+foot::~foot(){
+	std::cout << "foot object destroyed\n";
 
 }
 
-void don::print() {
-	std::cout << "don object printed\n";
+void foot::print() {
+	std::cout << "foot object printed\n";
 
 }
 
-void don::updateTiming(std::chrono::milliseconds deltaTime){
+void foot::updateTiming(std::chrono::milliseconds deltaTime){
 	spriteTimer += deltaTime;
 	inputTimer += deltaTime;
 	if (spriteTimer >= spriteTrigger)  {
@@ -51,7 +52,7 @@ void don::updateTiming(std::chrono::milliseconds deltaTime){
 		spriteOffset++;
 		if (spriteOffset>=numSprites) spriteOffset = 0; 
 		unitSprite->setTextureRect(sf::IntRect(
-			spriteOffset*93,0,93,62));
+			spriteOffset*40,0,40,62));
 //todo [ ] MOVE THIS TO A DIFFERENT TIMER
 		posX += velX;
 		posY += velY;
@@ -69,7 +70,7 @@ void don::updateTiming(std::chrono::milliseconds deltaTime){
  * as is - this combines all buttons under the same cooldown
  */
 
-void don::inputHandling(){
+void foot::inputHandling(){
 	if (!getCooldown())  return;
 
 	
@@ -113,11 +114,11 @@ void don::inputHandling(){
 	burnCooldown(); 
 }
 
-bool don::getCooldown() {
+bool foot::getCooldown() {
 	return movCooldown;
 }
 
-bool don::burnCooldown() {
+bool foot::burnCooldown() {
 	movCooldown = false;
 	inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(inputTimer).zero();
 
