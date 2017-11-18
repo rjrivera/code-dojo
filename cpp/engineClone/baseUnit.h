@@ -18,11 +18,13 @@ class baseUnit {
 		sf::Sprite * unitSprite;
 		int32_t posX, posY, velX, velY,  hp; 
 		uint32_t player, spriteOffset, numSprites;
-		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger;
-		enum unitState {right, left, idle, attack}; 
+		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
+		// apparently - enums are not exclusive to enum types so just collapse ai and player states into one enum
+		enum unitState {right, left, idle, attack, toPlayer, toSpot}; 
 		unitState curState;
 		bool isValMove(uint32_t destX, uint32_t destY);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
+		virtual void updateBehavior();
 		virtual void inputHandling() = 0;
 		bool movCooldown;
 

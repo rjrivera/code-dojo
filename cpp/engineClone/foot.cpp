@@ -25,8 +25,10 @@ foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 
 	spriteTrigger = std::chrono::milliseconds(70);
-	inputTrigger = std::chrono::milliseconds(35);
-
+	inputTrigger = std::chrono::milliseconds(1000);
+// hmmmm - inputTrigger IS an aiTrigger	
+	aiTrigger = std::chrono::milliseconds(35);
+	aiTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 	curState = unitState(idle);
 	unitSprite = &(sprites->at(curState));
 	unitSprite->setTextureRect(sf::IntRect(
@@ -70,6 +72,43 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
  * as is - this combines all buttons under the same cooldown
  */
 
+void foot::updateBehavior() {
+	if (!getCooldown())  return;
+	// iteration one, preprogrammed state pathing - TODO[ ] rng state pick - easy implementation, just rng to pick state, then keep this prototype as the behavior swap logic. 
+	switch (curState) { 
+		case (idle) :
+			moveVelX(3);
+			curState = right;
+			unitSprite = &(sprites->at(curState));
+			break;
+		case (right) :		
+			curState = left;
+			moveVelX(-3);
+			unitSprite = &(sprites->at(curState));
+			break;
+		case (left) :
+			curState = attack;
+			unitSprite = &(sprites->at(curState));
+			moveVelX(0);
+			moveVelY(0);
+			break;
+		case (attack) :
+			curState = idle;
+			unitSprite = &(sprites->at(curState));
+			moveVelX(0);
+			break;
+			// higher priority attacks must be near the bottom to provide defacto override	
+
+	}
+
+	burnCooldown(); 
+}
+/*
+ * updateBehavoir is a proof-of-concept function to capture ai behavior - 
+ * characters will be similar in nature but will still require customization and tuning
+ * relies on random number generator. 
+ *
+ */
 void foot::inputHandling(){
 	if (!getCooldown())  return;
 
@@ -112,6 +151,7 @@ void foot::inputHandling(){
 
 
 	burnCooldown(); 
+
 }
 
 bool foot::getCooldown() {

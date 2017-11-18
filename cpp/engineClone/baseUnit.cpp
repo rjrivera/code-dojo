@@ -57,6 +57,11 @@ void baseUnit::updateTiming(std::chrono::milliseconds deltaTime) {
 
 	//NOP
 }
+void baseUnit::updateBehavior(){
+
+
+	//NOP
+}
 /*
 //temporary sprite - redefine with better software architecture. 
 void baseUnit::defineGridSprite(const sf::Texture * image) {

@@ -163,7 +163,9 @@ int main( int argc, char** argv ) {
 	
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 	baseUnit * fUnit = unitBuilder(unitTexts, footPurpUnit_const);
-
+	baseUnit * fUnit2 = unitBuilder(unitTexts, footPurpUnit_const);
+	fUnit2->posX = 200;
+	fUnit2->posY = 200;
 	bool inGame = true;
 
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "TMNT Clone");
@@ -213,6 +215,7 @@ int main( int argc, char** argv ) {
 
 		tUnit->updateTiming(myTimer);
 		fUnit->updateTiming(myTimer);
+		fUnit2->updateTiming(myTimer);
 
 		// ===================================================
 		// INPUT HANDLING
@@ -248,7 +251,8 @@ int main( int argc, char** argv ) {
 	
 		// character control
 		tUnit->inputHandling();
-		fUnit->inputHandling();
+		fUnit->updateBehavior();
+		fUnit2->updateBehavior();
 
 
 
@@ -258,6 +262,7 @@ int main( int argc, char** argv ) {
 			window.clear();
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
+			window.draw(*(fUnit2->unitSprite)); // all animation logic MUST be 'under the hood'
 			
 			window.display();
 		}
