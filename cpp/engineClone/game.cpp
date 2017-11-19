@@ -8,6 +8,7 @@
 #include "baseGFX.cpp"
 #include "don.cpp"
 #include "foot.cpp"
+#include "bckTerrain.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
@@ -19,8 +20,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <cstdlib>
-#define WIDTH 384
-#define HEIGHT 352
 
 // major todo[ ]  migrate input handling to objects, not client - client just interfaces between input device and objects. 
 // enum actionMenuState {move, atk, back}; keeping for reference
@@ -113,7 +112,7 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	}
 }
 */
-//potential repurpose
+//potential repurpose -- create a similar process for the bckTerrain
 baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 	std::cout << " attempting to build a unit\n";
 	std::vector<const sf::Texture *> textures = std::vector<const sf::Texture *>();
@@ -161,14 +160,30 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(myTimer).zero();
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
+	// PoC scratch Pad ===== all PoC work must be Migrated to a pipeline which can construct from data files 
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 	baseUnit * fUnit = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit2 = unitBuilder(unitTexts, footPurpUnit_const);
 	fUnit2->posX = 200;
-	fUnit2->posY = 200;
+	fUnit2->posY = 300;
+	fUnit->posX = 300;
+	fUnit->posY = 320;
+
+	tUnit->posX = 75;
+	tUnit->posY = 325;
+
+
+	sf::Image * tempImg = new sf::Image();
+	tempImg->loadFromFile("textures/pirateShip.png");
+	tempImg->createMaskFromColor(sf::Color(255,0,255),0);	
+	sf::Texture * tempText = new sf::Texture();
+	tempText->loadFromImage(*tempImg);
+	bckTerrain * bTerrain = new bckTerrain(tempText);
+
+
 	bool inGame = true;
 
-	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "TMNT Clone");
+	sf::RenderWindow window(sf::VideoMode(width, height), "TMNT Clone");
 	sf::Event event;				
 
 	// Networking PoC scratch pad ==================
@@ -216,7 +231,7 @@ int main( int argc, char** argv ) {
 		tUnit->updateTiming(myTimer);
 		fUnit->updateTiming(myTimer);
 		fUnit2->updateTiming(myTimer);
-
+		bTerrain->updateTiming(myTimer);
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
@@ -260,10 +275,11 @@ int main( int argc, char** argv ) {
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 			//std::cout << "draw some shit\n";
 			window.clear();
+			window.draw(bTerrain->bckSprite);
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 			window.draw(*(fUnit2->unitSprite)); // all animation logic MUST be 'under the hood'
-			
+					
 			window.display();
 		}
 	}

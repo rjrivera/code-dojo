@@ -20,7 +20,7 @@ class baseUnit {
 		uint32_t player, spriteOffset, numSprites;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
 		// apparently - enums are not exclusive to enum types so just collapse ai and player states into one enum
-		enum unitState {right, left, idle, attack, toPlayer, toSpot}; 
+		enum unitState {right, left, idle, attack, toPlayer, toSpot, dLeft, uLeft, dRight, uRight}; 
 		unitState curState;
 		bool isValMove(uint32_t destX, uint32_t destY);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);

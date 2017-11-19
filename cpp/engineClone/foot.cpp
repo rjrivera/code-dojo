@@ -24,7 +24,7 @@ foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	spriteOffset = 0; 
 	spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 
-	spriteTrigger = std::chrono::milliseconds(70);
+	spriteTrigger = std::chrono::milliseconds(80);
 	inputTrigger = std::chrono::milliseconds(1000);
 // hmmmm - inputTrigger IS an aiTrigger	
 	aiTrigger = std::chrono::milliseconds(35);
@@ -63,7 +63,10 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
 		movCooldown = true;
 		inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 	}
-
+	//TODO[ ] remove the hardnumber and query the sprite textRect Vector2u for height
+	if (posY  > height-62 ) posY = height - 62; 
+	if (posY  < minHeight) posY = minHeight; 
+	
 	//update the sprite sheet nao.
 	unitSprite->setPosition(posX, posY);
 }
@@ -75,30 +78,75 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
 void foot::updateBehavior() {
 	if (!getCooldown())  return;
 	// iteration one, preprogrammed state pathing - TODO[ ] rng state pick - easy implementation, just rng to pick state, then keep this prototype as the behavior swap logic. 
+	switch (distribution(generator)) {
+		case 0:
+			curState = right;
+			break;
+		case 1:
+			curState = left;
+			break; 
+		case 2:
+			curState = attack;
+			break;
+		case 3:
+			curState = idle;
+			break;
+		case 4:
+			curState = dLeft;
+			break;
+		case 5:
+			curState = uLeft;
+			break;
+		case 6:
+			curState = dRight;
+			break;
+		case 7:
+			curState = uRight;
+			break;
+		default:
+			curState = idle;
+			break;
+	}
 	switch (curState) { 
 		case (idle) :
-			moveVelX(3);
-			curState = right;
+			moveVelX(0);
 			unitSprite = &(sprites->at(curState));
 			break;
 		case (right) :		
-			curState = left;
-			moveVelX(-3);
+			moveVelX(3);
 			unitSprite = &(sprites->at(curState));
 			break;
 		case (left) :
-			curState = attack;
 			unitSprite = &(sprites->at(curState));
-			moveVelX(0);
+			moveVelX(-3);
 			moveVelY(0);
 			break;
 		case (attack) :
-			curState = idle;
 			unitSprite = &(sprites->at(curState));
 			moveVelX(0);
 			break;
+		case (dLeft) :
+			unitSprite = &(sprites->at(left));
+			moveVelX(-3);
+			moveVelY(3);
+			break;
+		case (dRight) :
+			unitSprite = &(sprites->at(right));
+			moveVelX(3);
+			moveVelY(3);
+			break;
+		case (uRight) :
+			unitSprite = &(sprites->at(right));
+			moveVelX(3);
+			moveVelY(-3);
+			break;
+		case (uLeft) :
+			unitSprite = &(sprites->at(left));
+			moveVelX(3);
+			moveVelY(-3);
+			break;
 			// higher priority attacks must be near the bottom to provide defacto override	
-
+	
 	}
 
 	burnCooldown(); 

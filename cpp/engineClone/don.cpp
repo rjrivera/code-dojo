@@ -23,7 +23,7 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	spriteOffset = 0; 
 	spriteTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 
-	spriteTrigger = std::chrono::milliseconds(70);
+	spriteTrigger = std::chrono::milliseconds(80);
 	inputTrigger = std::chrono::milliseconds(35);
 
 	curState = unitState(idle);
