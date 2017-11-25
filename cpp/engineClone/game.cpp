@@ -20,6 +20,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <cstdlib>
+#include "Point.h"
 
 // major todo[ ]  migrate input handling to objects, not client - client just interfaces between input device and objects. 
 // enum actionMenuState {move, atk, back}; keeping for reference
@@ -139,6 +140,34 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 	return nullptr;
 }
 
+bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_, Point tL_, Point bR_) {
+	std::cout << " attempting to build a Terrain object\n";
+	// do we create vis effects for backTerain? no
+	bckTerrain * tempT;
+	switch(bkg_){
+		case pirateBkg_const :
+			tempT = new bckTerrain(worldTexts_[pirateBkg_const]);
+			tempT->setCeiling(tL_.Y());
+			tempT->setFloor(bR_.Y());
+			break;
+		default : 
+			break;
+		}
+	return nullptr;
+}
+
+void activateEnemies(std::vector<baseUnit *> * enemies_, bckTerrain * curTerrain_)   {
+	// TODO[ ] implement this function
+	// usage: the enemies vector will be build bottom up where the active will start at 0, and the first
+	// inactive enemy will be at the next background terrain's rectangle
+	// THEREFORE, on activation you will...
+	
+	// detect all enemies withing the curTerrain_'s rectangle using some algrebra
+	
+	// process those enemies by setting to active, setting ceiling and floor as per curTerrain_'s lines. 
+	return;
+}
+
 int main( int argc, char** argv ) {
 
 
@@ -147,8 +176,10 @@ int main( int argc, char** argv ) {
 	// ====================
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
+	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
 	unitTexts.push_back(nullptr);
-	//control unit for board manipulation operations TODO[ ] move to cursor class.
+	terrainTexts.push_back(nullptr);
+	// foo should be renamed to loadUnitTexts
 	foo(unitTexts, "turtle");
 	foo(unitTexts, "foot");
 	std::chrono::milliseconds frameTrigger{35};
@@ -164,10 +195,17 @@ int main( int argc, char** argv ) {
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 	baseUnit * fUnit = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit2 = unitBuilder(unitTexts, footPurpUnit_const);
+	// all this right here should be in the activate function ====
+	//
 	fUnit2->posX = 200;
 	fUnit2->posY = 300;
 	fUnit->posX = 300;
 	fUnit->posY = 320;
+
+	// ===============
+	// when building units from json file, build just like you would ... in the advanced wars PoC/Engine
+	enemies.push_back(fUnit);
+	enemies.push_back(fUnit2);
 
 	tUnit->posX = 75;
 	tUnit->posY = 325;
@@ -178,9 +216,19 @@ int main( int argc, char** argv ) {
 	tempImg->createMaskFromColor(sf::Color(255,0,255),0);	
 	sf::Texture * tempText = new sf::Texture();
 	tempText->loadFromImage(*tempImg);
-	bckTerrain * bTerrain = new bckTerrain(tempText);
-
-
+	terrainTexts.push_back(tempText);
+	// todo[ ] Leverage the point PoC with the world building content pipeline and TILED program to json up the world
+	// JUST LIKE in the advanced wars demos. 
+	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,350), Point(640, 400));
+	// this should be in activate unit function =====
+	for (baseUnit * enemy : enemies) {
+		enemy->setCeiling(bTerrain->minHeight);
+		enemy->setFloor(bTerrain->maxHeight);
+	}
+	tUnit->setCeiling(bTerrain->minHeight);
+	tUnit->setFloor(bTerrain->maxHeight);
+	
+	// =====
 	bool inGame = true;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "TMNT Clone");
@@ -266,9 +314,7 @@ int main( int argc, char** argv ) {
 	
 		// character control
 		tUnit->inputHandling();
-		fUnit->updateBehavior();
-		fUnit2->updateBehavior();
-
+		for (baseUnit * enemy : enemies) enemy->updateBehavior();
 
 
 		if ( frameTimer >= frameTrigger ) { 
@@ -276,9 +322,10 @@ int main( int argc, char** argv ) {
 			//std::cout << "draw some shit\n";
 			window.clear();
 			window.draw(bTerrain->bckSprite);
+			for (baseUnit * enemy : enemies) window.draw(*(enemy->unitSprite));
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
-			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
-			window.draw(*(fUnit2->unitSprite)); // all animation logic MUST be 'under the hood'
+//			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
+//			window.draw(*(fUnit2->unitSprite)); // all animation logic MUST be 'under the hood'
 					
 			window.display();
 		}

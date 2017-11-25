@@ -64,7 +64,7 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
 		inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 	}
 	//TODO[ ] remove the hardnumber and query the sprite textRect Vector2u for height
-	if (posY  > height-62 ) posY = height - 62; 
+	if (posY  > maxHeight-62 ) posY = height - 62; 
 	if (posY  < minHeight) posY = minHeight; 
 	
 	//update the sprite sheet nao.
@@ -107,6 +107,7 @@ void foot::updateBehavior() {
 			curState = idle;
 			break;
 	}
+/*
 	switch (curState) { 
 		case (idle) :
 			moveVelX(0);
@@ -148,7 +149,7 @@ void foot::updateBehavior() {
 			// higher priority attacks must be near the bottom to provide defacto override	
 	
 	}
-
+*/
 	burnCooldown(); 
 }
 /*

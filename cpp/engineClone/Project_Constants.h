@@ -14,12 +14,12 @@ const int maxPlayers_const = 2;
 // utility setup
 const int maxMenuDepth = 3;
 int height = 400;
-int minHeight = 250;
 int width = 640;
 int backX = 0;
 int backY = 0;
 //terrain textures
-const int maxTerrain_const =0;
+const int maxTerrain_const =1;
+const int pirateBkg_const = 1;
 
 //unit textures
 const int maxUnit_const = 1;

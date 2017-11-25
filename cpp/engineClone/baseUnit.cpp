@@ -62,6 +62,14 @@ void baseUnit::updateBehavior(){
 
 	//NOP
 }
+
+void baseUnit::setCeiling(double ceiling_) {
+	minHeight = ceiling_; 
+}
+
+void baseUnit::setFloor(double floor_) {
+	maxHeight = floor_; 
+}
 /*
 //temporary sprite - redefine with better software architecture. 
 void baseUnit::defineGridSprite(const sf::Texture * image) {

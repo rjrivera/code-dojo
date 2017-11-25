@@ -26,5 +26,11 @@ void bckTerrain::updateTiming(std::chrono::milliseconds deltaTime) {
 
 }
 
+void bckTerrain::setFloor(double floor_) {
+	maxHeight = floor_;
+}
 
 
+void bckTerrain::setCeiling(double ceiling_) {
+	minHeight = ceiling_;
+}

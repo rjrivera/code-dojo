@@ -17,12 +17,15 @@ class baseUnit {
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
 		int32_t posX, posY, velX, velY,  hp; 
+		double maxHeight, minHeight; // POINT OF ORDER - MAX IS MAX MAGNITUED, THE FLOOR -- MIN IS MIN MAGNITUDE, THE CEILING!!!
 		uint32_t player, spriteOffset, numSprites;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
 		// apparently - enums are not exclusive to enum types so just collapse ai and player states into one enum
 		enum unitState {right, left, idle, attack, toPlayer, toSpot, dLeft, uLeft, dRight, uRight}; 
 		unitState curState;
 		bool isValMove(uint32_t destX, uint32_t destY);
+		void setCeiling(double ceiling_);
+		void setFloor(double floor_);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
 		virtual void inputHandling() = 0;
