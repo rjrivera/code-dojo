@@ -107,7 +107,7 @@ void foot::updateBehavior() {
 			curState = idle;
 			break;
 	}
-/*
+// now do the action of new state
 	switch (curState) { 
 		case (idle) :
 			moveVelX(0);
@@ -149,7 +149,7 @@ void foot::updateBehavior() {
 			// higher priority attacks must be near the bottom to provide defacto override	
 	
 	}
-*/
+
 	burnCooldown(); 
 }
 /*

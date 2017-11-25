@@ -147,9 +147,10 @@ bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_,
 	switch(bkg_){
 		case pirateBkg_const :
 			tempT = new bckTerrain(worldTexts_[pirateBkg_const]);
+			
 			tempT->setCeiling(tL_.Y());
 			tempT->setFloor(bR_.Y());
-			break;
+			return tempT;
 		default : 
 			break;
 		}
@@ -219,7 +220,7 @@ int main( int argc, char** argv ) {
 	terrainTexts.push_back(tempText);
 	// todo[ ] Leverage the point PoC with the world building content pipeline and TILED program to json up the world
 	// JUST LIKE in the advanced wars demos. 
-	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,350), Point(640, 400));
+	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,225), Point(640, 400));
 	// this should be in activate unit function =====
 	for (baseUnit * enemy : enemies) {
 		enemy->setCeiling(bTerrain->minHeight);
