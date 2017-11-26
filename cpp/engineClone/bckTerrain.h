@@ -10,7 +10,7 @@
 class bckTerrain {
 
 	public:
-		Point tL, tR;
+		Point tL, bR;
 		double minHeight, maxHeight;
 		bckTerrain(); 	
 		bckTerrain(const sf::Texture * bckTexture);

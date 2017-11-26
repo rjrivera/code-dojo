@@ -68,7 +68,7 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
 	if (posY  < minHeight) posY = minHeight; 
 	
 	//update the sprite sheet nao.
-	unitSprite->setPosition(posX, posY);
+	unitSprite->setPosition(posX - backX, posY - backY);
 }
 
 /*

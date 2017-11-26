@@ -53,7 +53,14 @@ void don::updateTiming(std::chrono::milliseconds deltaTime){
 		unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
 //todo [ ] MOVE THIS TO A DIFFERENT TIMER
-		posX += velX;
+ 		// posX will be local - not global.
+ 		if (posX + velX <= viewPortRight && velX > 0 ) posX += velX;
+		else if (velX > 0) backX += velX;
+
+ 		if (posX + velX >= viewPortLeft && velX < 0) posX += velX;
+		else if (velX < 0 )  backX += velX;
+
+
 		posY += velY;
 	}
 	if (inputTimer >= inputTrigger)  {
@@ -74,14 +81,14 @@ void don::inputHandling(){
 
 	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-		moveVelX(3);
+		moveVelX(5);
 		curState = unitState(right);
 		unitSprite = &(sprites->at(curState));
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
 		curState = unitState(left);
-		moveVelX(-3);
+		moveVelX(-5);
 		unitSprite = &(sprites->at(curState));
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )  {
@@ -96,11 +103,11 @@ void don::inputHandling(){
 		moveVelX(0);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-		moveVelY(3);
+		moveVelY(5);
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-		moveVelY(-3);
+		moveVelY(-5);
 	}
 	else {
 		moveVelY(0);

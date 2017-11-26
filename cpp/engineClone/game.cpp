@@ -150,7 +150,16 @@ bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_,
 			
 			tempT->setCeiling(tL_.Y());
 			tempT->setFloor(bR_.Y());
+			tempT->bckSprite.setPosition(tL_.X(), 0);
 			return tempT;
+		case pirate2Bkg_const :
+			tempT = new bckTerrain(worldTexts_[pirate2Bkg_const]);
+			tempT->setCeiling(tL_.Y());
+			tempT->setFloor(bR_.Y());
+			tempT->tL = tL_;
+			tempT->bR = bR_;
+			return tempT;
+
 		default : 
 			break;
 		}
@@ -221,6 +230,16 @@ int main( int argc, char** argv ) {
 	// todo[ ] Leverage the point PoC with the world building content pipeline and TILED program to json up the world
 	// JUST LIKE in the advanced wars demos. 
 	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,225), Point(640, 400));
+	// FYI all this should be in a 'foo' like funciton - just doing a poc
+	tempImg = new sf::Image();
+	tempImg->loadFromFile("textures/pirateShip2.png");
+	tempImg->createMaskFromColor(sf::Color(255,0,255),0);	
+	tempText = new sf::Texture();
+	tempText->loadFromImage(*tempImg);
+	terrainTexts.push_back(tempText);
+	bckTerrain * bTerrain2 = worldBuilder(terrainTexts, pirate2Bkg_const, Point(640,225), Point(1280, 400));
+
+
 	// this should be in activate unit function =====
 	for (baseUnit * enemy : enemies) {
 		enemy->setCeiling(bTerrain->minHeight);
@@ -281,6 +300,7 @@ int main( int argc, char** argv ) {
 		fUnit->updateTiming(myTimer);
 		fUnit2->updateTiming(myTimer);
 		bTerrain->updateTiming(myTimer);
+		bTerrain2->updateTiming(myTimer);
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
@@ -323,6 +343,7 @@ int main( int argc, char** argv ) {
 			//std::cout << "draw some shit\n";
 			window.clear();
 			window.draw(bTerrain->bckSprite);
+			window.draw(bTerrain2->bckSprite);
 			for (baseUnit * enemy : enemies) window.draw(*(enemy->unitSprite));
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 //			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'

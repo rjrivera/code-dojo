@@ -22,7 +22,7 @@ bckTerrain::~bckTerrain(){
 }
 
 void bckTerrain::updateTiming(std::chrono::milliseconds deltaTime) {
-	bckSprite.setPosition(0 - backX, 0 - backY);
+	bckSprite.setPosition(tL.X() - backX, 0 - backY);
 
 }
 

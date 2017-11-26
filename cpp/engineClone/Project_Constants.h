@@ -17,9 +17,12 @@ int height = 400;
 int width = 640;
 int backX = 0;
 int backY = 0;
+int viewPortRight = 540;
+int viewPortLeft = 100;
 //terrain textures
 const int maxTerrain_const =1;
 const int pirateBkg_const = 1;
+const int pirate2Bkg_const = 2;
 
 //unit textures
 const int maxUnit_const = 1;
