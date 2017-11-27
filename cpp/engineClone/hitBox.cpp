@@ -41,7 +41,10 @@ void hitBox::velY(double y_) {
 }
 
 bool hitBox::intersect(hitBox& target_){
-	// TODO[ ] implement this - simple operation really.
+	if (tL->Y() <= target_.tL->Y() && bR->Y() >target_.bR->Y() &&
+		tL->X() >= target_.tL->X() && tL->X() < target_.bR->Y()  ) 
+		return true;
+
 	return false;
 }
 
