@@ -19,6 +19,13 @@ int backX = 0;
 int backY = 0;
 int viewPortRight = 540;
 int viewPortLeft = 100;
+
+// engine management
+int maxEnemies = 2;
+int numEnemies = 0;
+
+int curTerrain = 0;
+
 //terrain textures
 const int maxTerrain_const =1;
 const int pirateBkg_const = 1;

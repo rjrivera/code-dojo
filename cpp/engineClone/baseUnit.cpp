@@ -4,6 +4,9 @@
 
 baseUnit::baseUnit()  	{
 	hp = 100;
+	alive = true;
+	active = false;
+	tId = 1;
 }
 
 baseUnit::baseUnit(uint32_t player_) {

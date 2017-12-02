@@ -169,13 +169,40 @@ bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_,
 
 void activateEnemies(std::vector<baseUnit *> * enemies_, bckTerrain * curTerrain_)   {
 	// TODO[ ] implement this function
-	// usage: the enemies vector will be build bottom up where the active will start at 0, and the first
+	// usage: the enemies vector will be built bottom up where the active will start at 0, and the first
 	// inactive enemy will be at the next background terrain's rectangle
 	// THEREFORE, on activation you will...
 	
 	// detect all enemies withing the curTerrain_'s rectangle using some algrebra
 	
 	// process those enemies by setting to active, setting ceiling and floor as per curTerrain_'s lines. 
+	return;
+}
+
+// has access to the entire gamestate out the chute?
+// stage management tool for only managing necessary assets - keeping localization minimal while allowing for level scaling to
+// NOT impact engine performance. 
+//
+
+void updateStage(std::vector<baseUnit *>&  enemies_, std::vector<bckTerrain *>& terrain_, baseUnit * don_) {
+
+	// Activate new foot people needing activation 
+	for (uint32_t i = numEnemies; i < enemies_.size(); i++) {
+		std::cout << enemies_.at(i)->tId << " <- enemies.at(numEnemies) curTerrain-1 -> " << curTerrain-1 <<std::endl;
+		if (enemies_.at(i)->tId  == curTerrain-1)  {
+			enemies_.at(i)->active = true;
+			enemies_.at(i)->alive =true;
+			std::cout << "activating a foot from index: " << i << std::endl;
+			numEnemies++;
+		}
+		else {
+			break;
+		}
+		
+	}
+	// update curTerrain - triggered by movement of player (s).
+	if (curTerrain >= terrain_.size()) return;
+	if (terrain_.at(curTerrain)->tL.X() < (don_->posX + backX) ) curTerrain++; 
 	return;
 }
 
@@ -188,6 +215,7 @@ int main( int argc, char** argv ) {
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
 	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
+	std::vector<bckTerrain *> terrain = std::vector<bckTerrain *>();
 	unitTexts.push_back(nullptr);
 	terrainTexts.push_back(nullptr);
 	// foo should be renamed to loadUnitTexts
@@ -203,20 +231,39 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
 	// PoC scratch Pad ===== all PoC work must be Migrated to a pipeline which can construct from data files 
+	// ===== build the enemies_ vector 
+	std::vector<baseUnit *> enemies_ = std::vector<baseUnit *>();
+	for (uint32_t i = 0; i <= maxEnemies; i++) enemies_.push_back(unitBuilder(unitTexts, footPurpUnit_const));
+	numEnemies = 0;
+	// ===== define initial enemy locations from activation - external manifest will define in positionally sorted order all enemies. 
+	// interleaving spawn locations 
+
 	baseUnit * tUnit = unitBuilder(unitTexts, donUnit_const);
 	baseUnit * fUnit = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit2 = unitBuilder(unitTexts, footPurpUnit_const);
+	baseUnit * fUnit3 = unitBuilder(unitTexts, footPurpUnit_const);
+	baseUnit * fUnit4 = unitBuilder(unitTexts, footPurpUnit_const);
 	// all this right here should be in the activate function ====
 	//
+	fUnit4->posX = 400;
+	fUnit4->posY = 300;
+	fUnit4->tId = 1;
+	fUnit3->posX = 500;
+	fUnit3->posY = 300;
+	fUnit3->tId = 1;
 	fUnit2->posX = 200;
 	fUnit2->posY = 300;
+	fUnit2->tId = 0;
 	fUnit->posX = 300;
 	fUnit->posY = 320;
+	fUnit->tId = 0;
 
 	// ===============
 	// when building units from json file, build just like you would ... in the advanced wars PoC/Engine
 	enemies.push_back(fUnit);
 	enemies.push_back(fUnit2);
+	enemies.push_back(fUnit3);
+	enemies.push_back(fUnit4);
 
 	tUnit->posX = 75;
 	tUnit->posY = 325;
@@ -231,6 +278,7 @@ int main( int argc, char** argv ) {
 	// todo[ ] Leverage the point PoC with the world building content pipeline and TILED program to json up the world
 	// JUST LIKE in the advanced wars demos. 
 	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,225), Point(640, 400));
+	terrain.push_back(bTerrain);
 	// FYI all this should be in a 'foo' like funciton - just doing a poc
 	tempImg = new sf::Image();
 	tempImg->loadFromFile("textures/pirateShip2.png");
@@ -238,7 +286,8 @@ int main( int argc, char** argv ) {
 	tempText = new sf::Texture();
 	tempText->loadFromImage(*tempImg);
 	terrainTexts.push_back(tempText);
-	bckTerrain * bTerrain2 = worldBuilder(terrainTexts, pirate2Bkg_const, Point(640,225), Point(1280, 400));
+	bTerrain = worldBuilder(terrainTexts, pirate2Bkg_const, Point(640,225), Point(1280, 400));
+	terrain.push_back(bTerrain);
 
 
 	// this should be in activate unit function =====
@@ -249,6 +298,7 @@ int main( int argc, char** argv ) {
 	tUnit->setCeiling(bTerrain->minHeight);
 	tUnit->setFloor(bTerrain->maxHeight);
 	
+	curTerrain = 0;
 	// =====
 	bool inGame = true;
 
@@ -286,7 +336,7 @@ int main( int argc, char** argv ) {
 	*/
 	// ==============================================	
 	while(inGame) {
-
+		
 		while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
 		lastCycle = now;
 		now = std::chrono::system_clock::now();
@@ -298,10 +348,17 @@ int main( int argc, char** argv ) {
 		//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
 
 		tUnit->updateTiming(myTimer);
-		fUnit->updateTiming(myTimer);
-		fUnit2->updateTiming(myTimer);
-		bTerrain->updateTiming(myTimer);
-		bTerrain2->updateTiming(myTimer);
+//		fUnit->updateTiming(myTimer);
+//		fUnit2->updateTiming(myTimer);
+
+		for (bckTerrain * t : terrain) t->updateTiming(myTimer);
+		updateStage(enemies, terrain, tUnit);
+		for (baseUnit * t : enemies) {
+			if (t->active) t->updateTiming(myTimer);
+			else break; 
+		}
+//		bTerrain->updateTiming(myTimer);
+//		bTerrain2->updateTiming(myTimer);
 		// ===================================================
 		// INPUT HANDLING
 		// ===================================================
@@ -343,9 +400,13 @@ int main( int argc, char** argv ) {
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 			//std::cout << "draw some shit\n";
 			window.clear();
-			window.draw(bTerrain->bckSprite);
-			window.draw(bTerrain2->bckSprite);
-			for (baseUnit * enemy : enemies) window.draw(*(enemy->unitSprite));
+//			window.draw(bTerrain->bckSprite);
+//			window.draw(bTerrain2->bckSprite);
+			for (bckTerrain * t : terrain) window.draw(t->bckSprite);
+			for (baseUnit * enemy : enemies) {
+				if (enemy->active && enemy->alive) window.draw(*(enemy->unitSprite));
+				else break;
+			}
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 //			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 //			window.draw(*(fUnit2->unitSprite)); // all animation logic MUST be 'under the hood'

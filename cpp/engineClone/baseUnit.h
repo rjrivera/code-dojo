@@ -16,7 +16,8 @@ class baseUnit {
 		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
-		int32_t posX, posY, velX, velY,  hp; 
+		bool alive, active;
+		int32_t posX, posY, velX, velY,  hp, tId; 
 		double maxHeight, minHeight; // POINT OF ORDER - MAX IS MAX MAGNITUED, THE FLOOR -- MIN IS MIN MAGNITUDE, THE CEILING!!!
 		uint32_t player, spriteOffset, numSprites;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
