@@ -42,5 +42,6 @@ const int footPurpUnit_const = 2; // picking 23 to demonstrate the arbitrary nat
 std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(0,9);
 
-
+//signals
+bool atkCheck = false;
 #endif

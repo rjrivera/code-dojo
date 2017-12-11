@@ -34,6 +34,8 @@ foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*40,0,40,62));
 	movCooldown = true;
+	defHB = new hitBox(new Point((double)posX+93, (double)posY), new Point((double)posX+133, (double)posY+62));
+
 }
 
 foot::~foot(){
@@ -151,6 +153,14 @@ void foot::updateBehavior() {
 	}
 
 	burnCooldown(); 
+}
+
+void foot::updateHitBox() {
+	defHB->tL->X((double)posX+93);
+	defHB->tL->Y((double)posY);
+	defHB->bR->X((double)posX+133);
+	defHB->bR->Y((double)posY+62);
+		
 }
 /*
  * updateBehavoir is a proof-of-concept function to capture ai behavior - 

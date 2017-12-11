@@ -66,6 +66,9 @@ void baseUnit::updateBehavior(){
 	//NOP
 }
 
+void baseUnit::updateHitBox(){
+	//NOP
+}
 void baseUnit::setCeiling(double ceiling_) {
 	minHeight = ceiling_; 
 }

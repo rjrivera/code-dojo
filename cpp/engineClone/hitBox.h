@@ -12,8 +12,10 @@ class hitBox {
 		Point * tL;
 		Point * bR;
 		std::chrono::milliseconds ttlTimer, ttlTrigger;	
+		uint32_t hVelX, hVelY;
 		hitBox(); 	
 		hitBox(Point& tL_, Point& bR_);
+		hitBox(Point * tL_, Point * bR_);
 		~hitBox();
 		void updateTiming(std::chrono::milliseconds deltaTime);
 		void setTTL(std::chrono::milliseconds ttlTrigger_);

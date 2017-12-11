@@ -11,6 +11,7 @@ class foot : public baseUnit{
 		void print() override;
 		void updateTiming(std::chrono::milliseconds deltaTime) override;
 		void updateBehavior() override;
+		void updateHitBox() override;
 		void inputHandling() override;
 //	private:
 		bool getCooldown() override;

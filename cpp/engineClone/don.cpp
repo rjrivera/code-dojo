@@ -31,6 +31,8 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*93,0,93,62));
 	movCooldown = true;
+	// make and define your hitbox for your basic attack as an alpha. advanced battle will take some time
+	hB = new hitBox(new Point((double)posX+93, (double)posY), new Point((double)posX+133, (double)posY+40));
 }
 
 don::~don(){
@@ -96,6 +98,14 @@ void don::inputHandling(){
 		unitSprite = &(sprites->at(curState));
 		moveVelX(0);
 		moveVelY(0);
+		hB->tL->X((double)posX+93+backX);
+		hB->tL->Y((double)posY+backY);
+		hB->bR->X((double)posX+153+backX);
+		hB->bR->Y((double)posY+40+backY);
+		std::cout << "tl x y and bR x y: (" << hB->tL->X() << ", " << hB->tL->Y() <<
+			") ( " << hB->bR->X() << ", " << hB->bR->Y() << ")";
+		atkCheck = true;
+
 	}
 	else {
 		curState = unitState(idle);

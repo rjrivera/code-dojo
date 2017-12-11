@@ -15,6 +15,12 @@ hitBox::hitBox(Point& tL_, Point& bR_) {
 	*bR = bR_;
 }
 
+hitBox::hitBox(Point * tL_, Point * bR_) {
+ 	tL = tL_;
+	bR = bR_;
+}
+
+
 hitBox::~hitBox(){ 
 	// I should probably begin defining delete functionslol 
 	delete tL;
@@ -41,8 +47,8 @@ void hitBox::velY(double y_) {
 }
 
 bool hitBox::intersect(hitBox& target_){
-	if (tL->Y() <= target_.tL->Y() && bR->Y() >target_.bR->Y() &&
-		tL->X() >= target_.tL->X() && tL->X() < target_.bR->Y()  ) 
+	if (tL->Y() <= target_.tL->Y() && bR->Y() >target_.tL->Y() &&
+		tL->X() >= target_.tL->X() && tL->X() < target_.bR->X()  ) 
 		return true;
 
 	return false;

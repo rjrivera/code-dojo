@@ -395,6 +395,25 @@ int main( int argc, char** argv ) {
 		tUnit->inputHandling();
 		for (baseUnit * enemy : enemies) enemy->updateBehavior();
 
+		if (atkCheck)  {
+			atkCheck = false;
+			std::cout << "checking if atk connects\n";
+			for (baseUnit * enemy : enemies) {
+				if ( enemy->active && enemy->alive ) {
+					enemy->updateHitBox();
+					std::cout <<"enemy hitbos\n";
+					std::cout << enemy->defHB->tL->X() << ", " << enemy->defHB->tL->Y() << std::endl;
+					if (tUnit->hB->intersect(*(enemy->defHB))) {
+						std::cout << "hit registered!\n";
+						return 0;
+					}
+	
+				}
+				
+				else if (!enemy->active ) break;
+
+			}
+		}
 
 		if ( frameTimer >= frameTrigger ) { 
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();

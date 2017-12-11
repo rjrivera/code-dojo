@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
 #include <vector>
-//#include "baseTerrain.h"
+#include "hitBox.h"
 
 
 
@@ -16,6 +16,7 @@ class baseUnit {
 		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
+		hitBox * hB, * defHB, * offHB;
 		bool alive, active;
 		int32_t posX, posY, velX, velY,  hp, tId; 
 		double maxHeight, minHeight; // POINT OF ORDER - MAX IS MAX MAGNITUED, THE FLOOR -- MIN IS MIN MAGNITUDE, THE CEILING!!!
@@ -29,6 +30,7 @@ class baseUnit {
 		void setFloor(double floor_);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
+		virtual void updateHitBox();
 		virtual void inputHandling() = 0;
 		bool movCooldown;
 
