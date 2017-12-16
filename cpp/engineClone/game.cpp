@@ -403,7 +403,7 @@ int main( int argc, char** argv ) {
 					enemy->updateHitBox();
 					std::cout <<"enemy hitbos\n";
 					std::cout << enemy->defHB->tL->X() << ", " << enemy->defHB->tL->Y() << std::endl;
-					if (tUnit->hB->intersect(*(enemy->defHB))) {
+					if (tUnit->offHB->intersect(*(enemy->defHB))) {
 						std::cout << "hit registered!\n";
 						return 0;
 					}

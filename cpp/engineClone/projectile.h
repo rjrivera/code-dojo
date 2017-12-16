@@ -1,5 +1,5 @@
-#ifndef BASEUNIT_H
-#define BASEUNIT_H
+#ifndef PROJECTILE_H
+#define PROJECTILE_H
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
 #include <vector>
@@ -8,28 +8,20 @@
 
 
 
-class baseUnit {
+class projectile {
 
 	public:
-		baseUnit(); 	
-		baseUnit(uint32_t player_); 	
-		~baseUnit();
+		projectile(); 	
+		projectile(std::vector<const sf::Texture *>& images_);
+		~projectile();
 		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
-		std::vector<projectile *> projectiles; 
 		hitBox * defHB, * offHB;
 		bool alive, active;
 		int32_t posX, posY, velX, velY,  hp, tId; 
-		double maxHeight, minHeight; // POINT OF ORDER - MAX IS MAX MAGNITUED, THE FLOOR -- MIN IS MIN MAGNITUDE, THE CEILING!!!
 		uint32_t player, spriteOffset, numSprites;
-		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
-		// apparently - enums are not exclusive to enum types so just collapse ai and player states into one enum
-		enum unitState {right, left, idle, attack, toPlayer, toSpot, dLeft, uLeft, dRight, uRight}; 
-		unitState curState;
-		bool isValMove(uint32_t destX, uint32_t destY);
-		void setCeiling(double ceiling_);
-		void setFloor(double floor_);
+		std::chrono::milliseconds spriteTimer, spriteTrigger, projTimer, projTrigger;
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
 		virtual void updateHitBox();
