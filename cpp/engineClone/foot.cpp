@@ -36,6 +36,10 @@ foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	movCooldown = true;
 	defHB = new hitBox(new Point((double)posX+93, (double)posY), new Point((double)posX+133, (double)posY+62));
 
+	projectiles = std::vector<projectile *>();
+	
+	//projectiles.push_back(new projectile(projStar_const) );
+
 }
 
 foot::~foot(){

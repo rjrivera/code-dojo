@@ -10,6 +10,7 @@
 #include "foot.cpp"
 #include "bckTerrain.cpp"
 #include "hitBox.cpp"
+#include "projectile.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
@@ -35,6 +36,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
 	else if (textType_ == "turtle" ) numTexts = (maxUnit_const); 
 	else if (textType_ == "foot" ) numTexts = (maxUnit_const); 
+	else if (textType_ == "proj" ) numTexts = (maxProj_const); 
 	else return;
 
 	for (int i = 1 ; i <= numTexts; i++) {	
@@ -141,6 +143,26 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 	return nullptr;
 }
 
+//potential repurpose -- create a similar process for the bckTerrain
+projectile * projBuilder(std::vector<sf::Texture*>& projTexts_, uint32_t unit_) {
+	std::cout << " attempting to build a proj\n";
+	std::vector<const sf::Texture *> textures = std::vector<const sf::Texture *>();
+	switch(unit_){
+		case starProj_const :
+
+			// rev up those fryers
+			for (uint32_t i = 1; i <= maxProjState_const; i++) textures.push_back(projTexts_[starProj_const*i]);
+
+			std::cout << " don textures loaded in vector\n";
+			return new projectile(textures); //maek this the base...then make new projectiels becaues... there will be others. 
+			break;
+		default : 
+			break;
+		}
+	return nullptr;
+}
+
+
 bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_, Point tL_, Point bR_) {
 	std::cout << " attempting to build a Terrain object\n";
 	// do we create vis effects for backTerain? no
@@ -216,11 +238,15 @@ int main( int argc, char** argv ) {
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
 	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
 	std::vector<bckTerrain *> terrain = std::vector<bckTerrain *>();
+	projTexts = std::vector<sf::Texture *>();
+	projTexts.push_back(nullptr);
 	unitTexts.push_back(nullptr);
 	terrainTexts.push_back(nullptr);
 	// foo should be renamed to loadUnitTexts
 	foo(unitTexts, "turtle");
 	foo(unitTexts, "foot");
+	foo(projTexts, "proj");
+	
 	std::chrono::milliseconds frameTrigger{35};
 	// testing stl time libraries
 
@@ -244,6 +270,7 @@ int main( int argc, char** argv ) {
 	baseUnit * fUnit3 = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit4 = unitBuilder(unitTexts, footPurpUnit_const);
 	// all this right here should be in the activate function ====
+	fUnit->projectiles.push_back(projBuilder(projTexts, starProj_const)); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
 	//
 	fUnit4->posX = 400;
 	fUnit4->posY = 300;

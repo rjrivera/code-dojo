@@ -38,6 +38,13 @@ const int maxUnitState_const = 4; // all units need not use all 3
 const int donUnit_const = 1;
 const int footPurpUnit_const = 2; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
 
+//projectile textures
+const int maxProj_const = 1;
+const int starProj_const = 1;
+const int maxProjState_const = 2; // all units need not use all 3
+//experiment, globally accessible vector of textures
+std::vector<sf::Texture *> projTexts;
+
 //there can be only one
 std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(0,9);

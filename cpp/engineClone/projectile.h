@@ -14,7 +14,6 @@ class projectile {
 		projectile(); 	
 		projectile(std::vector<const sf::Texture *>& images_);
 		~projectile();
-		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
 		hitBox * defHB, * offHB;
@@ -25,7 +24,7 @@ class projectile {
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
 		virtual void updateHitBox();
-		virtual void inputHandling() = 0;
+	//	virtual void inputHandling();
 		bool movCooldown;
 
 //	private:
@@ -34,8 +33,8 @@ class projectile {
 		void moveVelX(int32_t moveX);
 		void moveVelY(int32_t moveY);
 
-		virtual bool getCooldown() = 0;
-		virtual bool burnCooldown() = 0;
+		virtual bool getCooldown();
+		virtual bool burnCooldown();
 
 
 
