@@ -11,6 +11,7 @@
 #include "bckTerrain.cpp"
 #include "hitBox.cpp"
 #include "projectile.cpp"
+#include "starProj.cpp"
 #include "rapidjson/include/rapidjson/writer.h"
 #include "rapidjson/include/rapidjson/document.h"
 #include "rapidjson/include/rapidjson/stringbuffer.h"
@@ -153,8 +154,8 @@ projectile * projBuilder(std::vector<sf::Texture*>& projTexts_, uint32_t unit_) 
 			// rev up those fryers
 			for (uint32_t i = 1; i <= maxProjState_const; i++) textures.push_back(projTexts_[starProj_const*i]);
 
-			std::cout << " don textures loaded in vector\n";
-			return new projectile(textures); //maek this the base...then make new projectiels becaues... there will be others. 
+			std::cout << " ninja star textures loaded in vector\n";
+			return new starProj(textures); //maek this the base...then make new projectiels becaues... there will be others. 
 			break;
 		default : 
 			break;
@@ -210,7 +211,7 @@ void updateStage(std::vector<baseUnit *>&  enemies_, std::vector<bckTerrain *>& 
 
 	// Activate new foot people needing activation 
 	for (uint32_t i = numEnemies; i < enemies_.size(); i++) {
-		std::cout << enemies_.at(i)->tId << " <- enemies.at(numEnemies) curTerrain-1 -> " << curTerrain-1 <<std::endl;
+	//	std::cout << enemies_.at(i)->tId << " <- enemies.at(numEnemies) curTerrain-1 -> " << curTerrain-1 <<std::endl;
 		if (enemies_.at(i)->tId  == curTerrain-1)  {
 			enemies_.at(i)->active = true;
 			enemies_.at(i)->alive =true;
@@ -239,6 +240,7 @@ int main( int argc, char** argv ) {
 	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
 	std::vector<bckTerrain *> terrain = std::vector<bckTerrain *>();
 	projTexts = std::vector<sf::Texture *>();
+	std::vector<projectile *> projLibrary = std::vector<projectile *>();
 	projTexts.push_back(nullptr);
 	unitTexts.push_back(nullptr);
 	terrainTexts.push_back(nullptr);
@@ -256,6 +258,9 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(myTimer).zero();
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
+	// ==== build the projectile library for copying into new enemies
+	projLibrary.push_back(projBuilder(projTexts, starProj_const));
+	// ====
 	// PoC scratch Pad ===== all PoC work must be Migrated to a pipeline which can construct from data files 
 	// ===== build the enemies_ vector 
 	std::vector<baseUnit *> enemies_ = std::vector<baseUnit *>();
@@ -270,7 +275,10 @@ int main( int argc, char** argv ) {
 	baseUnit * fUnit3 = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit4 = unitBuilder(unitTexts, footPurpUnit_const);
 	// all this right here should be in the activate function ====
-	fUnit->projectiles.push_back(projBuilder(projTexts, starProj_const)); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
+	fUnit->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
+	fUnit2->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
+	fUnit3->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
+	fUnit4->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
 	//
 	fUnit4->posX = 400;
 	fUnit4->posY = 300;
@@ -450,7 +458,17 @@ int main( int argc, char** argv ) {
 //			window.draw(bTerrain2->bckSprite);
 			for (bckTerrain * t : terrain) window.draw(t->bckSprite);
 			for (baseUnit * enemy : enemies) {
-				if (enemy->active && enemy->alive) window.draw(*(enemy->unitSprite));
+				if (enemy->active && enemy->alive) {
+					 window.draw(*(enemy->unitSprite));
+					for (projectile * proj : enemy->projectiles)   {
+						if (proj->active) {
+							window.draw(*(proj->unitSprite));
+							proj->updateTiming(myTimer );
+						}
+		
+						else break; 
+					}
+				}
 				else break;
 			}
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'

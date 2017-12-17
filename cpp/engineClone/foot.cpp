@@ -130,6 +130,9 @@ void foot::updateBehavior() {
 			break;
 		case (attack) :
 			unitSprite = &(sprites->at(curState));
+			projectiles[0]->active = true;
+			projectiles[0]->posX = posX;
+			projectiles[0]->posY = posY;
 			moveVelX(0);
 			break;
 		case (dLeft) :

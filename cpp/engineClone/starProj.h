@@ -1,18 +1,22 @@
-#ifndef PROJECTILE_H
-#define PROJECTILE_H
+#ifndef STARPROJ_H
+#define STARPROJ_H
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
 #include <vector>
 #include "hitBox.h"
+#include "projectile.h"
 
 
 
-class projectile {
+class starProj : public projectile {
 
 	public:
-		projectile(); 	
-		projectile(std::vector<const sf::Texture *>& images_);
-		~projectile();
+		starProj(); 	
+		starProj(std::vector<const sf::Texture *>& images_);
+		~starProj();
+		starProj(const projectile& sauce);
+		starProj& operator = (const starProj& sauce);
+/*
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
 		hitBox * defHB, * offHB;
@@ -20,6 +24,7 @@ class projectile {
 		int32_t posX, posY, velX, velY,  hp, tId; 
 		uint32_t player, spriteOffset, numSprites;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, projTimer, projTrigger;
+*/
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
 		virtual void updateHitBox();
