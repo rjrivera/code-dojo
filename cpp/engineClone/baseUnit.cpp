@@ -7,6 +7,7 @@ baseUnit::baseUnit()  	{
 	alive = true;
 	active = false;
 	tId = 1;
+	atkCheck = false;
 }
 
 baseUnit::baseUnit(uint32_t player_) {
@@ -66,9 +67,14 @@ void baseUnit::updateBehavior(){
 	//NOP
 }
 
-void baseUnit::updateHitBox(){
+void baseUnit::updateDefHitBox(){
 	//NOP
 }
+
+void baseUnit::updateOffHitBox(){
+	//NOP
+}
+
 void baseUnit::setCeiling(double ceiling_) {
 	minHeight = ceiling_; 
 }

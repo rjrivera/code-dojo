@@ -34,9 +34,11 @@ foot::foot(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	unitSprite->setTextureRect(sf::IntRect(
 			spriteOffset*40,0,40,62));
 	movCooldown = true;
+	projReady = false;
+	projConst = starProj_const;
 	defHB = new hitBox(new Point((double)posX+93, (double)posY), new Point((double)posX+133, (double)posY+62));
 
-	projectiles = std::vector<projectile *>();
+	//projectiles = std::vector<projectile *>();
 	
 	//projectiles.push_back(new projectile(projStar_const) );
 
@@ -75,6 +77,18 @@ void foot::updateTiming(std::chrono::milliseconds deltaTime){
 	
 	//update the sprite sheet nao.
 	unitSprite->setPosition(posX - backX, posY - backY);
+	updateDefHitBox();
+}
+
+/* fire Projectile must always be given the appropriate pointer from the engine, simply defining the behavior of the projectile and state based off of current instance of the enemy object shooting the proj.
+ *
+ */
+
+void foot::fireProjectile(projectile * proj) {
+	proj->active = true;
+	proj->posX = posX;
+	proj->posY = posY;
+	projReady = false;
 }
 
 /*
@@ -130,9 +144,12 @@ void foot::updateBehavior() {
 			break;
 		case (attack) :
 			unitSprite = &(sprites->at(curState));
+			projReady = true;
+			/*
 			projectiles[0]->active = true;
 			projectiles[0]->posX = posX;
 			projectiles[0]->posY = posY;
+			*/
 			moveVelX(0);
 			break;
 		case (dLeft) :
@@ -162,11 +179,21 @@ void foot::updateBehavior() {
 	burnCooldown(); 
 }
 
-void foot::updateHitBox() {
+void foot::hbCheck( std::vector< baseUnit * > * enemies ) {
+	// TODO - identify better semantics than ENEMIES and migrate players to containers. 
+	return;	
+}
+
+void foot::updateDefHitBox() {
 	defHB->tL->X((double)posX+93);
 	defHB->tL->Y((double)posY);
 	defHB->bR->X((double)posX+133);
 	defHB->bR->Y((double)posY+62);
+		
+}
+
+void foot::updateOffHitBox() {
+
 		
 }
 /*

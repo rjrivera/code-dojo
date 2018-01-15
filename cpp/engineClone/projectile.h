@@ -13,6 +13,7 @@ class projectile {
 		projectile(); 	
 		projectile(std::vector<const sf::Texture *>& images_);
 		~projectile();
+		virtual projectile * Clone() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
 		hitBox * defHB, * offHB;

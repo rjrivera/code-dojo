@@ -21,7 +21,7 @@ class Point{
 		bool operator == (const Point& p) const;
 		Point& operator = (const Point& sourc);
 		Point& operator *= (double factor); 
-		friend std::ostream& operator<< (std::ostream& os, const Point& source);
+	//	friend std::ostream& operator<< (std::ostream& os, const Point& source);
 		//selectors
 		double X() const;
 		double Y() const;

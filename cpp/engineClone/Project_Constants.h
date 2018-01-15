@@ -23,7 +23,7 @@ int viewPortLeft = 100;
 // engine management
 int maxEnemies = 2;
 int numEnemies = 0;
-
+uint32_t maxProjPerType = 20;
 int curTerrain = 0;
 
 //terrain textures
@@ -50,5 +50,5 @@ std::default_random_engine generator;
 std::uniform_int_distribution<int> distribution(0,9);
 
 //signals
-bool atkCheck = false;
+
 #endif

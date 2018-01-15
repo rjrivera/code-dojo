@@ -16,6 +16,7 @@ class starProj : public projectile {
 		~starProj();
 		starProj(const projectile& sauce);
 		starProj& operator = (const starProj& sauce);
+		starProj * Clone() override;
 /*
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;

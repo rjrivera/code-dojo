@@ -33,6 +33,9 @@ don::don(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	movCooldown = true;
 	// make and define your hitbox for your basic attack as an alpha. advanced battle will take some time
 	offHB = new hitBox(new Point((double)posX+93, (double)posY), new Point((double)posX+133, (double)posY+40));
+	defHB = new hitBox(new Point((double)posX, (double)posY), new Point((double)posX, (double)posY));
+//	std::cout << *offHB << "\n";
+//	std::cout << "offHB " << *offHB->tL << "\n";
 }
 
 don::~don(){
@@ -94,16 +97,10 @@ void don::inputHandling(){
 		unitSprite = &(sprites->at(curState));
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) )  {
-		curState = unitState(attack);
+		curState = attack;
 		unitSprite = &(sprites->at(curState));
 		moveVelX(0);
 		moveVelY(0);
-		offHB->tL->X((double)posX+93+backX);
-		offHB->tL->Y((double)posY+backY);
-		offHB->bR->X((double)posX+153+backX);
-		offHB->bR->Y((double)posY+40+backY);
-		std::cout << "tl x y and bR x y: (" << offHB->tL->X() << ", " << offHB->tL->Y() <<
-			") ( " << offHB->bR->X() << ", " << offHB->bR->Y() << ")";
 		atkCheck = true;
 
 	}
@@ -124,18 +121,47 @@ void don::inputHandling(){
 	}
 
 	// higher priority attacks must be near the bottom to provide defacto override	
-
-
-
 	burnCooldown(); 
 }
 
-void don::updateHitBox() {
+void don::hbCheck( std::vector< baseUnit * > * enemies ) {
+	atkCheck = false;
+	updateOffHitBox(); 
+	for ( baseUnit * enemy : *enemies ) {
+		if (enemy->alive) { 
+			std::cout << "scanning enemies\n";
+	//		std::cout << "offHB info: " << (*offHB).tL->X();	
+			if ( offHB->intersect( *enemy->defHB ) ) std::cout << "hit connected to enemy\n";
+			continue;
+		}
+		std::cout << "no more enemies to scan for\n";
+		break;
+	}
+	return;
+}
+
+void don::updateDefHitBox() {
 	defHB->tL->X((double)posX+93);
 	defHB->tL->Y((double)posY);
 	defHB->bR->X((double)posX+133);
 	defHB->bR->Y((double)posY+62);
-		
+
+}
+
+void don::updateOffHitBox() {
+	offHB->tL->X((double)posX+93+backX);
+	offHB->tL->Y((double)posY+backY);
+	offHB->bR->X((double)posX+153+backX);
+	offHB->bR->Y((double)posY+40+backY);
+
+
+}
+
+
+
+void don::fireProjectile(projectile * proj) {
+	//nop
+
 }
 
 bool don::getCooldown() {

@@ -240,7 +240,12 @@ int main( int argc, char** argv ) {
 	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
 	std::vector<bckTerrain *> terrain = std::vector<bckTerrain *>();
 	projTexts = std::vector<sf::Texture *>();
+	// the projectile library will assist in determining the projectile indexes. 
 	std::vector<projectile *> projLibrary = std::vector<projectile *>();
+	// this holds all repurposable projectiles, must be populated, indexes must be tracked.
+	std::vector<projectile *> allProjs = std::vector<projectile *>();
+	std::vector<uint32_t> projIndices = std::vector<uint32_t>();
+	// populate the container appropriately
 	projTexts.push_back(nullptr);
 	unitTexts.push_back(nullptr);
 	terrainTexts.push_back(nullptr);
@@ -259,7 +264,14 @@ int main( int argc, char** argv ) {
 	std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
 	
 	// ==== build the projectile library for copying into new enemies
-	projLibrary.push_back(projBuilder(projTexts, starProj_const));
+	for (uint32_t i = 1; i <= maxProj_const; i++) {
+		projLibrary.push_back(projBuilder(projTexts, i));
+		projIndices.push_back( (i - 1) * maxProjPerType );
+		for (uint32_t j = 0; j < maxProjPerType; j++ ) {
+			allProjs.push_back(projLibrary.at(i-1)->Clone());
+		}
+	}
+	
 	// ====
 	// PoC scratch Pad ===== all PoC work must be Migrated to a pipeline which can construct from data files 
 	// ===== build the enemies_ vector 
@@ -275,11 +287,12 @@ int main( int argc, char** argv ) {
 	baseUnit * fUnit3 = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit4 = unitBuilder(unitTexts, footPurpUnit_const);
 	// all this right here should be in the activate function ====
+	/*
 	fUnit->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
 	fUnit2->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
 	fUnit3->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
 	fUnit4->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
-	//
+	*/
 	fUnit4->posX = 400;
 	fUnit4->posY = 300;
 	fUnit4->tId = 1;
@@ -385,11 +398,25 @@ int main( int argc, char** argv ) {
 		tUnit->updateTiming(myTimer);
 //		fUnit->updateTiming(myTimer);
 //		fUnit2->updateTiming(myTimer);
-
+//projIndices, allProjs
 		for (bckTerrain * t : terrain) t->updateTiming(myTimer);
 		updateStage(enemies, terrain, tUnit);
 		for (baseUnit * t : enemies) {
-			if (t->active) t->updateTiming(myTimer);
+			if (t->active) {
+				t->updateTiming(myTimer);
+				if (t->projReady ) {
+					uint32_t tempIndex = projIndices.at(t->projConst -1);
+					// cycle through the projectiles of type needed by unit, until availble slot found, define and toggle
+					for(uint32_t i = tempIndex; i < tempIndex + maxProjPerType; i++) {
+						if (allProjs.at(i)->active)  continue;
+						allProjs.at(i)->active = true;
+						t->fireProjectile(allProjs.at(i));
+						break;
+					}
+					//find the next Projectile
+					
+				}
+			}
 			else break; 
 		}
 //		bTerrain->updateTiming(myTimer);
@@ -430,25 +457,13 @@ int main( int argc, char** argv ) {
 		tUnit->inputHandling();
 		for (baseUnit * enemy : enemies) enemy->updateBehavior();
 
-		if (atkCheck)  {
-			atkCheck = false;
-			std::cout << "checking if atk connects\n";
-			for (baseUnit * enemy : enemies) {
-				if ( enemy->active && enemy->alive ) {
-					enemy->updateHitBox();
-					std::cout <<"enemy hitbos\n";
-					std::cout << enemy->defHB->tL->X() << ", " << enemy->defHB->tL->Y() << std::endl;
-					if (tUnit->offHB->intersect(*(enemy->defHB))) {
-						std::cout << "hit registered!\n";
-						return 0;
-					}
+		// check if player hits any enemies
+		if (tUnit->atkCheck)  {
+			tUnit->hbCheck( &enemies);
 	
-				}
-				
-				else if (!enemy->active ) break;
-
-			}
 		}
+
+		// check if enemies hit the player
 
 		if ( frameTimer >= frameTrigger ) { 
 			std::chrono::milliseconds frameTimer = std::chrono::duration_cast<std::chrono::milliseconds>(frameTimer).zero();
@@ -460,6 +475,7 @@ int main( int argc, char** argv ) {
 			for (baseUnit * enemy : enemies) {
 				if (enemy->active && enemy->alive) {
 					 window.draw(*(enemy->unitSprite));
+					/*
 					for (projectile * proj : enemy->projectiles)   {
 						if (proj->active) {
 							window.draw(*(proj->unitSprite));
@@ -468,8 +484,15 @@ int main( int argc, char** argv ) {
 		
 						else break; 
 					}
+					*/
 				}
 				else break;
+			}
+			for (projectile * proj : allProjs) {
+				if (proj->active) {
+					window.draw(*(proj->unitSprite)); 
+					proj->updateTiming(myTimer);
+				}
 			}
 			window.draw(*(tUnit->unitSprite)); // all animation logic MUST be 'under the hood'
 //			window.draw(*(fUnit->unitSprite)); // all animation logic MUST be 'under the hood'

@@ -69,10 +69,12 @@ Point& Point::operator*= (double factor) {
 	return *this;
 }
 
+/*
 std::ostream& operator<< (std::ostream& os, const Point& source) {
 	os << "(" << source.x << ", " << source.y << ")" << std::endl;
 	return os;
 }
+*/
 //selectors
 double Point::X() const {
 	return x;

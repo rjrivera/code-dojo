@@ -47,6 +47,7 @@ void hitBox::velY(double y_) {
 }
 
 bool hitBox::intersect(hitBox& target_){
+	std::cout << "Checking intersection of two hitboxes\n";
 	if (tL->Y() <= target_.tL->Y() && bR->Y() >target_.tL->Y() &&
 		tL->X() >= target_.tL->X() && tL->X() < target_.bR->X()  ) 
 		return true;

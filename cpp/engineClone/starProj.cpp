@@ -102,6 +102,11 @@ starProj& starProj::operator= (const starProj& sauce) {
 	return *this;	
 }
 
+starProj * starProj::Clone() {
+	return new starProj(*this);
+
+}
+
 void starProj::updateTiming(std::chrono::milliseconds deltaTime){
 	spriteTimer += deltaTime;
 	if (spriteTimer >= spriteTrigger)  {
@@ -115,8 +120,6 @@ void starProj::updateTiming(std::chrono::milliseconds deltaTime){
 		posY += velY;	
 	}
 	velY = std::sin((double)posX) * 10;
-	std::cout<< "VELY of projectile --- " << velY << std::endl;
-	std::cout<< "POSX of projectile --- " << posX << std::endl;
 	projTimer += deltaTime;
 	if ( projTimer >= projTrigger ) {
 		projTimer = std::chrono::duration_cast<std::chrono::milliseconds>(projTimer).zero();

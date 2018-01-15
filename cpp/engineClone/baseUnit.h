@@ -17,12 +17,12 @@ class baseUnit {
 		virtual void print() = 0;
 		std::vector<sf::Sprite> * sprites;
 		sf::Sprite * unitSprite;
-		std::vector<projectile *> projectiles; 
+		//std::vector<projectile *> projectiles; 
 		hitBox * defHB, * offHB;
-		bool alive, active;
+		bool alive, active, projReady, atkCheck;
 		int32_t posX, posY, velX, velY,  hp, tId; 
 		double maxHeight, minHeight; // POINT OF ORDER - MAX IS MAX MAGNITUED, THE FLOOR -- MIN IS MIN MAGNITUDE, THE CEILING!!!
-		uint32_t player, spriteOffset, numSprites;
+		uint32_t player, spriteOffset, numSprites, projConst;
 		std::chrono::milliseconds spriteTimer, spriteTrigger, inputTimer, inputTrigger, aiTimer, aiTrigger;
 		// apparently - enums are not exclusive to enum types so just collapse ai and player states into one enum
 		enum unitState {right, left, idle, attack, toPlayer, toSpot, dLeft, uLeft, dRight, uRight}; 
@@ -32,8 +32,11 @@ class baseUnit {
 		void setFloor(double floor_);
 		virtual void updateTiming(std::chrono::milliseconds deltaTime);
 		virtual void updateBehavior();
-		virtual void updateHitBox();
+		virtual void updateDefHitBox();
+		virtual void updateOffHitBox();
 		virtual void inputHandling() = 0;
+		virtual void hbCheck( std::vector< baseUnit * > * enemies ) = 0;
+		virtual void fireProjectile( projectile * proj) = 0;
 		bool movCooldown;
 
 //	private:
