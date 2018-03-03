@@ -17,6 +17,7 @@
 #include "rapidjson/include/rapidjson/stringbuffer.h"
 #include "rapidjson/include/rapidjson/filereadstream.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -235,6 +236,10 @@ int main( int argc, char** argv ) {
 	// ====================
 	// INITIALIZATION 
 	// ====================
+	
+	sf::Music music;
+	music.openFromFile("audio/XmenAudio.mp3");
+	music.play();
 	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
 	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
 	std::vector<baseUnit *> enemies = std::vector<baseUnit *>();
