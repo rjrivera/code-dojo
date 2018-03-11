@@ -21,7 +21,7 @@ int viewPortRight = 540;
 int viewPortLeft = 100;
 
 // engine management
-int maxEnemies = 2;
+int maxEnemies = 3;
 int numEnemies = 0;
 uint32_t maxProjPerType = 20;
 int curTerrain = 0;
@@ -37,6 +37,7 @@ const int maxUnitState_const = 4; // all units need not use all 3
 
 const int donUnit_const = 1;
 const int footPurpUnit_const = 2; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
+const int bebopUnit_const = 3; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
 
 //projectile textures
 const int maxProj_const = 1;

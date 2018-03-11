@@ -8,6 +8,7 @@
 #include "baseGFX.cpp"
 #include "don.cpp"
 #include "foot.cpp"
+#include "bebop.cpp"
 #include "bckTerrain.cpp"
 #include "hitBox.cpp"
 #include "projectile.cpp"
@@ -38,6 +39,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
 	else if (textType_ == "turtle" ) numTexts = (maxUnit_const); 
 	else if (textType_ == "foot" ) numTexts = (maxUnit_const); 
+	else if (textType_ == "bebop" ) numTexts = (maxUnit_const); 
 	else if (textType_ == "proj" ) numTexts = (maxProj_const); 
 	else return;
 
@@ -139,9 +141,18 @@ baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, uint32_t unit_) {
 			std::cout << "foot textures loaded in vector\n";
 			return new foot(textures);
 			break;
+		case bebopUnit_const :
+
+			// rev up those fryers
+			for (uint32_t i = 1; i <= maxUnitState_const; i++) textures.push_back(unitTexts_[i + (bebopUnit_const-1)*maxUnitState_const]);
+
+			std::cout << "bebop textures loaded in vector\n";
+			return new bebop(textures);
+			break;
 		default : 
 			break;
 		}
+
 	return nullptr;
 }
 
@@ -257,6 +268,7 @@ int main( int argc, char** argv ) {
 	// foo should be renamed to loadUnitTexts
 	foo(unitTexts, "turtle");
 	foo(unitTexts, "foot");
+	foo(unitTexts, "bebop");
 	foo(projTexts, "proj");
 	
 	std::chrono::milliseconds frameTrigger{35};
@@ -291,6 +303,8 @@ int main( int argc, char** argv ) {
 	baseUnit * fUnit2 = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit3 = unitBuilder(unitTexts, footPurpUnit_const);
 	baseUnit * fUnit4 = unitBuilder(unitTexts, footPurpUnit_const);
+	baseUnit * bUnit = unitBuilder(unitTexts, bebopUnit_const);
+	std::cout << "bebop built\n";
 	// all this right here should be in the activate function ====
 	/*
 	fUnit->projectiles.push_back(new starProj(*(projLibrary[0]))); //PoC rtb migrate to scalable solution - concentrate on clone-ing for new ones. 
@@ -310,13 +324,19 @@ int main( int argc, char** argv ) {
 	fUnit->posX = 300;
 	fUnit->posY = 320;
 	fUnit->tId = 0;
+	bUnit->posX = 300;
+	bUnit->posY = 320;
+	bUnit->tId = 0;
 
 	// ===============
 	// when building units from json file, build just like you would ... in the advanced wars PoC/Engine
 	enemies.push_back(fUnit);
 	enemies.push_back(fUnit2);
+	enemies.push_back(bUnit);
 	enemies.push_back(fUnit3);
 	enemies.push_back(fUnit4);
+	enemies.push_back(bUnit);
+	std::cout << "enemies loaded in enemy container\n" << std::endl;
 
 	tUnit->posX = 75;
 	tUnit->posY = 325;
