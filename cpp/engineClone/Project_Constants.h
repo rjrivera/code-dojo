@@ -17,6 +17,9 @@ int height = 400;
 int width = 640;
 int backX = 0;
 int backY = 0;
+int donX = 0;
+int donY = 0;
+
 int viewPortRight = 540;
 int viewPortLeft = 100;
 
@@ -38,6 +41,7 @@ const int maxUnitState_const = 4; // all units need not use all 3
 const int donUnit_const = 1;
 const int footPurpUnit_const = 2; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
 const int bebopUnit_const = 3; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
+const int rockSteadyUnit_const = 4; // picking 23 to demonstrate the arbitrary nature of the constant itself EDIT; Lol jokes on me, not arb
 
 //projectile textures
 const int maxProj_const = 1;

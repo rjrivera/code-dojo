@@ -72,7 +72,9 @@ void don::updateTiming(std::chrono::milliseconds deltaTime){
 		movCooldown = true;
 		inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(spriteTimer).zero();
 	}
-
+	
+	donX = posX;
+	donY = posY;
 	//update the sprite sheet nao.
 	unitSprite->setPosition(posX, posY);
 }

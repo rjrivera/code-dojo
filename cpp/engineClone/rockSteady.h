@@ -1,13 +1,13 @@
-#ifndef BEBOP_H
-#define BEBOP_H
+#ifndef ROCKSTEADY_H
+#define ROCKSTEADY_H
 #include "projectile.h"
 
-class bebop : public baseUnit{
+class rockSteady : public baseUnit{
 
 	public:
-		bebop(); 	
-		bebop(std::vector<const sf::Texture *>& images_);
-		~bebop();
+		rockSteady(); 	
+		rockSteady(std::vector<const sf::Texture *>& images_);
+		~rockSteady();
 		void print() override;
 		void updateTiming(std::chrono::milliseconds deltaTime) override;
 		void updateBehavior() override;

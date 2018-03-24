@@ -1,14 +1,14 @@
-#include "bebop.h"
+#include "rockSteady.h"
 #include "Project_Constants.h"
 #include <iostream>
 #include <vector>
 
-bebop::bebop()  	{
-	std::cout << "bebop instatiated\n";
+rockSteady::rockSteady()  	{
+	std::cout << "rockSteady instatiated\n";
 	
 }
 
-bebop::bebop(std::vector<const sf::Texture *>& images_) : baseUnit(){
+rockSteady::rockSteady(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	sprites = new std::vector<sf::Sprite>();
 	std::cout << "vector<sf::sprite> built\n";
 	for (int32_t i = 0; i < maxUnitState_const; i++) {
@@ -32,7 +32,7 @@ bebop::bebop(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	curState = unitState(idle);
 	unitSprite = &(sprites->at(curState));
 	unitSprite->setTextureRect(sf::IntRect(
-			spriteOffset*48,0,48,72));
+			spriteOffset*79,0,79,100));
 	movCooldown = true;
 	projReady = false;
 	projConst = starProj_const;
@@ -41,20 +41,21 @@ bebop::bebop(std::vector<const sf::Texture *>& images_) : baseUnit(){
 	//projectiles = std::vector<projectile *>();
 	
 	//projectiles.push_back(new projectile(projStar_const) );
+	std::cout << "rockSteady created\n";
 
 }
 
-bebop::~bebop(){
-	std::cout << "bebop object destroyed\n";
+rockSteady::~rockSteady(){
+	std::cout << "rockSteady object destroyed\n";
 
 }
 
-void bebop::print() {
-	std::cout << "bebop object printed\n";
+void rockSteady::print() {
+	std::cout << "rockSteady object printed\n";
 
 }
 
-void bebop::updateTiming(std::chrono::milliseconds deltaTime){
+void rockSteady::updateTiming(std::chrono::milliseconds deltaTime){
 	spriteTimer += deltaTime;
 	inputTimer += deltaTime;
 	if (spriteTimer >= spriteTrigger)  {
@@ -62,7 +63,7 @@ void bebop::updateTiming(std::chrono::milliseconds deltaTime){
 		spriteOffset++;
 		if (spriteOffset>=numSprites) spriteOffset = 0; 
 		unitSprite->setTextureRect(sf::IntRect(
-			spriteOffset*48,0,48,72));
+			spriteOffset*79,0,79,100));
 //todo [ ] MOVE THIS TO A DIFFERENT TIMER
 		posX += velX;
 		posY += velY;
@@ -84,7 +85,7 @@ void bebop::updateTiming(std::chrono::milliseconds deltaTime){
  *
  */
 
-void bebop::fireProjectile(projectile * proj) {
+void rockSteady::fireProjectile(projectile * proj) {
 	proj->active = true;
 	proj->posX = posX;
 	proj->posY = posY;
@@ -95,7 +96,7 @@ void bebop::fireProjectile(projectile * proj) {
  * as is - this combines all buttons under the same cooldown
  */
 
-void bebop::updateBehavior() {
+void rockSteady::updateBehavior() {
 	if (!getCooldown())  return;
 	// iteration one, preprogrammed state pathing - TODO[ ] rng state pick - easy implementation, just rng to pick state, then keep this prototype as the behavior swap logic. 
 	switch (distribution(generator)) {
@@ -182,7 +183,7 @@ void bebop::updateBehavior() {
 	burnCooldown(); //customizing cooldown per state will require this moves 
 }
 
-void bebop::toPlayerDef(){
+void rockSteady::toPlayerDef(){
 	// use the updateCooldown default as a max, and update to a value greater than zero for customized state duration
 	//TODO - customized state duration
 	
@@ -202,12 +203,12 @@ void bebop::toPlayerDef(){
 
 }
 
-void bebop::hbCheck( std::vector< baseUnit * > * enemies ) {
+void rockSteady::hbCheck( std::vector< baseUnit * > * enemies ) {
 	// TODO - identify better semantics than ENEMIES and migrate players to containers. 
 	return;	
 }
 
-void bebop::updateDefHitBox() {
+void rockSteady::updateDefHitBox() {
 	defHB->tL->X((double)posX+93);
 	defHB->tL->Y((double)posY);
 	defHB->bR->X((double)posX+133);
@@ -215,7 +216,7 @@ void bebop::updateDefHitBox() {
 		
 }
 
-void bebop::updateOffHitBox() {
+void rockSteady::updateOffHitBox() {
 
 		
 }
@@ -225,7 +226,7 @@ void bebop::updateOffHitBox() {
  * relies on random number generator. 
  *
  */
-void bebop::inputHandling(){
+void rockSteady::inputHandling(){
 	if (!getCooldown())  return;
 
 	
@@ -270,11 +271,11 @@ void bebop::inputHandling(){
 
 }
 
-bool bebop::getCooldown() {
+bool rockSteady::getCooldown() {
 	return movCooldown;
 }
 
-bool bebop::burnCooldown() {
+bool rockSteady::burnCooldown() {
 	movCooldown = false;
 	inputTimer = std::chrono::duration_cast<std::chrono::milliseconds>(inputTimer).zero();
 
