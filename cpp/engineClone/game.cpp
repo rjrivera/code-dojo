@@ -28,6 +28,8 @@
 #include <cstdlib>
 #include "Point.h"
 
+// TODO[ ]  backgroung objects need to be revisit, right now tiles need to be preloaded before building world. 
+
 // major todo[ ]  migrate input handling to objects, not client - client just interfaces between input device and objects. 
 // enum actionMenuState {move, atk, back}; keeping for reference
 // I want this server to receive packets and use said packets as inputs 
@@ -198,6 +200,13 @@ bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_,
 			tempT->setFloor(bR_.Y());
 			tempT->bckSprite.setPosition(tL_.X(), 0);
 			return tempT;
+		case waterBkg_const :
+			tempT = new bckTerrain(worldTexts_[waterBkg_const]);
+			tempT->setCeiling(tL_.Y());
+			tempT->setFloor(bR_.Y());
+			tempT->tL = tL_;
+			tempT->bR = bR_;
+			return tempT;
 		case pirate2Bkg_const :
 			tempT = new bckTerrain(worldTexts_[pirate2Bkg_const]);
 			tempT->setCeiling(tL_.Y());
@@ -205,7 +214,6 @@ bckTerrain * worldBuilder(std::vector<sf::Texture*>& worldTexts_, uint32_t bkg_,
 			tempT->tL = tL_;
 			tempT->bR = bR_;
 			return tempT;
-
 		default : 
 			break;
 		}
@@ -358,6 +366,7 @@ int main( int argc, char** argv ) {
 	tUnit->posY = 325;
 
 
+	//
 	sf::Image * tempImg = new sf::Image();
 	tempImg->loadFromFile("textures/pirateShip.png");
 	tempImg->createMaskFromColor(sf::Color(255,0,255),0);	
@@ -368,6 +377,15 @@ int main( int argc, char** argv ) {
 	// JUST LIKE in the advanced wars demos. 
 	bckTerrain * bTerrain = worldBuilder(terrainTexts, pirateBkg_const, Point(0,225), Point(640, 400));
 	terrain.push_back(bTerrain);
+	// still need to migrate poc to foo like function
+	tempImg = new sf::Image();
+	tempImg->loadFromFile("textures/water.png");
+	tempImg->createMaskFromColor(sf::Color(255,0,255),0);	
+	tempText = new sf::Texture();
+	tempText->loadFromImage(*tempImg);
+	terrainTexts.push_back(tempText);
+	bTerrain = worldBuilder(terrainTexts, waterBkg_const, Point(0,0), Point(0, 0));
+	terrain.push_back(bTerrain);
 	// FYI all this should be in a 'foo' like funciton - just doing a poc
 	tempImg = new sf::Image();
 	tempImg->loadFromFile("textures/pirateShip2.png");
@@ -377,6 +395,7 @@ int main( int argc, char** argv ) {
 	terrainTexts.push_back(tempText);
 	bTerrain = worldBuilder(terrainTexts, pirate2Bkg_const, Point(640,225), Point(1280, 400));
 	terrain.push_back(bTerrain);
+
 
 
 	// this should be in activate unit function =====

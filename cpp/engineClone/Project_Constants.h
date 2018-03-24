@@ -32,7 +32,8 @@ int curTerrain = 0;
 //terrain textures
 const int maxTerrain_const =1;
 const int pirateBkg_const = 1;
-const int pirate2Bkg_const = 2;
+const int pirate2Bkg_const = 3;
+const int waterBkg_const = 2;
 
 //unit textures
 const int maxUnit_const = 1;
