@@ -1,0 +1,50 @@
+	
+	while (window.pollEvent(event)) {}//nop == clear the event queue buffer. 
+	
+	lastCycle = now;
+	now = std::chrono::system_clock::now();
+	frameTimer += myTimer = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastCycle);
+	
+	// ===================================================
+	// UPDATE TIMING
+	// ==================================================		
+	//TODO[ ]  MIGRATE COOLDOWN TO CHARACTER 
+
+	tUnit->updateTiming(myTimer);
+//		fUnit->updateTiming(myTimer);
+//		fUnit2->updateTiming(myTimer);
+//projIndices, allProjs
+	for (bckTerrain * t : terrain) t->updateTiming(myTimer);
+	updateStage(enemies, terrain, tUnit);
+	for (baseUnit * t : enemies) {
+		if (t->active) {
+			t->updateTiming(myTimer);
+			if (t->projReady ) {
+				uint32_t tempIndex = projIndices.at(t->projConst -1);
+				// cycle through the projectiles of type needed by unit, until availble slot found, define and toggle
+				for(uint32_t i = tempIndex; i < tempIndex + maxProjPerType; i++) {
+					if (allProjs.at(i)->active)  continue;
+					allProjs.at(i)->active = true;
+					t->fireProjectile(allProjs.at(i));
+					break;
+				}
+				//find the next Projectile
+				
+			}
+		}
+		else break; 
+	}
+//		bTerrain->updateTiming(myTimer);
+//		bTerrain2->updateTiming(myTimer);
+	// ===================================================
+	// INPUT HANDLING
+	// ===================================================
+	
+	// client control TODO[ ] abstract away to a client handling layer. 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+		inGame = false;
+	}	 
+/*
+	// client control TODO[ ] abstract away to a client handling layer. 
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && tUnit->getCooldown()){
+	//	myConnect = connect(mySendSocket, (struct sockaddr *)&localServerAddr, sizeof(struct sockaddr));
