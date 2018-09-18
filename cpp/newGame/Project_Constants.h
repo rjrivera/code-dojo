@@ -3,6 +3,7 @@
 #include <string>
 #include <vector> 
 #include "baseTerrain.h"
+#include "ui_hby.h"
 
 const int maxPlayers_const = 2;
 
