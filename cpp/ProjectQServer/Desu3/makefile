@@ -9,7 +9,7 @@ CC = g++
 COMPILER_FLAGS = -I. -w -std=c++11
 
 #linker flags
-LINKER_FLAGS =  -lboost_system -lpthread -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+LINKER_FLAGS =  -lboost_system -lboost_chrono -lpthread -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lboost_timer -lrt
 
 
 #OBJ_NAME specifies the name of our executable

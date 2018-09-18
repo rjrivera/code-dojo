@@ -1,5 +1,6 @@
 #include "GServer.h"
 #include "GState.cpp"
+#include <boost/chrono.hpp>
 
 GServer::GServer() {
 	curGState = new GState();
@@ -7,13 +8,16 @@ GServer::GServer() {
 }
 
 void GServer::iterateGameLoop() {
+	// timing 
+	GSTime = boost::chrono::system_clock::now();
 
 	std::cout << "iterating gameloop\n";
 
+	std::cout << "current time: " << GSTime << std::endl;
 
 	// IF Event queue is NOT full. 	
 	if(curEventInd != latestEventInd) {
-	curGState->eventHandler(eventQueue->at(curEventInd)); // manipulate gameState based off eventQueue //HANDLE ALL EVENTS OF SAME TICK...after introducing concept of tick. 
+		curGState->eventHandler(eventQueue->at(curEventInd)); // manipulate gameState based off eventQueue //HANDLE ALL EVENTS OF SAME TICK...after introducing concept of tick. 
 	curEventInd++;
 	}
 
