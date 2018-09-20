@@ -16,6 +16,7 @@
 #include "waterTerrain.cpp"
 #include "moveGrid.cpp"
 #include "cursor.cpp"
+#include "ui_hby.cpp"
 #include "rapidjson/writer.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -208,6 +209,11 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 			count++;
 		}
 	}
+}
+
+void createUIElements( std::vector< ui_hby * >& ) {
+	
+
 }
 
 baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, std::vector<sf::Texture*>& unitInfoTexts_,
