@@ -1,0 +1,12 @@
+{
+	"rootParams" : [0,0,0],
+	
+	"numChildren" : 0,
+	
+	"childrenConfigs" : [
+			"ui_actionMenu_1_0.json",
+			"ui_actionMenu_1_1.json",
+			"ui_actionMenu_1_2.json"
+			]
+      
+}
