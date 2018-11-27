@@ -4,7 +4,6 @@
 
 ui_hby::ui_hby() {
 	subMenus = std::vector<ui_hby *>();
-	
 }
 
 ui_hby::ui_hby(const sf::Texture * image_) : subMenus( std::vector< ui_hby * >() ) {
@@ -12,6 +11,7 @@ ui_hby::ui_hby(const sf::Texture * image_) : subMenus( std::vector< ui_hby * >()
 	tileSprite.setTexture(*image_);
 	tileSprite.setPosition(0, 0);
 
+	subMenus = std::vector< ui_hby * >();
 }
 
 /*

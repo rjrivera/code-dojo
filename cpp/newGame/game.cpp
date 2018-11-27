@@ -123,7 +123,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 //prototyping function
 //provides initial content load of terrain art assetts
 
-enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu};
+//enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu};
 enum actionMenuState {move, atk, back};
 
 // provide texture container you wish to populate and the texture type you wish to populate it with. 
@@ -135,6 +135,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
 	else if (textType_ == "unit") numTexts = (maxUnit_const * maxPlayers_const); 
 	else if (textType_ == "unitInfo") numTexts = (maxUnit_const); 
+	else if (textType_ == "ui") numTexts = (maxUI_const); 
 	else return;
 	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
 	for (int i = 1 ; i <= numTexts; i++) {
@@ -211,8 +212,82 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	}
 }
 
-void createUIElements( std::vector< ui_hby * >& ) {
+// leverage the configurations set in config, parse and load engine ui datastructures here. 
+
+void createUIElements( std::vector< ui_hby * >&  , std::vector< sf::Texture * > ui_textures ) {
+	// define sentinel
+	//// sf::Sprite tileSprite;
+	// std::vector<ui_hby *> subMenus;
+	ui_hby * sentinel = new ui_hby( ui_textures[1] ); // will not leave magic number, migrate to a more valid scheme when ui is a focus
 	
+	// walk the configuration file (implied) tree. failure to properly  name config files runs risk of 
+	// improper configuration
+	// ui_actionMenu_0_0.json	
+	
+
+	// I'm taking creative control and iterating over enums because I want to :)
+	//
+//enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
+	std::string configFile = "";
+	for( uint32_t state = terrainSelect; state != lastEnum; state++ )
+	{
+		switch( state ) {
+			case terrainSelect :
+				std::cout << "building ui terrainSelect" << std::endl;
+				break;	
+			case gameMenu :
+				std::cout << "building ui gameMenu" << std::endl;
+				break;
+			case terrainInfo :
+				std::cout << "building ui terrainInfo" << std::endl;
+				break;
+			case unitInfo :
+				std::cout << "building ui unitInfo" << std::endl;
+				break;
+			case atkSelect :
+				std::cout << "building ui atkSelect" << std::endl;
+				break;
+			case unitSelected :
+				std::cout << "building ui unitSelected" << std::endl;
+				break;
+			case actionMenu :
+				std::cout << "building ui actionMenu" << std::endl;
+				configFile = "config/ui_actionMenu_";// guarenteed to be supplied to engine. 
+				
+				for( uint32_t depth = 0; depth < maxUIDepth; depth++ )
+				{
+					configFile += std::to_string(depth) + "_0.json";//root must be present if children specified. 
+					// process guarenteed first child
+					std::cout << configFile << std::endl;
+					const char * curConfig = configFile.c_str();
+					FILE* fp = fopen(curConfig, "rb");
+					char readBuffer[65536];
+					FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+					Document doc;
+					doc.ParseStream(is);	
+					fclose(fp);
+
+					// Using a reference for consecutive access is handy and faster
+					const Value& rootParams 	= doc["rootParams"];
+					const Value& numChildren 	= doc["numChildren"];
+					const Value& childrenConfigs 	= doc["childrenConfigs"];
+
+//					assert(rootParams.IsArray());
+//					assert(numChildren.IsInt());
+//					assert(childrenConfigs.IsArray());
+					
+//					for( uint32_t width = 0; width < 
+					configFile = "config/ui_actionMenu_";
+				}
+				break;
+			case lastEnum :
+				std::cout << "valmorfigation complete" << std::endl;
+				break;
+			default :
+				std::cout << "something broke in ui generation\n";			
+		}
+
+	}
 
 }
 
@@ -248,9 +323,12 @@ int main( int argc, char** argv ) {
 	// INITIALIZATION 
 	// ====================
 	///*	std::vector<baseTerrain * >*/ board = std::vector<baseTerrain *>();
-	std::vector<sf::Texture *> terrainTexts = std::vector<sf::Texture *>();
-	std::vector<sf::Texture *> unitTexts = std::vector<sf::Texture *>();
-	std::vector<sf::Texture *> unitInfoTexts = std::vector<sf::Texture *>();
+	std::vector< sf::Texture * > terrainTexts 	= std::vector< sf::Texture * >();
+	std::vector< sf::Texture * > unitTexts 		= std::vector< sf::Texture * >();
+	std::vector< sf::Texture * > unitInfoTexts 	= std::vector< sf::Texture * >();
+	std::vector< sf::Texture * > uiTexts 		= std::vector< sf::Texture * >();
+	std::vector< ui_hby * > uiElements 		= std::vector< ui_hby * >();
+
 	baseUnit * curUnit;
 	bool draw = false;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
@@ -259,6 +337,8 @@ int main( int argc, char** argv ) {
 	foo(terrainTexts, "plain");
 	foo(unitTexts, "unit");
 	foo(unitInfoTexts, "unitInfo");
+	foo(uiTexts, "ui");
+	createUIElements( uiElements, uiTexts );
 	sf::RenderWindow window(sf::VideoMode(WIDTH, HEIGHT), "Advance Wars Clone");
 	//window.setFramerateLimit(35);
 	std::chrono::milliseconds frameTrigger{70};

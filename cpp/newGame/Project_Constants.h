@@ -25,6 +25,10 @@ const int maxUnit_const = 3;
 const int infantryUnit_const = 1;
 const int tankUnit_const = 2;
 const int planeUnit_const = 3;
+//ui textures
+const int maxUI_const		= 1;
+const int blueMenu_const	= 1;
+const int maxUIDepth		= 1;
 // checklist for adding new ujnits
 // [ ] update constants
 // [ ] rename textures accordingly (push vals right by one)
@@ -41,4 +45,8 @@ uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_);
 int32_t getBelowBSlot(int32_t sourceBSlot); 
 int32_t getAboveBSlot(int32_t sourceBSlot); 
+
+
+
+enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 #endif
