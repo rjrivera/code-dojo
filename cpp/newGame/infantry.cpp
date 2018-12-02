@@ -4,7 +4,7 @@
 
 
 infantry::infantry()  	{
-	std::cout << "plainTerrain instatiated\n";
+	std::cout << "infantry instatiated\n";
 	
 }
 
@@ -27,12 +27,12 @@ infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(play
 }
 
 infantry::~infantry(){
-	std::cout << "plainTerrain destroyed\n";
+	std::cout << "infantry destroyed\n";
 
 }
 
 void infantry::print() {
-	std::cout << "plainTerrain printed\n";
+	std::cout << "infantry printed\n";
 
 }
 /*

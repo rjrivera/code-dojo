@@ -1,12 +1,5 @@
 {
-	"rootParams" : [0,0,0],
-	
-	"numChildren" : 0,
-	
 	"childrenConfigs" : [
-			"ui_{state}_{level}_{siblingId}.json",
-			"ui_{state}_{level}_{siblingId}.json",
-			"ui_{state}_{level}_{siblingId}.json"
 			]
-      
+     
 }

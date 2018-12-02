@@ -28,7 +28,7 @@ const int planeUnit_const = 3;
 //ui textures
 const int maxUI_const		= 1;
 const int blueMenu_const	= 1;
-const int maxUIDepth		= 1;
+//const int maxUIDepth		= 1;
 // checklist for adding new ujnits
 // [ ] update constants
 // [ ] rename textures accordingly (push vals right by one)

@@ -11,9 +11,11 @@ class ui_hby {
 	//	ui_hby * clone();
 
 		sf::Sprite tileSprite;
-		std::vector<ui_hby *> subMenus;
+		std::vector<ui_hby *> * subMenus;
 		//  cursor will just map to the px, py of all submenus, who inherit locations based off parents. 
 		// when adding a new menu item, besides setting name and action to it... everything should be self setting.	
+		void uiAction();
+		std::vector<ui_hby *> * uiSelectMenu();
 };
 
 #endif

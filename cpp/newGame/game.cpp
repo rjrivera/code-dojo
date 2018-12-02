@@ -214,7 +214,7 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 
 // leverage the configurations set in config, parse and load engine ui datastructures here. 
 
-void createUIElements( std::vector< ui_hby * >&  , std::vector< sf::Texture * > ui_textures ) {
+void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, std::vector< sf::Texture * > ui_textures ) {
 	// define sentinel
 	//// sf::Sprite tileSprite;
 	// std::vector<ui_hby *> subMenus;
@@ -229,33 +229,40 @@ void createUIElements( std::vector< ui_hby * >&  , std::vector< sf::Texture * > 
 	//
 //enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 	std::string configFile = "";
+	int maxUIDepth = 2; // determin how to encode this in the ui configs.  
 	for( uint32_t state = terrainSelect; state != lastEnum; state++ )
 	{
 		switch( state ) {
 			case terrainSelect :
 				std::cout << "building ui terrainSelect" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;	
 			case gameMenu :
 				std::cout << "building ui gameMenu" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case terrainInfo :
 				std::cout << "building ui terrainInfo" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case unitInfo :
 				std::cout << "building ui unitInfo" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case atkSelect :
 				std::cout << "building ui atkSelect" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case unitSelected :
 				std::cout << "building ui unitSelected" << std::endl;
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case actionMenu :
 				std::cout << "building ui actionMenu" << std::endl;
-				configFile = "config/ui_actionMenu_";// guarenteed to be supplied to engine. 
-				
-				for( uint32_t depth = 0; depth < maxUIDepth; depth++ )
-				{
+				stateUIRoot->push_back( new std::vector< ui_hby * >() );
+				for( int depth = 0; depth < maxUIDepth; depth++ )
+				{			
+					configFile = "config/ui_actionMenu_";// guarenteed to be supplied to engine. 
 					configFile += std::to_string(depth) + "_0.json";//root must be present if children specified. 
 					// process guarenteed first child
 					std::cout << configFile << std::endl;
@@ -268,16 +275,19 @@ void createUIElements( std::vector< ui_hby * >&  , std::vector< sf::Texture * > 
 					fclose(fp);
 
 					// Using a reference for consecutive access is handy and faster
-					const Value& rootParams 	= doc["rootParams"];
-					const Value& numChildren 	= doc["numChildren"];
 					const Value& childrenConfigs 	= doc["childrenConfigs"];
+//					int siblings	= childrenConfigs.size();
+					
 
 //					assert(rootParams.IsArray());
 //					assert(numChildren.IsInt());
-//					assert(childrenConfigs.IsArray());
-					
-//					for( uint32_t width = 0; width < 
-					configFile = "config/ui_actionMenu_";
+					assert(childrenConfigs.IsArray());
+
+					// do work [ fence ]					
+
+//					for( uint32_t sibling = 1; sibling < siblings; sibling++ ) {
+//						configFile = "config/ui_actionMenu_";
+//					}
 				}
 				break;
 			case lastEnum :
@@ -327,7 +337,7 @@ int main( int argc, char** argv ) {
 	std::vector< sf::Texture * > unitTexts 		= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > unitInfoTexts 	= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > uiTexts 		= std::vector< sf::Texture * >();
-	std::vector< ui_hby * > uiElements 		= std::vector< ui_hby * >();
+	std::vector< std::vector< ui_hby * > * > * uiElements 	= new std::vector< std::vector< ui_hby * > * >();
 
 	baseUnit * curUnit;
 	bool draw = false;
@@ -373,7 +383,7 @@ int main( int argc, char** argv ) {
 
 	bool inGame, menu, prototype, engineLive;
 	inGame = menu = prototype = engineLive = false;
-	inGame = menu = true;
+	inGame = engineLive = true;
 
 	//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	//myI->defineGridSprite(movText);
@@ -426,6 +436,7 @@ int main( int argc, char** argv ) {
 
 		// main game ui navigation. 
 		// should be viewed as an in-engine data manipulater and configuration. 
+/*
 		if( menu )
 		{
 			
@@ -485,7 +496,7 @@ int main( int argc, char** argv ) {
 			prototype = false;
 			engineLive = true;
 		}
-
+*/
 		if( engineLive ) 
 		{
 			sf::Event event;	
@@ -733,7 +744,6 @@ int main( int argc, char** argv ) {
 			if (frameTimer > frameTrigger )  {
 		// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
 				frameTimer = std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer).zero();
-
 				if (draw) draw = false;
 				else draw = true;
 				window.clear();
@@ -743,7 +753,7 @@ int main( int argc, char** argv ) {
 					window.draw(obj->tileSprite);
 					if (obj->attachedUnit != nullptr) {
 						window.draw(obj->attachedUnit->unitSprite);
-						std::cout << obj->attachedUnit->spriteTimer << std::endl;
+	//					std::cout << obj->attachedUnit->spriteTimer << std::endl;
 	//					if (objj->attachedUnit is  ) everthing below in this else loop needs to be in the unit class. 
 						obj->attachedUnit->spriteTimer++;
 						if (obj->attachedUnit->spriteTimer >= obj->attachedUnit->spriteTrigger) {
@@ -786,7 +796,7 @@ int main( int argc, char** argv ) {
 			}
 			else draw = true;
 		} // < brace is for if( engineLive )		
-		if( inGame ) std::cout << "inGame\n";
+	//	if( inGame ) std::cout << "inGame\n";
 	}
 	return 0;
 }
