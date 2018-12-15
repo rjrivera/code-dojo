@@ -37,7 +37,17 @@ void ui_hby::uiAction() {
 
 void ui_hby::setPosition( int x_, int y_) {
 	tileSprite.setPosition( x_, y_ );
+	x = x_;
+	y = y_;
 	return;
+}
+
+int ui_hby::getX(){
+	return x;
+}
+
+int ui_hby::getY(){
+	return y;
 }
 
 std::vector<ui_hby *> * ui_hby::uiSelectMenu() {

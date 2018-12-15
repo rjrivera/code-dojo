@@ -357,6 +357,7 @@ int main( int argc, char** argv ) {
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	uint32_t sourceBSlot = 0;
 	uint32_t destBSlot = 0;
+	int curUI = 0;
 	foo(terrainTexts, "plain");
 	foo(unitTexts, "unit");
 	foo(unitInfoTexts, "unitInfo");
@@ -636,10 +637,11 @@ int main( int argc, char** argv ) {
 							
 						}				
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-							if (curActionMenuState != back ) { 
-								myC->movePosY(menusize_const);
+							if (curUI < uiElements->at(actionMenu)->size() - 1 ) { // I need to update this to be based off of the ui_hby data structure. 
+								curUI++;
+								myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
 								myC->burnCooldown();
-								switch(curActionMenuState) {
+								switch(curActionMenuState) { // for now do this...migrate action to ui_hby class. 
 									case(move) :
 										curActionMenuState = atk;
 										break;
@@ -651,8 +653,9 @@ int main( int argc, char** argv ) {
 							}
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-							if (curActionMenuState != move ) {
-								myC->movePosY(-menusize_const);
+							if (curUI > 0) {
+								curUI--;
+								myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
 								myC->burnCooldown();
 								switch(curActionMenuState) {
 									case(back) :
@@ -720,8 +723,9 @@ int main( int argc, char** argv ) {
 							enemyNeighbors = curUnit->enemyNeighbors;
 							curInputState = actionMenu;
 							myC = cursorStack[myC->stackInd +1];
-							myC->movePosYAbs(64);
-							myC->movePosXAbs(96);
+							curUI = 0;
+							myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
+							myC->movePosXAbs(uiElements->at(actionMenu)->at(curUI)->getX());
 							myC->burnCooldown();
 							curActionMenuState = move;
 						}
