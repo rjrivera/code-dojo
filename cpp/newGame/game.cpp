@@ -229,7 +229,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 	//
 //enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 	std::string configFile = "";
-	int maxUIDepth = 2; // determin how to encode this in the ui configs.  
+	int maxUIDepth = 0; // determin how to encode this in the ui configs.  
 	for( uint32_t state = terrainSelect; state != lastEnum; state++ )
 	{
 		switch( state ) {
@@ -276,11 +276,14 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 
 					// Using a reference for consecutive access is handy and faster
 					const Value& childrenConfigs 	= doc["childrenConfigs"];
+					const Value& height		= doc["height"];
+					const Value& width		= doc["width"];
 //					int siblings	= childrenConfigs.size();
 					
 
 //					assert(rootParams.IsArray());
-//					assert(numChildren.IsInt());
+					assert(width.IsInt());
+					assert(height.IsInt());
 					assert(childrenConfigs.IsArray());
 
 					// do work [ fence ]					
