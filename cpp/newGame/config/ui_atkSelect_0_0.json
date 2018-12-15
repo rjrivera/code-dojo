@@ -1,12 +1,10 @@
 {
-	"title"	: "actionMenu_0_title.png",	
+	"title"	: "",	
 	"childrenConfigs" : [
 			],
 
 	"leaves" 	: [ 
-				"actionMenu_0_0.png",
-				"actionMenu_0_1.png",
-				"actionMenu_0_2.png"
+
       			],
 	
 	"height"	: 128,

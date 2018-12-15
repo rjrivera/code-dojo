@@ -26,8 +26,13 @@ const int infantryUnit_const = 1;
 const int tankUnit_const = 2;
 const int planeUnit_const = 3;
 //ui textures
-const int maxUI_const		= 1;
-const int blueMenu_const	= 1;
+const int maxUI_const		= 4;
+const int ui1_const		= 1;
+const int ui2_const		= 2;
+const int ui3_const		= 3;
+const int ui4_const		= 4;
+
+//const int blueMenu_const	= 1;
 //const int maxUIDepth		= 1;
 // checklist for adding new ujnits
 // [ ] update constants

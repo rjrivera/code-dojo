@@ -214,7 +214,7 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 
 // leverage the configurations set in config, parse and load engine ui datastructures here. 
 
-void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, std::vector< sf::Texture * > ui_textures ) {
+void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, std::vector< sf::Texture * >& ui_textures ) {
 	// define sentinel
 	//// sf::Sprite tileSprite;
 	// std::vector<ui_hby *> subMenus;
@@ -229,7 +229,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 	//
 //enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 	std::string configFile = "";
-	int maxUIDepth = 0; // determin how to encode this in the ui configs.  
+	int maxUIDepth = 1; // determin how to encode this in the ui configs.  
 	for( uint32_t state = terrainSelect; state != lastEnum; state++ )
 	{
 		switch( state ) {
@@ -278,6 +278,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 					const Value& childrenConfigs 	= doc["childrenConfigs"];
 					const Value& height		= doc["height"];
 					const Value& width		= doc["width"];
+					const Value& leaves		= doc["leaves"];
 //					int siblings	= childrenConfigs.size();
 					
 
@@ -285,9 +286,17 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 					assert(width.IsInt());
 					assert(height.IsInt());
 					assert(childrenConfigs.IsArray());
-
+					assert(leaves.IsArray());
+			
 					// do work [ fence ]					
-
+					// begin linking the static assets for the ui based off configuration information.
+					// generate a single ui_hby as encoded from the .json
+//					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
+					for( int i = 0; i < leaves.Size(); i++) {
+						std::cout << "spawning new leaf" << std::endl;
+						std::cout << "new leaf png const -- " << leaves[ i ].GetInt() << std::endl;
+						stateUIRoot->at(0)->push_back( new ui_hby( ui_textures[ leaves[ i ].GetInt() ] ) );
+					}
 //					for( uint32_t sibling = 1; sibling < siblings; sibling++ ) {
 //						configFile = "config/ui_actionMenu_";
 //					}
