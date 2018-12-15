@@ -35,6 +35,10 @@ void ui_hby::uiAction() {
 	std::cout << "action button has been selected" << std::endl;
 }
 
+void ui_hby::setPosition( int x_, int y_) {
+	tileSprite.setPosition( x_, y_ );
+	return;
+}
 
 std::vector<ui_hby *> * ui_hby::uiSelectMenu() {
 	return subMenus;

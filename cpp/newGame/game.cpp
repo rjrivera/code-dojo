@@ -234,7 +234,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 	{
 		switch( state ) {
 			case terrainSelect :
-				std::cout << "building ui terrainSelect" << std::endl;
+				std::cout << "building ui terrainSelect -- " << terrainSelect << std::endl;
 				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;	
 			case gameMenu :
@@ -258,7 +258,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				break;
 			case actionMenu :
-				std::cout << "building ui actionMenu" << std::endl;
+				std::cout << "building ui actionMenu -- " << actionMenu << std::endl;
 				stateUIRoot->push_back( new std::vector< ui_hby * >() );
 				for( int depth = 0; depth < maxUIDepth; depth++ )
 				{			
@@ -295,7 +295,8 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 					for( int i = 0; i < leaves.Size(); i++) {
 						std::cout << "spawning new leaf" << std::endl;
 						std::cout << "new leaf png const -- " << leaves[ i ].GetInt() << std::endl;
-						stateUIRoot->at(0)->push_back( new ui_hby( ui_textures[ leaves[ i ].GetInt() ] ) );
+						stateUIRoot->at(actionMenu)->push_back( new ui_hby( ui_textures[ leaves[ i ].GetInt() ] ) );
+						stateUIRoot->at(actionMenu)->back()->setPosition(depth*width.GetInt(), i*height.GetInt());
 					}
 //					for( uint32_t sibling = 1; sibling < siblings; sibling++ ) {
 //						configFile = "config/ui_actionMenu_";
@@ -799,9 +800,14 @@ int main( int argc, char** argv ) {
 					for(uint32_t atkGrid : *(curUnit->enemyNeighbors)) {
 						window.draw(board[atkGrid]->atkSprite);
 					}
-					window.draw(*actionSprite); 
+//					window.draw(*actionSprite); 
+					for(ui_hby * ui : *(uiElements->at(curInputState)) ) {
+						window.draw(ui->tileSprite);					
+					}
 					window.draw(myC->tileSprite);
 					if (curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(board[enemyNeighbors->at(enemyNeighborIndex)]->attachedUnit->unitInfoSprite); 
+
+
 				}
 
 				window.display();
