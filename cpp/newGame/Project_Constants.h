@@ -2,6 +2,7 @@
 #define PROJECT_CONSTANTS_H
 #include <string>
 #include <vector> 
+//#include <functional>
 #include "baseTerrain.h"
 #include "ui_hby.h"
 
@@ -50,8 +51,6 @@ uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_);
 int32_t getBelowBSlot(int32_t sourceBSlot); 
 int32_t getAboveBSlot(int32_t sourceBSlot); 
-
-
 
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 #endif
