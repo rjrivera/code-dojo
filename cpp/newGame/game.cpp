@@ -190,28 +190,28 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, const 
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
 				case (plainTerrain_const -1) :
-					board_->push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (mountTerrain_const - 1) :
-					board_->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (waterTerrain_const - 1):
-					board_->push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (roadTerrain_const - 1) :
-					board_->push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (forestTerrain_const - 1) :
-					board_->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 			}
 				//TODO[ ] put this logic in the class...it belongs there. 
-			board_->at(count)->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
-			board_->at(count)->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
-			board_->at(count)->setUnitSize(tilesize_const);
-			board_->at(count)->setGridPos(j, i);
-			board_->at(count)->setAtkSprite(terrainTexts[atkTerrain_const]);
-			board_->at(count)->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			gState_->board->at(count)->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			gState_->board->at(count)->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			gState_->board->at(count)->setUnitSize(tilesize_const);
+			gState_->board->at(count)->setGridPos(j, i);
+			gState_->board->at(count)->setAtkSprite(terrainTexts[atkTerrain_const]);
+			gState_->board->at(count)->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			count++;
 		}
 	}
@@ -376,6 +376,7 @@ int main( int argc, char** argv ) {
 	//bar(board, terrainTexts);
 
 	mapGen(gState, terrainTexts, "map2.json");
+	std::cout << "current size of the gState board " << gState->board->size() << std::endl;
 	//board = *(gState->board); // testing this is done correctly before further migrating. 
 	// testing posix_time libraries
 
@@ -412,16 +413,22 @@ int main( int argc, char** argv ) {
 	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	std::cout << "tUnit player num: " << tUnit->player << std::endl;
-	gState->board->at(1)->attachUnit(tUnit);	
+
+	std::cout << "game engine looking good at 416\n";
+	std::cout << "temp units hp before attachment: " << tUnit->hp << std::endl;
+	gState->board->at(1)->attachUnit(tUnit, gState->board);	
+	std::cout << "game engine looking good at 418\n";
 	gState->board->at(1)->attachedUnit->player = 1;
+	std::cout << "game engine looking good at 420\n";
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 1);
-	gState->board->at(9)->attachUnit(tUnit);
+	gState->board->at(9)->attachUnit(tUnit, gState->board);
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 1);
-	gState->board->at(21)->attachUnit(tUnit);
+	gState->board->at(21)->attachUnit(tUnit, gState->board);
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 2);
-	gState->board->at(3)->attachUnit(tUnit);	
+	gState->board->at(3)->attachUnit(tUnit, gState->board);	
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
-	gState->board->at(5)->attachUnit(tUnit);
+	gState->board->at(5)->attachUnit(tUnit, gState->board);
+	std::cout << "game engine looking good at 425\n";
 
 	inputState curInputState(terrainSelect);
 	actionMenuState curActionMenuState(move);
@@ -518,7 +525,6 @@ int main( int argc, char** argv ) {
 			now = std::chrono::high_resolution_clock::now();
 	//		deltaTime = now - lastCycle;
 			frameTimer += myTimer = now - lastCycle;
-			std::cout << "Game runtime healthy - line 521\n";	
 	// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
 
 
@@ -562,10 +568,10 @@ int main( int argc, char** argv ) {
 							}
 	*/
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
-							if ( board[getBSlot(myC->posX, myC->posY)]->attachedUnit != nullptr ) { 
+							if ( gState->board->at(getBSlot(myC->posX, myC->posY))->attachedUnit != nullptr ) { 
 								myC->burnCooldown();
 								sourceBSlot = getBSlot(myC->posX, myC->posY);
-								curUnit = board[sourceBSlot]->attachedUnit;
+								curUnit = gState->board->at(sourceBSlot)->attachedUnit;
 								curInputState = unitSelected;
 							//std::cout << board[sourceBSlot]->attachedUnit->posX << std::endl;
 							//std::cout << myC->posX << std::endl;
@@ -593,10 +599,10 @@ int main( int argc, char** argv ) {
 									myC = cursorStack[myC->stackInd - 1];					
 									myC->burnCooldown();
 									destBSlot = getBSlot(myC->posX, myC->posY);
-									bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
+									bool valMove = gState->board->at(sourceBSlot)->attachedUnit->isValMove(myC->posX, myC->posY);
 								if ( destBSlot != sourceBSlot && valMove &&
 										gState->board->at(destBSlot)->attachedUnit == nullptr )  {
-										gState->board->at(destBSlot)->attachUnit(curUnit);
+										gState->board->at(destBSlot)->attachUnit(curUnit, gState->board);
 										gState->board->at(sourceBSlot)->detachUnit();	
 									 
 								}
@@ -716,7 +722,7 @@ int main( int argc, char** argv ) {
 				case(unitSelected):
 						//s -- move unit
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
-							curUnit->findEnemyNeighbors(myC->posX, myC->posY);
+							curUnit->findEnemyNeighbors(myC->posX, myC->posY, gState->board);
 							enemyNeighbors = curUnit->enemyNeighbors;
 							curInputState = actionMenu;
 							myC = cursorStack[myC->stackInd +1];
@@ -748,9 +754,6 @@ int main( int argc, char** argv ) {
 		
 				}
 			}
-
-
-			std::cout << "Game runtime healthy - line 753\n";	
 	// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
 			// ===================================================
 			// sprite draw logic
@@ -765,7 +768,7 @@ int main( int argc, char** argv ) {
 				window.clear();
 				// note, blocks is simply a repo of texture. 
 				// should iterate through a collection of sprites, not texutres. 
-				for(baseTerrain * obj : board) 	{
+				for(baseTerrain * obj : *(gState->board)) 	{
 					window.draw(obj->tileSprite);
 					if (obj->attachedUnit != nullptr) {
 						window.draw(obj->attachedUnit->unitSprite);

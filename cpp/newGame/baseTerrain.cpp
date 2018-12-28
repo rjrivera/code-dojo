@@ -22,20 +22,20 @@ void baseTerrain::setAtkSprite(const sf::Texture * atkSprite_) {
 	atkSprite.setTexture(*atkSprite_);
 }
 
-void baseTerrain::attachUnit(baseUnit*& unit) {
+void baseTerrain::attachUnit(baseUnit*& unit, std::vector<baseTerrain*> * board) {
 	if (attachedUnit!=nullptr) {
 		std::cout << "cannot attach Unit, slot already occupied\n";
 		return;
 	}
 	attachedUnit = unit;
 	std::cout << "attached unit player num: " << attachedUnit->player;
-	std::cout << "  unit player num: " << unit->player << std::endl;
+	std::cout << "  unit player num: " << unit->player;
 	std::cout << "  unit hp num: " << unit->hp;
-	unit->posX = gridX*unitSize;
-	unit->posY = gridY*unitSize;
+	(unit->posX) = gridX*unitSize;
+	(unit->posY) = gridY*unitSize;
 	attachedUnit->unitSprite.setPosition(gridX*unitSize, gridY*unitSize);
 	attachedUnit->validMoves->clear();
-	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize);
+	attachedUnit->initMoveGrids(attachedUnit->mvt, gridX*unitSize, gridY*unitSize, board);
 }
 
 void baseTerrain::detachUnit(){

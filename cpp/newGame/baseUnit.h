@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "moveGrid.h"
 #include <vector>
-//#include "baseTerrain.h"
+class baseTerrain;
 
 
 
@@ -27,9 +27,9 @@ class baseUnit {
 //		void updateTimer(std::chrono::nanoseconds timer);
 		void movePosX(uint64_t moveX);
 		void movePosY(uint64_t moveY);
-		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY);
+		virtual void initMoveGrids(int32_t mvtRemaining, uint32_t curX, uint32_t curY, std::vector<baseTerrain*> * board);
 		//prototyping function which will migrate to unit classes (direct fire units will use baseUnit definition, indirect will override)
-		void findEnemyNeighbors(int32_t posX_, int32_t posY_); 
+		void findEnemyNeighbors(int32_t posX_, int32_t posY_, std::vector<baseTerrain*> * board); 
 		void defineUnitInfoSprite(const sf::Texture * unitInfo_);
 	
 		bool isValMove(uint32_t destX, uint32_t destY);
