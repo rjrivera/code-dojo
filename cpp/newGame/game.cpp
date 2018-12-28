@@ -17,6 +17,7 @@
 #include "moveGrid.cpp"
 #include "cursor.cpp"
 #include "ui_hby.cpp"
+#include "gameState.cpp"
 #include "rapidjson/writer.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -155,7 +156,8 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 
 //MAPGENERATOR
 //PROTOTYPING FUNCTION TODO[ ] update the json to reflect the new const scheme for terrains and remove the + 1 offset in below funct
-void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terrainTexts, const char * mapName) {
+void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, const char * mapName) {
+//std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terrainTexts, const char * mapName) {
 	FILE* fp = fopen(mapName, "rb");
 	char readBuffer[65536];
 	FileReadStream is(fp, readBuffer, sizeof(readBuffer));
@@ -178,35 +180,38 @@ void mapGen(std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terra
 	std::cout << data.Size() << std::endl;
 	std::cout << "height is: " << h.GetInt() << std::endl;
 	std::cout << "width is: " << w.GetInt() << std::endl;
-	height = h.GetInt();
-	width = w.GetInt();
+	gState_->height = h.GetInt();
+	gState_->width = w.GetInt();
+	height = gState_->height; // TODO[ ] migrate the height and width out of the Project Constants.h
+	width  = gState_->width;
+	std::vector<baseTerrain *> * board_ = gState_->board;
 	int count=0;
 	for(int i = 0; i < h.GetInt(); i++) {
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
 				case (plainTerrain_const -1) :
-					board_.push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
+					board_->push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (mountTerrain_const - 1) :
-					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					board_->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (waterTerrain_const - 1):
-					board_.push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
+					board_->push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (roadTerrain_const - 1) :
-					board_.push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
+					board_->push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 				case (forestTerrain_const - 1) :
-					board_.push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					board_->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
 					break;
 			}
 				//TODO[ ] put this logic in the class...it belongs there. 
-			board_[count]->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
-			board_[count]->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
-			board_[count]->setUnitSize(tilesize_const);
-			board_[count]->setGridPos(j, i);
-			board_[count]->setAtkSprite(terrainTexts[atkTerrain_const]);
-			board_[count]->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			board_->at(count)->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			board_->at(count)->highlightSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			board_->at(count)->setUnitSize(tilesize_const);
+			board_->at(count)->setGridPos(j, i);
+			board_->at(count)->setAtkSprite(terrainTexts[atkTerrain_const]);
+			board_->at(count)->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
 			count++;
 		}
 	}
@@ -351,6 +356,7 @@ int main( int argc, char** argv ) {
 	std::vector< sf::Texture * > unitInfoTexts 	= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > uiTexts 		= std::vector< sf::Texture * >();
 	std::vector< std::vector< ui_hby * > * > * uiElements 	= new std::vector< std::vector< ui_hby * > * >();
+	gameState * gState = new gameState();
 
 	baseUnit * curUnit;
 	bool draw = false;
@@ -369,7 +375,8 @@ int main( int argc, char** argv ) {
 	
 	//bar(board, terrainTexts);
 
-	mapGen(board, terrainTexts, "map2.json");
+	mapGen(gState, terrainTexts, "map2.json");
+	//board = *(gState->board); // testing this is done correctly before further migrating. 
 	// testing posix_time libraries
 
 	auto deltaTime = std::chrono::high_resolution_clock::now();
@@ -405,24 +412,16 @@ int main( int argc, char** argv ) {
 	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	std::cout << "tUnit player num: " << tUnit->player << std::endl;
-	board[1]->attachUnit(tUnit);// = myI;	
-	std::cout << "unit attached\n";
-	std::cout << "attached unit player num is: " << board[1]->attachedUnit->player << std::endl;
-	board[1]->attachedUnit->player = 1;
-	std::cout << "attached unit player num is: " << board[1]->attachedUnit->player << std::endl;
-//	board[1]->attachedUnit->defineGridSprite(movText);
+	gState->board->at(1)->attachUnit(tUnit);	
+	gState->board->at(1)->attachedUnit->player = 1;
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 1);
-	//tUnit->defineGridSprite(movText);
-	board[9]->attachUnit(tUnit);// = myI;	
-//	board[9]->attachedUnit->defineGridSprite(movText);
+	gState->board->at(9)->attachUnit(tUnit);
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 1);
-	//tUnit->defineGridSprite(movText);
-	board[21]->attachUnit(tUnit);// = myI;	
+	gState->board->at(21)->attachUnit(tUnit);
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 2);
-	board[3]->attachUnit(tUnit);	
+	gState->board->at(3)->attachUnit(tUnit);	
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
-	board[5]->attachUnit(tUnit);
-
+	gState->board->at(5)->attachUnit(tUnit);
 
 	inputState curInputState(terrainSelect);
 	actionMenuState curActionMenuState(move);
@@ -519,7 +518,7 @@ int main( int argc, char** argv ) {
 			now = std::chrono::high_resolution_clock::now();
 	//		deltaTime = now - lastCycle;
 			frameTimer += myTimer = now - lastCycle;
-			
+			std::cout << "Game runtime healthy - line 521\n";	
 	// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
 
 
@@ -596,9 +595,9 @@ int main( int argc, char** argv ) {
 									destBSlot = getBSlot(myC->posX, myC->posY);
 									bool valMove = board[sourceBSlot]->attachedUnit->isValMove(myC->posX, myC->posY);
 								if ( destBSlot != sourceBSlot && valMove &&
-										board[destBSlot]->attachedUnit == nullptr )  {
-										board[destBSlot]->attachUnit(curUnit);
-										board[sourceBSlot]->detachUnit();	
+										gState->board->at(destBSlot)->attachedUnit == nullptr )  {
+										gState->board->at(destBSlot)->attachUnit(curUnit);
+										gState->board->at(sourceBSlot)->detachUnit();	
 									 
 								}
 									curInputState = terrainSelect;
@@ -648,7 +647,6 @@ int main( int argc, char** argv ) {
 									case(atk) :
 										curActionMenuState = back;
 										break;
-
 								}
 							}
 						}
@@ -665,7 +663,6 @@ int main( int argc, char** argv ) {
 										curActionMenuState = move;
 										break;
 								}
-		
 							}
 						}
 						break;
@@ -753,6 +750,8 @@ int main( int argc, char** argv ) {
 			}
 
 
+			std::cout << "Game runtime healthy - line 753\n";	
+	// 		std::cout << std::chrono::duration_cast<std::chrono::nanoseconds>(frameTimer ).count() << std::endl;
 			// ===================================================
 			// sprite draw logic
 			// ===================================================
@@ -786,10 +785,9 @@ int main( int argc, char** argv ) {
 				//TODO[ ] this is apparently a resource hog. must develop a way to draw all pixels EXACTLY ONCE or a make foreground draw far less. 
 				//use 'draw' for things you want to use even/odd drawing to reduce load. 
 				if (curInputState == unitSelected )  {
-
-					for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
-						window.draw(board[mGrid]->highlightSprite);
-						if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
+					for(uint32_t mGrid : *(gState->board->at(sourceBSlot)->attachedUnit->validMoves)) {
+						window.draw(gState->board->at(mGrid)->highlightSprite);
+						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
 				}
 				window.draw(myC->tileSprite);
@@ -797,23 +795,20 @@ int main( int argc, char** argv ) {
 				if (curInputState == terrainInfo) window.draw(*plSprite); 
 				if (curInputState == actionMenu || curInputState == atkSelect) {
 					window.draw(cursorStack[myC->stackInd-1]->tileSprite);
-					for(uint32_t mGrid : *(board[sourceBSlot]->attachedUnit->validMoves)) {
-						window.draw(board[mGrid]->highlightSprite);
-						if (board[mGrid]->attachedUnit != nullptr) window.draw(board[mGrid]->attachedUnit->unitSprite); 
+					for(uint32_t mGrid : *(gState->board->at(sourceBSlot)->attachedUnit->validMoves)) {
+						window.draw(gState->board->at(mGrid)->highlightSprite);
+						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
 					for(uint32_t atkGrid : *(curUnit->enemyNeighbors)) {
-						window.draw(board[atkGrid]->atkSprite);
+						window.draw(gState->board->at(atkGrid)->atkSprite);
 					}
 //					window.draw(*actionSprite); 
 					for(ui_hby * ui : *(uiElements->at(curInputState)) ) {
 						window.draw(ui->tileSprite);					
 					}
 					window.draw(myC->tileSprite);
-					if (curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(board[enemyNeighbors->at(enemyNeighborIndex)]->attachedUnit->unitInfoSprite); 
-
-
+					if (curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
 				}
-
 				window.display();
 			}
 			else draw = true;
