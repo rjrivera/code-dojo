@@ -43,7 +43,7 @@ const int ui4_const		= 4;
 const int tilesize_const = 16;
 const int menusize_const = tilesize_const * 2;
 //board container
-extern std::vector<baseTerrain*> board = std::vector<baseTerrain*>(); // this needs to be remove TODO[ ] this is terribly bad practice. 
+//extern std::vector<baseTerrain*> board = std::vector<baseTerrain*>(); // this needs to be remove TODO[ ] this is terribly bad practice. 
 
 
 //board index calculator function

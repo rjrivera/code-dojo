@@ -6,8 +6,10 @@
 #include "cursor.h"
 #include "baseTerrain.h"
 #include "ui_hby.h"
+#include "Project_Constants.h"
 
-static void move(std::map< 
+// return code for client response/state manipulation
+static int move( gameState * gState_, cursor * myC, 
 
 /*
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
