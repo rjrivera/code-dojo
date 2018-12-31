@@ -4,7 +4,7 @@
 #include <vector> 
 //#include <functional>
 #include "baseTerrain.h"
-#include "ui_hby.h"
+//#include "ui_hby.h"
 
 const int maxPlayers_const = 2;
 
@@ -52,5 +52,6 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 int32_t getBelowBSlot(int32_t sourceBSlot); 
 int32_t getAboveBSlot(int32_t sourceBSlot); 
 
+enum actionMenuState {move, atk, back};
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 #endif

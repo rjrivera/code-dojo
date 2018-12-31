@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <chrono>
 #include "Project_Constants.h"
+#include "Command_Catalogue.h"
 #include "baseTerrain.cpp"
 #include "baseUnit.cpp"
 #include "baseGFX.cpp"
@@ -125,7 +126,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 //provides initial content load of terrain art assetts
 
 //enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu};
-enum actionMenuState {move, atk, back};
+
 
 // provide texture container you wish to populate and the texture type you wish to populate it with. 
 // project_constants.h contains definitions to constants referenced here. 
@@ -302,6 +303,8 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 						std::cout << "new leaf png const -- " << leaves[ i ].GetInt() << std::endl;
 						stateUIRoot->at(actionMenu)->push_back( new ui_hby( ui_textures[ leaves[ i ].GetInt() ] ) );
 						stateUIRoot->at(actionMenu)->back()->setPosition(depth*width.GetInt(), i*height.GetInt());
+						stateUIRoot->at(actionMenu)->back()->command = leaves[ i ].GetInt();
+						std::cout << "currently made leaf's command enum: " << std::endl;
 					}
 //					for( uint32_t sibling = 1; sibling < siblings; sibling++ ) {
 //						configFile = "config/ui_actionMenu_";
@@ -568,6 +571,8 @@ int main( int argc, char** argv ) {
 							}
 	*/
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
+
+
 							if ( gState->board->at(getBSlot(myC->posX, myC->posY))->attachedUnit != nullptr ) { 
 								myC->burnCooldown();
 								sourceBSlot = getBSlot(myC->posX, myC->posY);
@@ -596,6 +601,10 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 							switch(curActionMenuState) { 
 								case(move) : {
+									myC = cursorStack[myC->stackInd - 1];
+									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+									//cmdMove( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+/*
 									myC = cursorStack[myC->stackInd - 1];					
 									myC->burnCooldown();
 									destBSlot = getBSlot(myC->posX, myC->posY);
@@ -607,6 +616,8 @@ int main( int argc, char** argv ) {
 									 
 								}
 									curInputState = terrainSelect;
+*/
+
 									break;
 									}
 								case(atk) : {
@@ -634,8 +645,10 @@ int main( int argc, char** argv ) {
 									}
 								case(back) : { 
 									myC = cursorStack[myC->stackInd - 1];
-									myC->burnCooldown();
-									curInputState = terrainSelect;
+
+									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+//									myC->burnCooldown();
+//									curInputState = terrainSelect;
 									break;
 									}
 							}
