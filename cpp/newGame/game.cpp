@@ -365,8 +365,6 @@ int main( int argc, char** argv ) {
 	baseUnit * curUnit;
 	bool draw = false;
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
-	uint32_t sourceBSlot = 0;
-	uint32_t destBSlot = 0;
 	int curUI = 0;
 	foo(terrainTexts, "plain");
 	foo(unitTexts, "unit");
@@ -434,7 +432,7 @@ int main( int argc, char** argv ) {
 	gState->board->at(5)->attachUnit(tUnit, gState->board);
 	std::cout << "game engine looking good at 425\n";
 
-	inputState curInputState(terrainSelect);
+//	inputState cState->curInputState(terrainSelect);
 	actionMenuState curActionMenuState(move);
 // Terrain info PoC, move to object
 	sf::Texture * plainsInfo = new sf::Texture();
@@ -453,6 +451,8 @@ int main( int argc, char** argv ) {
 	std::vector<int32_t> * enemyNeighbors;	
 	int32_t enemyNeighborIndex = 0;
 	clientState * cState = new clientState();
+	cState->myC = myC;
+	cState->curInputState = terrainSelect;
 	// build out the games representation of the ui. 
 	// it will be a state machine. 
 
@@ -498,7 +498,7 @@ int main( int argc, char** argv ) {
 			board[5]->attachUnit(tUnit);
 
 
-			inputState curInputState(terrainSelect);
+			inputState cState->curInputState(terrainSelect);
 			actionMenuState curActionMenuState(move);
 		// Terrain info PoC, move to object
 			sf::Texture * plainsInfo = new sf::Texture();
@@ -539,35 +539,35 @@ int main( int argc, char** argv ) {
 			// UPDATE TIMING
 			// ==================================================		
 			
-			myC->updateTimer(myTimer);
+			cState->myC->updateTimer(myTimer);
 
 			// ===================================================
 			// INPUT HANDLING
 			// ===================================================
 			//debounce input.
-			if (myC->getCooldown() ) {
-				switch(curInputState){
+			if (cState->myC->getCooldown() ) {
+				switch(cState->curInputState){
 					case(terrainSelect):
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
 							engineLive 	= false;
 							inGame 		= false;
-							myC->burnCooldown();
+							cState->myC->burnCooldown();
 						}	 
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-							myC->movePosX(tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosX(tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-							myC->movePosX(-tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosX(-tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-							myC->movePosY(tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosY(tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-							myC->movePosY(-tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosY(-tilesize_const);
+							cState->myC->burnCooldown();
 						}
 	/*					if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) ) {
 
@@ -576,19 +576,19 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
 
 
-							if ( gState->board->at(getBSlot(myC->posX, myC->posY))->attachedUnit != nullptr ) { 
-								myC->burnCooldown();
-								sourceBSlot = getBSlot(myC->posX, myC->posY);
-								curUnit = gState->board->at(sourceBSlot)->attachedUnit;
-								curInputState = unitSelected;
-							//std::cout << board[sourceBSlot]->attachedUnit->posX << std::endl;
-							//std::cout << myC->posX << std::endl;
+							if ( gState->board->at(getBSlot(cState->myC->posX, cState->myC->posY))->attachedUnit != nullptr ) { 
+								cState->myC->burnCooldown();
+								cState->sourceBSlot = getBSlot(cState->myC->posX, cState->myC->posY);
+								curUnit = gState->board->at(cState->sourceBSlot)->attachedUnit;
+								cState->curInputState = unitSelected;
+							//std::cout << board[cState->sourceBSlot]->attachedUnit->posX << std::endl;
+							//std::cout << cState->myC->posX << std::endl;
 							}
 							// only alter the inputState if a unit is stationed on that board slot. 
-							//if (curUnit != nullptr) curInputState = unitSelected;
+							//if (curUnit != nullptr) cState->curInputState = unitSelected;
 							else {
-								curInputState = terrainInfo;
-								myC->burnCooldown();
+								cState->curInputState = terrainInfo;
+								cState->myC->burnCooldown();
 							}
 							
 						}				
@@ -596,8 +596,8 @@ int main( int argc, char** argv ) {
 
 					case(terrainInfo):
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-							curInputState = terrainSelect;
-							myC->burnCooldown();
+							cState->curInputState = terrainSelect;
+							cState->myC->burnCooldown();
 						}
 						break;
 					case(actionMenu):
@@ -605,43 +605,37 @@ int main( int argc, char** argv ) {
 							switch(curActionMenuState) { 
 								case(move) : {
 									
-									myC = cursorStack[myC->stackInd - 1];
-									cState->myC = myC;
-									cState->destBSlot = destBSlot;
-									cState->sourceBSlot = sourceBSlot;
-									cState->curInputState = curInputState;
+									cState->myC = cursorStack[cState->myC->stackInd - 1];
 									cState->selectedUnit  = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
-									sourceBSlot	= 	cState->sourceBSlot;
-									destBSlot	= 	cState->destBSlot;
-									curInputState	= cState->curInputState;
 
-									//cmdMove( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+									//cmdMove( gState, cState->myC, cState->curInputState, curUnit, cState->destBSlot, cState->sourceBSlot );
 /*
-									myC = cursorStack[myC->stackInd - 1];					
-									myC->burnCooldown();
-									destBSlot = getBSlot(myC->posX, myC->posY);
-									bool valMove = gState->board->at(sourceBSlot)->attachedUnit->isValMove(myC->posX, myC->posY);
-								if ( destBSlot != sourceBSlot && valMove &&
-										gState->board->at(destBSlot)->attachedUnit == nullptr )  {
-										gState->board->at(destBSlot)->attachUnit(curUnit, gState->board);
-										gState->board->at(sourceBSlot)->detachUnit();	
+									cState->myC = cursorStack[cState->myC->stackInd - 1];					
+									cState->myC->burnCooldown();
+									cState->destBSlot = getBSlot(cState->myC->posX, cState->myC->posY);
+									bool valMove = gState->board->at(cState->sourceBSlot)->attachedUnit->isValMove(cState->myC->posX, cState->myC->posY);
+								if ( cState->destBSlot != cState->sourceBSlot && valMove &&
+										gState->board->at(cState->destBSlot)->attachedUnit == nullptr )  {
+										gState->board->at(cState->destBSlot)->attachUnit(curUnit, gState->board);
+										gState->board->at(cState->sourceBSlot)->detachUnit();	
 									 
 								}
-									curInputState = terrainSelect;
+									cState->curInputState = terrainSelect;
 */
 
 									break;
 									}
 								case(atk) : {
 									// get the attack menu cursor
-									myC = cursorStack[myC->stackInd + 1];
-									myC->burnCooldown();
-									curInputState = atkSelect;
+									/*
+									cState->myC = cursorStack[cState->myC->stackInd + 1];
+									cState->myC->burnCooldown();
+									cState->curInputState = atkSelect;
 									if (enemyNeighbors->size() == 0) {
 										enemyNeighborIndex = -1;
-										myC->movePosXAbs(0);
-										myC->movePosYAbs(0);
+										cState->myC->movePosXAbs(0);
+										cState->myC->movePosYAbs(0);
 									}
 									else {
 										enemyNeighborIndex = 0;
@@ -649,26 +643,19 @@ int main( int argc, char** argv ) {
 										int32_t absX = getScaledPosX(atkBSlot);
 										int32_t absY = getScaledPosY(atkBSlot);
 										if (absX >= 0 && absY >= 0) { 
-											myC->movePosXAbs(absX);
-											myC->movePosYAbs(absY);
-											myC->burnCooldown();
+											cState->myC->movePosXAbs(absX);
+											cState->myC->movePosYAbs(absY);
+											cState->myC->burnCooldown();
 										}
-									}
+									}*/
 									break;
 									}
 								case(back) : { 
-									myC = cursorStack[myC->stackInd - 1];
-									cState->myC = myC;
-									cState->destBSlot = destBSlot;
-									cState->sourceBSlot = sourceBSlot;
-									cState->curInputState = curInputState;
+									cState->myC = cursorStack[cState->myC->stackInd - 1];
 									cState->selectedUnit  = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
-									sourceBSlot	= 	cState->sourceBSlot;
-									destBSlot	= 	cState->destBSlot;
-									curInputState	= cState->curInputState;
-//									myC->burnCooldown();
-//									curInputState = terrainSelect;
+//									cState->myC->burnCooldown();
+//									cState->curInputState = terrainSelect;
 									break;
 									}
 							}
@@ -677,8 +664,8 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
 							if (curUI < uiElements->at(actionMenu)->size() - 1 ) { // I need to update this to be based off of the ui_hby data structure. 
 								curUI++;
-								myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
-								myC->burnCooldown();
+								cState->myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
+								cState->myC->burnCooldown();
 								switch(curActionMenuState) { // for now do this...migrate action to ui_hby class. 
 									case(move) :
 										curActionMenuState = atk;
@@ -692,8 +679,8 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
 							if (curUI > 0) {
 								curUI--;
-								myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
-								myC->burnCooldown();
+								cState->myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
+								cState->myC->burnCooldown();
 								switch(curActionMenuState) {
 									case(back) :
 										curActionMenuState = atk;
@@ -708,12 +695,12 @@ int main( int argc, char** argv ) {
 					case(atkSelect):
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 							//use the cursor's current location to calc potential attacks
-							curInputState = terrainSelect;
-							std::cout << "Current cursor stack index: " << myC->stackInd << std::endl;
-							myC = cursorStack[myC->stackInd - 2];
+							cState->curInputState = terrainSelect;
+							std::cout << "Current cursor stack index: " << cState->myC->stackInd << std::endl;
+							cState->myC = cursorStack[cState->myC->stackInd - 2];
 							std::cout << "Moving to terrain select\n";
-							std::cout << "current cursor pos: " << myC->posX << ", " << myC->posY << std::endl;
-							myC->burnCooldown();
+							std::cout << "current cursor pos: " << cState->myC->posX << ", " << cState->myC->posY << std::endl;
+							cState->myC->burnCooldown();
 							//TODO[ ] initiate battle sequence.
 		
 						}
@@ -728,9 +715,9 @@ int main( int argc, char** argv ) {
 							int32_t absX = getScaledPosX(atkBSlot);
 							int32_t absY = getScaledPosY(atkBSlot);
 							if (absX >= 0 && absY >= 0) { 
-								myC->movePosXAbs(absX);
-								myC->movePosYAbs(absY);
-								myC->burnCooldown();
+								cState->myC->movePosXAbs(absX);
+								cState->myC->movePosYAbs(absY);
+								cState->myC->burnCooldown();
 							}
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ||
@@ -745,9 +732,9 @@ int main( int argc, char** argv ) {
 							int32_t absY = getScaledPosY(atkBSlot);
 							
 							if (absX >= 0 && absY >= 0) { 
-								myC->movePosXAbs(absX);
-								myC->movePosYAbs(absY);
-								myC->burnCooldown();
+								cState->myC->movePosXAbs(absX);
+								cState->myC->movePosYAbs(absY);
+								cState->myC->burnCooldown();
 							}					
 							
 						}
@@ -755,31 +742,31 @@ int main( int argc, char** argv ) {
 				case(unitSelected):
 						//s -- move unit
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
-							curUnit->findEnemyNeighbors(myC->posX, myC->posY, gState->board);
+							curUnit->findEnemyNeighbors(cState->myC->posX, cState->myC->posY, gState->board);
 							enemyNeighbors = curUnit->enemyNeighbors;
-							curInputState = actionMenu;
-							myC = cursorStack[myC->stackInd +1];
+							cState->curInputState = actionMenu;
+							cState->myC = cursorStack[cState->myC->stackInd +1];
 							curUI = 0;
-							myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
-							myC->movePosXAbs(uiElements->at(actionMenu)->at(curUI)->getX());
-							myC->burnCooldown();
+							cState->myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
+							cState->myC->movePosXAbs(uiElements->at(actionMenu)->at(curUI)->getX());
+							cState->myC->burnCooldown();
 							curActionMenuState = move;
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-							myC->movePosX(tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosX(tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-							myC->movePosX(-tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosX(-tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-							myC->movePosY(tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosY(tilesize_const);
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-							myC->movePosY(-tilesize_const);
-							myC->burnCooldown();
+							cState->myC->movePosY(-tilesize_const);
+							cState->myC->burnCooldown();
 						}
 		
 						//a -- exit unit with no action
@@ -820,18 +807,18 @@ int main( int argc, char** argv ) {
 				}
 				//TODO[ ] this is apparently a resource hog. must develop a way to draw all pixels EXACTLY ONCE or a make foreground draw far less. 
 				//use 'draw' for things you want to use even/odd drawing to reduce load. 
-				if (curInputState == unitSelected )  {
-					for(uint32_t mGrid : *(gState->board->at(sourceBSlot)->attachedUnit->validMoves)) {
+				if (cState->curInputState == unitSelected )  {
+					for(uint32_t mGrid : *(gState->board->at(cState->sourceBSlot)->attachedUnit->validMoves)) {
 						window.draw(gState->board->at(mGrid)->highlightSprite);
 						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
 				}
-				window.draw(myC->tileSprite);
+				window.draw(cState->myC->tileSprite);
 				
-				if (curInputState == terrainInfo) window.draw(*plSprite); 
-				if (curInputState == actionMenu || curInputState == atkSelect) {
-					window.draw(cursorStack[myC->stackInd-1]->tileSprite);
-					for(uint32_t mGrid : *(gState->board->at(sourceBSlot)->attachedUnit->validMoves)) {
+				if (cState->curInputState == terrainInfo) window.draw(*plSprite); 
+				if (cState->curInputState == actionMenu || cState->curInputState == atkSelect) {
+					window.draw(cursorStack[cState->myC->stackInd-1]->tileSprite);
+					for(uint32_t mGrid : *(gState->board->at(cState->sourceBSlot)->attachedUnit->validMoves)) {
 						window.draw(gState->board->at(mGrid)->highlightSprite);
 						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
@@ -839,11 +826,11 @@ int main( int argc, char** argv ) {
 						window.draw(gState->board->at(atkGrid)->atkSprite);
 					}
 //					window.draw(*actionSprite); 
-					for(ui_hby * ui : *(uiElements->at(curInputState)) ) {
+					for(ui_hby * ui : *(uiElements->at(cState->curInputState)) ) {
 						window.draw(ui->tileSprite);					
 					}
-					window.draw(myC->tileSprite);
-					if (curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
+					window.draw(cState->myC->tileSprite);
+					if (cState->curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
 				}
 				window.display();
 			}
