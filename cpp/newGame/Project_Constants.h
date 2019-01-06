@@ -2,7 +2,6 @@
 #define PROJECT_CONSTANTS_H
 #include <string>
 #include <vector> 
-//#include <functional>
 #include "baseTerrain.h"
 //#include "ui_hby.h"
 

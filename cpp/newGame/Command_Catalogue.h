@@ -10,27 +10,27 @@
 #include "Project_Constants.h"
 
 // return code for client response/state manipulation
-static int cmdMove( gameState * gState_, cursor * myC, inputState& curInputState_, baseUnit * curUnit, uint32_t destBSlot, uint32_t sourceBSlot ) {
+static int cmdMove( gameState * gState_, clientState * cState_ ) {
 //	myC = cursorStack[myC->stackInd - 1];					
-	myC->burnCooldown();
-	destBSlot = getBSlot(myC->posX, myC->posY);
-	bool valMove = gState_->board->at(sourceBSlot)->attachedUnit->isValMove(myC->posX, myC->posY);
-	if ( destBSlot != sourceBSlot && valMove &&
-		gState_->board->at(destBSlot)->attachedUnit == nullptr )  {
-		gState_->board->at(destBSlot)->attachUnit(curUnit, gState_->board);
-		gState_->board->at(sourceBSlot)->detachUnit();					 
+	std::cout << "initCommand" << std::endl;
+	cState_->myC->burnCooldown();
+	cState_->destBSlot = getBSlot( cState_->myC->posX, cState_->myC->posY);
+	bool valMove = gState_->board->at(cState_->sourceBSlot)->attachedUnit->isValMove(cState_->myC->posX, cState_->myC->posY);
+	if ( cState_->destBSlot != cState_->sourceBSlot && valMove &&
+		gState_->board->at( cState_->destBSlot )->attachedUnit == nullptr )  {
+		gState_->board->at( cState_->destBSlot )->attachUnit( cState_->selectedUnit, gState_->board);
+		gState_->board->at( cState_->sourceBSlot )->detachUnit();					 
 	}
-	curInputState_ = terrainSelect;
+	cState_->curInputState = terrainSelect;
+	std::cout << "termCommand" << std::endl;
 	return 0;
 
 };
 
-static int cmdBackMenu( gameState * gState_, cursor * myC, inputState& curInputState_, baseUnit * curUnit, uint32_t destBSlot, uint32_t sourceBSlot ) {
+static int cmdBackMenu( gameState * gState_, clientState * cState_ ) {
 	// this should be based off a stack
-	std::cout << "old inputstate before actioning a back menu" << curInputState_ << std::endl;
-	myC->burnCooldown();
-	curInputState_ = terrainSelect;
-	std::cout << "old inputstate before actioning a back menu" << curInputState_ << std::endl;
+	cState_->myC->burnCooldown();
+	cState_->curInputState = terrainSelect;
 	return 0;
 };
 

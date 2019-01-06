@@ -30,11 +30,11 @@ ui_hby * ui_hby::clone() {
 
 		//  cursor will just map to the px, py of all submenus, who inherit locations based off parents. 
 		// when adding a new menu item, besides setting name and action to it... everything should be self setting.
-		
+	/*	
 void ui_hby::uiAction( gameState * gState_, cursor * myC, inputState& curInputState_, baseUnit * curUnit, uint32_t destBSlot, uint32_t sourceBSlot ) {
 	switch( command ) {
 		case 1 : { 
- 			cmdMove(gState_, myC, curInputState_, curUnit, destBSlot, sourceBSlot);
+ //			cmdMove(gState_, myC, curInputState_, curUnit, destBSlot, sourceBSlot);
 			break;
 		}
 		case 2 : {
@@ -43,6 +43,29 @@ void ui_hby::uiAction( gameState * gState_, cursor * myC, inputState& curInputSt
 		}
 		case 3 : {
 			cmdBackMenu(gState_, myC, curInputState_, curUnit, destBSlot, sourceBSlot);
+			break;
+		}
+		default : {
+			std::cout << "Unknown command enum\n";
+			break;
+		}
+	}
+	return;
+	
+}
+*/
+void ui_hby::uiAction( gameState * gState_, clientState * clientState_ ) {
+	switch( command ) {
+		case 1 : { 
+ 			cmdMove(gState_, clientState_);
+			break;
+		}
+		case 2 : {
+			std::cout << "atk selected\n";
+			break;
+		}
+		case 3 : {
+			cmdBackMenu(gState_, clientState_);
 			break;
 		}
 		default : {

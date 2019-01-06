@@ -19,6 +19,7 @@
 #include "cursor.cpp"
 #include "ui_hby.cpp"
 #include "gameState.cpp"
+#include "clientState.cpp"
 #include "rapidjson/writer.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -451,8 +452,10 @@ int main( int argc, char** argv ) {
 //	No need to declare this explicitly
 	std::vector<int32_t> * enemyNeighbors;	
 	int32_t enemyNeighborIndex = 0;
+	clientState * cState = new clientState();
 	// build out the games representation of the ui. 
 	// it will be a state machine. 
+
 
 	while( inGame)
 	{
@@ -601,8 +604,18 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 							switch(curActionMenuState) { 
 								case(move) : {
+									
 									myC = cursorStack[myC->stackInd - 1];
-									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+									cState->myC = myC;
+									cState->destBSlot = destBSlot;
+									cState->sourceBSlot = sourceBSlot;
+									cState->curInputState = curInputState;
+									cState->selectedUnit  = curUnit;
+									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
+									sourceBSlot	= 	cState->sourceBSlot;
+									destBSlot	= 	cState->destBSlot;
+									curInputState	= cState->curInputState;
+
 									//cmdMove( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
 /*
 									myC = cursorStack[myC->stackInd - 1];					
@@ -645,8 +658,15 @@ int main( int argc, char** argv ) {
 									}
 								case(back) : { 
 									myC = cursorStack[myC->stackInd - 1];
-
-									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, myC, curInputState, curUnit, destBSlot, sourceBSlot );
+									cState->myC = myC;
+									cState->destBSlot = destBSlot;
+									cState->sourceBSlot = sourceBSlot;
+									cState->curInputState = curInputState;
+									cState->selectedUnit  = curUnit;
+									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
+									sourceBSlot	= 	cState->sourceBSlot;
+									destBSlot	= 	cState->destBSlot;
+									curInputState	= cState->curInputState;
 //									myC->burnCooldown();
 //									curInputState = terrainSelect;
 									break;
