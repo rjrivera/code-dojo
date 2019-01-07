@@ -61,7 +61,7 @@ void ui_hby::uiAction( gameState * gState_, clientState * clientState_ ) {
 			break;
 		}
 		case 2 : {
-			std::cout << "atk selected\n";
+			cmdAtk(gState_, clientState_);
 			break;
 		}
 		case 3 : {

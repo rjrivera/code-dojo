@@ -621,6 +621,9 @@ int main( int argc, char** argv ) {
 									break;
 									}
 								case(atk) : {
+									cState->myC = cursorStack[ cState->myC->stackInd - 1];
+									cState->selectedUnit = curUnit;
+									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
 									// get the attack menu cursor
 									/*
 									cState->myC = cursorStack[cState->myC->stackInd + 1];

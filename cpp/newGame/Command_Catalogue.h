@@ -32,6 +32,13 @@ static int cmdBackMenu( gameState * gState_, clientState * cState_ ) {
 	return 0;
 };
 
+static int cmdAtk( gameState * gState_, clientState * cState_ ) {
+	cState_->myC->burnCooldown();
+	cState_->curInputState = terrainSelect;
+	return 0;
+
+};
+
 	/*							case(atk) : {
 									// get the attack menu cursor
 									myC = cursorStack[myC->stackInd + 1];
