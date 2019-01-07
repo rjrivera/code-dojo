@@ -22,7 +22,7 @@ void baseTerrain::setAtkSprite(const sf::Texture * atkSprite_) {
 	atkSprite.setTexture(*atkSprite_);
 }
 
-void baseTerrain::attachUnit(baseUnit*& unit, std::vector<baseTerrain*> * board) {
+void baseTerrain::attachUnit(baseUnit* unit, std::vector<baseTerrain*> * board) {
 	if (attachedUnit!=nullptr) {
 		std::cout << "cannot attach Unit, slot already occupied\n";
 		return;

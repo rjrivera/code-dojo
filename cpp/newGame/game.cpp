@@ -325,7 +325,7 @@ void createUIElements( std::vector< std::vector< ui_hby * > * > * stateUIRoot, s
 
 baseUnit * unitBuilder(std::vector<sf::Texture*>& unitTexts_, std::vector<sf::Texture*>& unitInfoTexts_,
 				uint32_t unit_, uint32_t player_) {
-	std::cout << "building unit for player " << player_ << std::endl;
+	std::cout << "\nbuilding unit for player " << player_ << std::endl;
 	baseUnit * unit;
 	switch(unit_){
 		case infantryUnit_const :
@@ -414,23 +414,17 @@ int main( int argc, char** argv ) {
 	//now lets attach this unit to a board slot...
 	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
-	std::cout << "tUnit player num: " << tUnit->player << std::endl;
-
-	std::cout << "game engine looking good at 416\n";
-	std::cout << "temp units hp before attachment: " << tUnit->hp << std::endl;
+	//std::cout << "tUnit player num: " << tUnit->player << std::endl;
 	gState->board->at(1)->attachUnit(tUnit, gState->board);	
-	std::cout << "game engine looking good at 418\n";
-	gState->board->at(1)->attachedUnit->player = 1;
-	std::cout << "game engine looking good at 420\n";
-	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 1);
+//	gState->board->at(1)->attachedUnit->player = 1;
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
 	gState->board->at(9)->attachUnit(tUnit, gState->board);
-	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 1);
-	gState->board->at(21)->attachUnit(tUnit, gState->board);
-	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 2);
-	gState->board->at(3)->attachUnit(tUnit, gState->board);	
+//	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 1);
+//	gState->board->at(21)->attachUnit(tUnit, gState->board);
+//	tUnit = unitBuilder(unitTexts, unitInfoTexts, planeUnit_const, 2);
+//	gState->board->at(3)->attachUnit(tUnit, gState->board);	
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
 	gState->board->at(5)->attachUnit(tUnit, gState->board);
-	std::cout << "game engine looking good at 425\n";
 
 //	inputState cState->curInputState(terrainSelect);
 	actionMenuState curActionMenuState(move);

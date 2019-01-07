@@ -7,7 +7,7 @@ tank::tank()  	{
 	
 }
 
-tank::tank(const sf::Texture * image_, uint32_t player_) {
+tank::tank(const sf::Texture * image_, uint32_t player_) : baseUnit( player_ ) {
 	unitSprite = sf::Sprite();
 	unitSprite.setTexture(*image_);
 	unitSprite.setPosition(0, 0);

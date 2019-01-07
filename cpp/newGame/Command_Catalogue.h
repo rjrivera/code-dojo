@@ -12,7 +12,6 @@
 // return code for client response/state manipulation
 static int cmdMove( gameState * gState_, clientState * cState_ ) {
 //	myC = cursorStack[myC->stackInd - 1];					
-	std::cout << "initCommand" << std::endl;
 	cState_->myC->burnCooldown();
 	cState_->destBSlot = getBSlot( cState_->myC->posX, cState_->myC->posY);
 	bool valMove = gState_->board->at(cState_->sourceBSlot)->attachedUnit->isValMove(cState_->myC->posX, cState_->myC->posY);
@@ -22,7 +21,6 @@ static int cmdMove( gameState * gState_, clientState * cState_ ) {
 		gState_->board->at( cState_->sourceBSlot )->detachUnit();					 
 	}
 	cState_->curInputState = terrainSelect;
-	std::cout << "termCommand" << std::endl;
 	return 0;
 
 };

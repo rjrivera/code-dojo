@@ -8,7 +8,7 @@ baseUnit::baseUnit()  	{
 }
 
 baseUnit::baseUnit(uint32_t player_) {
-	player = 1;
+	player = player_;
 	hp = 100;
 }
 
