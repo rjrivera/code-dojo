@@ -442,8 +442,8 @@ int main( int argc, char** argv ) {
 	actionSprite->setPosition(0,0);
 //	simple reusable vector<uint32_t> for navigating through potential enemies...great because NOW simply altering a unit's findEnemyNeighbors function. 
 //	No need to declare this explicitly
-	std::vector<int32_t> * enemyNeighbors;	
-	int32_t enemyNeighborIndex = 0;
+//	std::vector<int32_t> * enemyNeighbors;	
+//	int32_t enemyNeighborIndex = 0;
 	clientState * cState = new clientState();
 	cState->myC = myC;
 	cState->curInputState = terrainSelect;
@@ -690,6 +690,7 @@ int main( int argc, char** argv ) {
 						}
 						break;
 					case(atkSelect):
+/*
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 							//use the cursor's current location to calc potential attacks
 							cState->curInputState = terrainSelect;
@@ -702,7 +703,7 @@ int main( int argc, char** argv ) {
 		
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || 
-							sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && enemyNeighborIndex >= 0) {
+							sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) { //&& enemyNeighborIndex >= 0) {
 							
 
 							if (enemyNeighborIndex == enemyNeighbors->size() - 1 ) enemyNeighborIndex = 0; 
@@ -736,11 +737,12 @@ int main( int argc, char** argv ) {
 							
 						}
 						break; 
-				case(unitSelected):
+*/
+					case(unitSelected):
 						//s -- move unit
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
 							curUnit->findEnemyNeighbors(cState->myC->posX, cState->myC->posY, gState->board);
-							enemyNeighbors = curUnit->enemyNeighbors;
+							curUnit->enemyNeighbors;
 							cState->curInputState = actionMenu;
 							cState->myC = cursorStack[cState->myC->stackInd +1];
 							curUI = 0;
@@ -813,7 +815,7 @@ int main( int argc, char** argv ) {
 				window.draw(cState->myC->tileSprite);
 				
 				if (cState->curInputState == terrainInfo) window.draw(*plSprite); 
-				if (cState->curInputState == actionMenu || cState->curInputState == atkSelect) {
+				if (cState->curInputState == actionMenu ) {//|| cState->curInputState == atkSelect) {
 					window.draw(cursorStack[cState->myC->stackInd-1]->tileSprite);
 					for(uint32_t mGrid : *(gState->board->at(cState->sourceBSlot)->attachedUnit->validMoves)) {
 						window.draw(gState->board->at(mGrid)->highlightSprite);
@@ -827,7 +829,7 @@ int main( int argc, char** argv ) {
 						window.draw(ui->tileSprite);					
 					}
 					window.draw(cState->myC->tileSprite);
-					if (cState->curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
+//					if (cState->curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
 				}
 				window.display();
 			}

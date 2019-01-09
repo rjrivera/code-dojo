@@ -34,7 +34,17 @@ static int cmdBackMenu( gameState * gState_, clientState * cState_ ) {
 
 static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
+	cState_->destBSlot = getBSlot( cState_->myC->posX, cState_->myC->posY);
+	bool valMove = gState_->board->at(cState_->sourceBSlot)->attachedUnit->isValMove(cState_->myC->posX, cState_->myC->posY);
+	if ( cState_->destBSlot != cState_->sourceBSlot && valMove &&
+		gState_->board->at( cState_->destBSlot )->attachedUnit == nullptr )  {
+		gState_->board->at( cState_->destBSlot )->attachUnit( cState_->selectedUnit, gState_->board);
+		gState_->board->at( cState_->sourceBSlot )->detachUnit();					 
+	}
+	cState_->selectedUnit->findEnemyNeighbors(cState_->myC->posX, cState_->myC->posY, gState_->board);
+	std::cout << "TESTING PURPOSES -- neighboring enemy unit count" << cState_->selectedUnit->enemyNeighbors->size() << std::endl;
 	cState_->curInputState = terrainSelect;
+
 	return 0;
 
 };
