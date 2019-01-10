@@ -1,6 +1,6 @@
 #include "clientState.h"
 
-clientState::clientState() : destBSlot(0), sourceBSlot(0), curInputState(lastEnum), selectedUnit(nullptr), myC(nullptr) 
+clientState::clientState() : destBSlot(0), sourceBSlot(0), curInputState(lastEnum), selectedUnit(nullptr), myC(nullptr), cursorStack(nullptr)
 { 
 
 }

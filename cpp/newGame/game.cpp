@@ -398,12 +398,14 @@ int main( int argc, char** argv ) {
 	cursor * myC = new cursor(cursText);
 	//cursor * tmpMyC = nullptr; //used to permit multi-state usage of same sprite object while tracking old
 	//TODO[ ] consider a stack of tmpMyC's to track multiple layers of state machine cursor usage *like as needed for submenus.
-	std::vector<cursor *> cursorStack = std::vector<cursor *>();
+	//std::vector<cursor *> cursorStack = std::vector<cursor *>();
+	clientState * cState = new clientState();
+	cState->cursorStack = new std::vector<cursor *>();
 	for (int i = 0; i < maxMenuDepth; i++) {
-		cursorStack.push_back(myC->clone());
-		cursorStack[i]->stackInd = i;
+		cState->cursorStack->push_back(myC->clone());
+		cState->cursorStack->at(i)->stackInd = i;
 	}
-	myC = cursorStack[0];
+	myC = cState->cursorStack->front();
 
 	bool inGame, menu, prototype, engineLive;
 	inGame = menu = prototype = engineLive = false;
@@ -444,7 +446,7 @@ int main( int argc, char** argv ) {
 //	No need to declare this explicitly
 //	std::vector<int32_t> * enemyNeighbors;	
 //	int32_t enemyNeighborIndex = 0;
-	clientState * cState = new clientState();
+
 	cState->myC = myC;
 	cState->curInputState = terrainSelect;
 	// build out the games representation of the ui. 
@@ -599,7 +601,7 @@ int main( int argc, char** argv ) {
 							switch(curActionMenuState) { 
 								case(move) : {
 									
-									cState->myC = cursorStack[cState->myC->stackInd - 1];
+									cState->myC = cState->cursorStack->at(cState->myC->stackInd - 1);
 									cState->selectedUnit  = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
 
@@ -621,7 +623,7 @@ int main( int argc, char** argv ) {
 									break;
 									}
 								case(atkUI) : {
-									cState->myC = cursorStack[ cState->myC->stackInd - 1];
+									cState->myC = cState->cursorStack->at(cState->myC->stackInd - 1);
 									cState->selectedUnit = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
 									// get the attack menu cursor
@@ -648,7 +650,7 @@ int main( int argc, char** argv ) {
 									break;
 									}
 								case(back) : { 
-									cState->myC = cursorStack[cState->myC->stackInd - 1];
+									cState->myC = cState->cursorStack->at(cState->myC->stackInd - 1);
 									cState->selectedUnit  = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
 //									cState->myC->burnCooldown();
@@ -762,7 +764,7 @@ int main( int argc, char** argv ) {
 							curUnit->findEnemyNeighbors(cState->myC->posX, cState->myC->posY, gState->board);
 							curUnit->enemyNeighbors;
 							cState->curInputState = actionMenu;
-							cState->myC = cursorStack[cState->myC->stackInd +1];
+							cState->myC = cState->cursorStack->at( cState->myC->stackInd +1 );
 							curUI = 0;
 							cState->myC->movePosYAbs(uiElements->at(actionMenu)->at(curUI)->getY());
 							cState->myC->movePosXAbs(uiElements->at(actionMenu)->at(curUI)->getX());
@@ -834,7 +836,7 @@ int main( int argc, char** argv ) {
 				
 				if (cState->curInputState == terrainInfo) window.draw(*plSprite); 
 				if (cState->curInputState == actionMenu ) {//|| cState->curInputState == atkSelect) {
-					window.draw(cursorStack[cState->myC->stackInd-1]->tileSprite);
+					window.draw(cState->cursorStack->at( cState->myC->stackInd-1 )->tileSprite);
 					for(uint32_t mGrid : *(gState->board->at(cState->sourceBSlot)->attachedUnit->validMoves)) {
 						window.draw(gState->board->at(mGrid)->highlightSprite);
 						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
