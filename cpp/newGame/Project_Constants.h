@@ -51,6 +51,6 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 int32_t getBelowBSlot(int32_t sourceBSlot); 
 int32_t getAboveBSlot(int32_t sourceBSlot); 
 
-enum actionMenuState {move, atk, back};
+enum actionMenuState {move, atkUI, back, atkB};
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 #endif

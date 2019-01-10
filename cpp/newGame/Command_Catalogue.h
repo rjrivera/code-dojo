@@ -32,7 +32,7 @@ static int cmdBackMenu( gameState * gState_, clientState * cState_ ) {
 	return 0;
 };
 
-static int cmdAtk( gameState * gState_, clientState * cState_ ) {
+static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
 	cState_->destBSlot = getBSlot( cState_->myC->posX, cState_->myC->posY);
 	bool valMove = gState_->board->at(cState_->sourceBSlot)->attachedUnit->isValMove(cState_->myC->posX, cState_->myC->posY);
@@ -43,10 +43,16 @@ static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	}
 	cState_->selectedUnit->findEnemyNeighbors(cState_->myC->posX, cState_->myC->posY, gState_->board);
 	std::cout << "TESTING PURPOSES -- neighboring enemy unit count" << cState_->selectedUnit->enemyNeighbors->size() << std::endl;
-	cState_->curInputState = terrainSelect;
+	cState_->curInputState = atkSelect;
 
 	return 0;
 
+};
+
+static int cmdAtk( gameState * gState_, clientState * cState_ ) {
+	cState_->myC->burnCooldown();
+	cState_->curInputState = terrainSelect;
+	std::cout << "TESTING CMDATK\n";
 };
 
 	/*							case(atk) : {

@@ -61,11 +61,15 @@ void ui_hby::uiAction( gameState * gState_, clientState * clientState_ ) {
 			break;
 		}
 		case 2 : {
-			cmdAtk(gState_, clientState_);
+			cmdAtkSelect(gState_, clientState_);
 			break;
 		}
 		case 3 : {
 			cmdBackMenu(gState_, clientState_);
+			break;
+		}
+		case 4 : {
+			cmdAtk(gState_, clientState_);
 			break;
 		}
 		default : {

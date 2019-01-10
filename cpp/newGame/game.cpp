@@ -620,7 +620,7 @@ int main( int argc, char** argv ) {
 
 									break;
 									}
-								case(atk) : {
+								case(atkUI) : {
 									cState->myC = cursorStack[ cState->myC->stackInd - 1];
 									cState->selectedUnit = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
@@ -655,6 +655,7 @@ int main( int argc, char** argv ) {
 //									cState->curInputState = terrainSelect;
 									break;
 									}
+
 							}
 							
 						}				
@@ -665,9 +666,9 @@ int main( int argc, char** argv ) {
 								cState->myC->burnCooldown();
 								switch(curActionMenuState) { // for now do this...migrate action to ui_hby class. 
 									case(move) :
-										curActionMenuState = atk;
+										curActionMenuState = atkUI;
 										break;
-									case(atk) :
+									case(atkUI) :
 										curActionMenuState = back;
 										break;
 								}
@@ -680,9 +681,9 @@ int main( int argc, char** argv ) {
 								cState->myC->burnCooldown();
 								switch(curActionMenuState) {
 									case(back) :
-										curActionMenuState = atk;
+										curActionMenuState = atkUI;
 										break;
-									case(atk) :
+									case(atkUI) :
 										curActionMenuState = move;
 										break;
 								}
@@ -690,6 +691,22 @@ int main( int argc, char** argv ) {
 						}
 						break;
 					case(atkSelect):
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
+
+						}
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
+
+						}
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
+
+						}
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
+
+						}
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
+							cmdAtk( gState, cState );
+						}
+
 /*
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {
 							//use the cursor's current location to calc potential attacks
@@ -736,8 +753,9 @@ int main( int argc, char** argv ) {
 							}					
 							
 						}
-						break; 
 */
+						break; 
+
 					case(unitSelected):
 						//s -- move unit
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {	
