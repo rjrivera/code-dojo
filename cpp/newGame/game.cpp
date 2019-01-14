@@ -429,6 +429,9 @@ int main( int argc, char** argv ) {
 //	gState->board->at(3)->attachUnit(tUnit, gState->board);	
 	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
 	gState->board->at(5)->attachUnit(tUnit, gState->board);
+	tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 2);
+	gState->board->at(6)->attachUnit(tUnit, gState->board);
+
 
 //	inputState cState->curInputState(terrainSelect);
 	actionMenuState curActionMenuState(move);
@@ -696,20 +699,35 @@ int main( int argc, char** argv ) {
 						break;
 					case(atkSelect):
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) ) {
-
+							if( cState->enemyNeighborsIndex < cState->selectedUnit->enemyNeighbors->size() - 1 ) {
+								cState->enemyNeighborsIndex++;
+							}
+							else cState->enemyNeighborsIndex = 0;
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
-
+							if( cState->enemyNeighborsIndex < cState->selectedUnit->enemyNeighbors->size() - 1 ) {
+								cState->enemyNeighborsIndex++;
+							}
+							else cState->enemyNeighborsIndex = 0;
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
-
+							if( cState->enemyNeighborsIndex > 0 ) {//<  ) {
+								cState->enemyNeighborsIndex--;
+							}
+							else cState->enemyNeighborsIndex = cState->selectedUnit->enemyNeighbors->size() - 1;
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
-
+							if( cState->enemyNeighborsIndex > 0 ) {//<  ) {
+								cState->enemyNeighborsIndex--;
+							}
+							else cState->enemyNeighborsIndex = cState->selectedUnit->enemyNeighbors->size() - 1;
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
 							cmdAtk( gState, cState );
 						}
+						cState->myC->movePosXAbs( getScaledPosX((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
+						cState->myC->movePosYAbs( getScaledPosY((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
+						cState->myC->burnCooldown();
 
 /*
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {

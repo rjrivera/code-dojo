@@ -10,7 +10,7 @@ class clientState {
 	public:
 		clientState(); 	
 		~clientState();
-		uint32_t destBSlot, sourceBSlot;
+		uint32_t destBSlot, sourceBSlot, enemyNeighborsIndex;
 		cursor * myC;
 		std::vector< cursor * > * cursorStack;
 		inputState curInputState;

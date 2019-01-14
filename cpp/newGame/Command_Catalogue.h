@@ -44,7 +44,11 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 	cState_->selectedUnit->findEnemyNeighbors(cState_->myC->posX, cState_->myC->posY, gState_->board);
 	std::cout << "TESTING PURPOSES -- neighboring enemy unit count" << cState_->selectedUnit->enemyNeighbors->size() << std::endl;
 	cState_->curInputState = atkSelect;
-
+	if( cState_->selectedUnit->enemyNeighbors->size() > 0 ) {
+		cState_->myC->movePosXAbs( getScaledPosX((uint32_t)cState_->selectedUnit->enemyNeighbors->at(0)) ); 
+		cState_->myC->movePosYAbs( getScaledPosY((uint32_t)cState_->selectedUnit->enemyNeighbors->at(0)) ); 
+		cState_->enemyNeighborsIndex = 0;
+	}
 	return 0;
 
 };
