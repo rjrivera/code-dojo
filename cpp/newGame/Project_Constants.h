@@ -46,11 +46,43 @@ const int menusize_const = tilesize_const * 2;
 
 
 //board index calculator function
-uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
+//uint32_t getBSlot(uint32_t posX_, uint32_t posY_);
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_);
-int32_t getBelowBSlot(int32_t sourceBSlot); 
-int32_t getAboveBSlot(int32_t sourceBSlot); 
+//int32_t getBelowBSlot(int32_t sourceBSlot); 
+//int32_t getAboveBSlot(int32_t sourceBSlot); 
 
 enum actionMenuState {move, atkUI, back, atkB};
 enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
+
+//given a cursors raw x,y coord. extrapolate which slot of the board container is associated with the cursors pos. 
+static uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
+	uint32_t scaledX, scaledY;
+	scaledX = posX_/tilesize_const;
+	scaledY = posY_/tilesize_const;
+	return ((scaledY*width) + scaledX);
+
+}
+
+static int32_t getScaledPosX(uint32_t bSlot_) {
+	if ( bSlot_ >= width*height || bSlot_ < 0  ) return -1;
+	return ( bSlot_ % width ) * tilesize_const;
+
+}
+
+static int32_t getScaledPosY(uint32_t bSlot_) {
+	if ( bSlot_ >= width*height || bSlot_ < 0  ) return -1;
+	return ( (bSlot_ + 1) / width ) * tilesize_const;
+}
+
+// must be signed to indicate when outside of bounds
+static int32_t getAboveBSlot(int32_t sourceBSlot) {
+	return sourceBSlot - width;
+}
+
+// must be signed to indicate when outside of bounds
+static int32_t getBelowBSlot(int32_t sourceBSlot) {
+	if ((sourceBSlot + width) > (height * width)) return -1; 
+	else return (sourceBSlot + width);
+}
+
 #endif

@@ -49,6 +49,10 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 
 };
 
+//enum actionMenuState {move, atkUI, back, atkB};
+//enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
+
+
 static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
 	cState_->curInputState = terrainSelect;

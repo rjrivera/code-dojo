@@ -27,7 +27,7 @@
 #include <SFML/Graphics.hpp>
 //#include <boost/date_time/posix_time/posix_time.hpp>
 //#include <boost/date_time/posix_time/posix_time_types.hpp>
-
+// [] NEXT TODO -- finish the attackSelect mode. 
 #define WIDTH 384
 #define HEIGHT 352
 //recent update - cleaned up userinput and leveraged cursor attached cooldown mechanism to the uinput handling
@@ -53,6 +53,7 @@ using namespace rapidjson;
 //uint64_t width = 0;
 
 //given a cursors raw x,y coord. extrapolate which slot of the board container is associated with the cursors pos. 
+/*
 uint32_t getBSlot(uint32_t posX_, uint32_t posY_) {
 	uint32_t scaledX, scaledY;
 	scaledX = posX_/tilesize_const;
@@ -82,6 +83,7 @@ int32_t getBelowBSlot(int32_t sourceBSlot) {
 	if ((sourceBSlot + width) > (height * width)) return -1; 
 	else return (sourceBSlot + width);
 }
+*/
 
 void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrain*>& board_) {
 	// init stat calcs
@@ -832,6 +834,11 @@ int main( int argc, char** argv ) {
 						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
 				}
+				if (cState->curInputState == atkSelect) {
+					for(int32_t atkGrid : *(cState->selectedUnit->enemyNeighbors)) {
+						window.draw(gState->board->at(atkGrid)->atkSprite);
+					}
+				}
 				window.draw(cState->myC->tileSprite);
 				
 				if (cState->curInputState == terrainInfo) window.draw(*plSprite); 
@@ -841,9 +848,6 @@ int main( int argc, char** argv ) {
 						window.draw(gState->board->at(mGrid)->highlightSprite);
 						if (gState->board->at(mGrid)->attachedUnit != nullptr) window.draw(gState->board->at(mGrid)->attachedUnit->unitSprite); 
 					}
-					for(uint32_t atkGrid : *(curUnit->enemyNeighbors)) {
-						window.draw(gState->board->at(atkGrid)->atkSprite);
-					}
 //					window.draw(*actionSprite); 
 					for(ui_hby * ui : *(uiElements->at(cState->curInputState)) ) {
 						window.draw(ui->tileSprite);					
@@ -851,6 +855,7 @@ int main( int argc, char** argv ) {
 					window.draw(cState->myC->tileSprite);
 //					if (cState->curInputState == atkSelect && enemyNeighborIndex >= 0) window.draw(gState->board->at(enemyNeighbors->at(enemyNeighborIndex))->attachedUnit->unitInfoSprite); 
 				}
+
 				window.display();
 			}
 			else draw = true;
