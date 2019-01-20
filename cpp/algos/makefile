@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of project
-OBJS = dictRB.cpp
+OBJS = invertTree.cpp
 
 
 #CC specifies which compiler we're using 
