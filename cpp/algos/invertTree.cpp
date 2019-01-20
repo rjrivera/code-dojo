@@ -51,16 +51,38 @@ class bst {
 		if( curN->lC == NULL ) return; //can't rotate if the left childe is NULL. 
 		node * tmp;
 		tmp = curN->lC;
+		node *tRc = tmp->rC;
+		node *tLc = tmp->lC;
 		tmp->rC = curN->rC;
 		tmp->parent = curN->parent;
 		if( tmp->parent->rC == curN ) tmp->parent->rC = tmp;
 		else tmp->parent->lC = tmp;
-		curN->rC = curN->lC->rC;
+		curN->rC = tRc;
 		curN->parent = curN->lC;
-		curN->lC = curN->lC->lC;
+		curN->lC = tLc;
+		tmp->lC = curN;
+		
 		
 
 	};
+	
+void rotateLeft( node * curN ) {
+		if( curN->rC == NULL ) return; //nothing to rotate with.
+		node * tmp = curN->rC;
+		tmp->parent = curN->parent;
+		node * tLc = tmp->lC;
+		node * tRc = tmp->rC;
+		tmp->rC = curN;
+		tmp->lC = curN->lC;
+		if( tmp->parent != NULL ) {
+			if( tmp->parent->rC == curN ) tmp->parent->rC = tmp;
+			else tmp->parent->lC = tmp;
+		}
+		curN->rC = tRc;
+		curN->lC = tLc;
+		curN->parent = tmp;
+	};
+
 	private:
 	
 	void printHelper( node * curN ) {
@@ -78,6 +100,7 @@ class bst {
 		if( curN->key > nN->key && curN->lC == NULL ) {
 			curN->lC = nN;
 			nN->parent = curN;
+			return;
 		}
 		if( curN->key > nN->key ) {
 			return insertHelper(nN, curN->lC);
@@ -85,6 +108,7 @@ class bst {
 		if( curN->key < nN->key && curN->rC == NULL ) {
 			curN->rC = nN;
 			nN->parent = curN;
+			return;
 		}
 		if( curN->key < nN->key ) {
 			return insertHelper( nN, curN->rC );
@@ -96,9 +120,7 @@ class bst {
 
 	
 
-	void rotateLeft( node * curN ) {
-
-	};
+	
 
 
 };
@@ -111,7 +133,8 @@ int main() {
 	
 	for(int i = 0; i < 5; i++ ) tree->insert( new node(keys[ i ], values[ i ]) ); 
 	tree->print();
-
+	tree->rotateLeft( tree->root->rC );
+	tree->print();
 	
 	return 0;
 }
