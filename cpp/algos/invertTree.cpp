@@ -69,7 +69,7 @@ class bst {
 
 	};
 	
-void rotateLeft( node * curN ) {
+	void rotateLeft( node * curN ) {
 		if( curN->rC == NULL ) return; //nothing to rotate with.
 		node * tmp = curN->rC;
 		tmp->parent = curN->parent;
@@ -127,23 +127,42 @@ void rotateLeft( node * curN ) {
 	};
 
 	void invertHelper( node * curN ) {
+		cout << "attempting to invert node -- ";
+		curN->print();
 		if ( curN == NULL ) return;
-		invertHelper( curN->lC );
-		process( curN );
-		invertHelper( curN->rC );
+		if ( curN->lC != NULL )     invertHelper( curN->lC );
+		if ( curN->parent != NULL ) process( curN );
+		if ( curN->rC != NULL )     invertHelper( curN->rC );
 	
 	};
-
+	// not rated to perform on root.
 	void process( node * curN ) {
-		// bubble up to the root position while tracking what roations were called. 
-		node * tmp = curN->parent;
+		if( curN == NULL ) return;
+		// bubble up to the root position's child - while tracking what roations were called. 
+		node * tmp;
 		vector<int> cmdLog = vector<int>();
-		while( tmp != NULL ) {
-			if(tmp->rC->key == curN->key ) rotateLeft(curN);
-			else rotateRight( curN );
-			tmp = curN->parent;	
-			tmp->print();
+		cout << "attempting to process a node -here is that node and it's parent";
+		curN->print();
+		curN->parent->print();
+		while( curN->parent->parent != NULL ) {
+			tmp = curN->parent;
+			if( tmp->rC->key == curN->key ) {
+				rotateLeft(curN);
+				cmdLog.push_back(1);
+			}
+			else {	
+				rotateRight( curN );
+				cmdLog.push_back( 0 );
+			}
+				
+
 		};
+		//swap with the sibling.
+		// this version ASSUMES you will always start on the left side.
+		node * tmp2 = tmp->parent->rC;
+		tmp->parent->rC = tmp;
+		tmp->parent->lC = tmp2; 
+		cout << "root -- rC key " << root->rC->key << endl;	
 		return;
 	};
 
@@ -166,8 +185,8 @@ int main() {
 	
 	// given this tree - let us go ahead and invert a binary tree as an exercise of tree familiarity.
 	tree->print(); 
-	//tree->invert();
-	tree->rotateLeft(tree->root);
+	tree->invert();
+	//tree->rotateLeft(tree->root);
 	tree->print();
 	return 0;
 }
