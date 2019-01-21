@@ -46,7 +46,7 @@ class bst {
 	node * retrieve(int key_) {
 
 	};
-
+	// these versions of rotate do not work with the root - proceed to write a better one again once you get home that is proven across all of these. 
 	void rotateRight( node * curN ) {
 		if( curN->lC == NULL ) return; //can't rotate if the left childe is NULL. 
 		node * tmp;
@@ -54,13 +54,16 @@ class bst {
 		node *tRc = tmp->rC;
 		node *tLc = tmp->lC;
 		tmp->rC = curN->rC;
+		tmp->lC = curN;
 		tmp->parent = curN->parent;
-		if( tmp->parent->rC == curN ) tmp->parent->rC = tmp;
-		else tmp->parent->lC = tmp;
+		if( tmp->parent != NULL ) {
+			if( tmp->parent->rC == curN ) tmp->parent->rC = tmp;
+			else tmp->parent->lC = tmp;
+		}
 		curN->rC = tRc;
 		curN->parent = curN->lC;
 		curN->lC = tLc;
-		tmp->lC = curN;
+		
 		
 		
 
@@ -81,6 +84,11 @@ void rotateLeft( node * curN ) {
 		curN->rC = tRc;
 		curN->lC = tLc;
 		curN->parent = tmp;
+	};
+
+	void invert() {
+		// get left most node - pass to invertHelper - invertHelper will stop once the root has been reached, and then a post inversion cleanup will commence. 
+		invertHelper( root );
 	};
 
 	private:
@@ -118,6 +126,29 @@ void rotateLeft( node * curN ) {
 		
 	};
 
+	void invertHelper( node * curN ) {
+		if ( curN == NULL ) return;
+		invertHelper( curN->lC );
+		process( curN );
+		invertHelper( curN->rC );
+	
+	};
+
+	void process( node * curN ) {
+		// bubble up to the root position while tracking what roations were called. 
+		node * tmp = curN->parent;
+		vector<int> cmdLog = vector<int>();
+		while( tmp != NULL ) {
+			if(tmp->rC->key == curN->key ) rotateLeft(curN);
+			else rotateRight( curN );
+			tmp = curN->parent;	
+			tmp->print();
+		};
+		return;
+	};
+
+	
+
 	
 
 	
@@ -132,9 +163,11 @@ int main() {
 	bst * tree = new bst();
 	
 	for(int i = 0; i < 5; i++ ) tree->insert( new node(keys[ i ], values[ i ]) ); 
-	tree->print();
-	tree->rotateLeft( tree->root->rC );
-	tree->print();
 	
+	// given this tree - let us go ahead and invert a binary tree as an exercise of tree familiarity.
+	tree->print(); 
+	//tree->invert();
+	tree->rotateLeft(tree->root);
+	tree->print();
 	return 0;
 }
