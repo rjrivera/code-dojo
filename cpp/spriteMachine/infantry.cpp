@@ -13,10 +13,10 @@ infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(play
 	unitSprite.setTexture(*(image_));
 	unitSprite.setPosition(0, 0);
 	//unitSprite.setColor(sf::Color(255,255,255,0));
-	numSprites = 2;
+	numSprites = 9;
 	spriteOffset = 0; 
 	spriteTimer = 0;
-	spriteTrigger = 10;
+	spriteTrigger = 1;
 	mvt = 6;
 	std::cout << "constructor sees this player value: " << player_ << std::endl;
 	def = 1;

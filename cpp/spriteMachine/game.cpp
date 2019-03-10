@@ -164,7 +164,7 @@ int main( int argc, char** argv ) {
 				if( tUnit->spriteTimer >= tUnit->spriteTrigger) {
 					tUnit->spriteOffset++; 
 					tUnit->spriteTimer = 0;
-					tUnit->unitSprite.setTextureRect(sf::IntRect(tUnit->spriteOffset*16, 0, 16, 16));
+					tUnit->unitSprite.setTextureRect(sf::IntRect(tUnit->spriteOffset*41, 0, 41, 60));// so tTHIS should really be in the class..
 					if (tUnit->spriteOffset == tUnit->numSprites)  {
 						tUnit->spriteOffset = 0;
 					}
