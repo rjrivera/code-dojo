@@ -631,6 +631,7 @@ int main( int argc, char** argv ) {
 									cState->myC = cState->cursorStack->at(cState->myC->stackInd - 1);
 									cState->selectedUnit = curUnit;
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
+									std::cout << "atkUI selected\n";
 									// get the attack menu cursor
 									/*
 									cState->myC = cursorStack[cState->myC->stackInd + 1];
@@ -703,31 +704,36 @@ int main( int argc, char** argv ) {
 								cState->enemyNeighborsIndex++;
 							}
 							else cState->enemyNeighborsIndex = 0;
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) ) {
 							if( cState->enemyNeighborsIndex < cState->selectedUnit->enemyNeighbors->size() - 1 ) {
 								cState->enemyNeighborsIndex++;
 							}
 							else cState->enemyNeighborsIndex = 0;
+							std::cout << "increment up the enemyNeighborsIndex\n";
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
 							if( cState->enemyNeighborsIndex > 0 ) {//<  ) {
 								cState->enemyNeighborsIndex--;
 							}
 							else cState->enemyNeighborsIndex = cState->selectedUnit->enemyNeighbors->size() - 1;
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) ) {
 							if( cState->enemyNeighborsIndex > 0 ) {//<  ) {
 								cState->enemyNeighborsIndex--;
 							}
 							else cState->enemyNeighborsIndex = cState->selectedUnit->enemyNeighbors->size() - 1;
+							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
 							cmdAtk( gState, cState );
 						}
 						cState->myC->movePosXAbs( getScaledPosX((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
 						cState->myC->movePosYAbs( getScaledPosY((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
-						cState->myC->burnCooldown();
+
 
 /*
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))  {

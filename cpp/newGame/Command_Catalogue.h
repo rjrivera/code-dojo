@@ -61,6 +61,12 @@ static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
 	cState_->curInputState = terrainSelect;
 	std::cout << "TESTING CMDATK\n";
+	// place holder for battle initiation. 
+	
+	// 
+
+	return 0;
+
 };
 
 	/*							case(atk) : {
