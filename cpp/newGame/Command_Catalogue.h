@@ -65,6 +65,10 @@ static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	// place holder for battle initiation. 
 	std::cout << "Current Player: " << cState_->selectedUnit->player << std::endl;
 	std::cout << "Target enemy's Player: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->player << std::endl;
+	gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp -= 2;
+	cState_->selectedUnit->hp -= 1;
+	std::cout << "Current Players unit health: " << cState_->selectedUnit->hp << std::endl;
+	std::cout << "Target enemy's Player's health: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp << std::endl;
 	// 
 
 	return 0;
