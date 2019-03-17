@@ -10,6 +10,7 @@
 #include "Project_Constants.h"
 
 // return code for client response/state manipulation
+// Command Catalogue will handle the actions the game server should until we migrate to a proper client / server paradigm. 
 static int cmdMove( gameState * gState_, clientState * cState_ ) {
 //	myC = cursorStack[myC->stackInd - 1];					
 	cState_->myC->burnCooldown();
@@ -62,7 +63,8 @@ static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->curInputState = terrainSelect;
 	std::cout << "TESTING CMDATK\n";
 	// place holder for battle initiation. 
-	
+	std::cout << "Current Player: " << cState_->selectedUnit->player << std::endl;
+	std::cout << "Target enemy's Player: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->player << std::endl;
 	// 
 
 	return 0;
