@@ -16,7 +16,7 @@ infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(play
 	numSprites = 9;
 	spriteOffset = 0; 
 	spriteTimer = 0;
-	spriteTrigger = 1;
+	spriteTrigger = 5;
 	mvt = 6;
 	std::cout << "constructor sees this player value: " << player_ << std::endl;
 	def = 1;
