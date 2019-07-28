@@ -190,6 +190,8 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, const 
 	width  = gState_->width;
 	std::vector<baseTerrain *> * board_ = gState_->board;
 	int count=0;
+	// DESIGN TODO: Until a mechanism is designed to handle and manage all textures (like a content loader) all objects using textures must be passed a pointer at
+        // construction
 	for(int i = 0; i < h.GetInt(); i++) {
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
@@ -549,7 +551,7 @@ int main( int argc, char** argv ) {
 			if (cState->myC->getCooldown() ) {
 				switch(cState->curInputState){
 					case(terrainSelect):
-						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || sf::Keyboard::isKeyPressed(sf::Keyboard::Q)){
 							engineLive 	= false;
 							inGame 		= false;
 							cState->myC->burnCooldown();
@@ -587,7 +589,7 @@ int main( int argc, char** argv ) {
 							}
 							// only alter the inputState if a unit is stationed on that board slot. 
 							//if (curUnit != nullptr) cState->curInputState = unitSelected;
-							else {
+							else { // terrainInfo should be keyed based on the tile information...
 								cState->curInputState = terrainInfo;
 								cState->myC->burnCooldown();
 							}
@@ -865,7 +867,9 @@ int main( int argc, char** argv ) {
 				}
 				window.draw(cState->myC->tileSprite);
 				
-				if (cState->curInputState == terrainInfo) window.draw(*plSprite); 
+				if (cState->curInputState == terrainInfo) {
+					window.draw(*plSprite); 
+				}
 				if (cState->curInputState == actionMenu ) {//|| cState->curInputState == atkSelect) {
 					window.draw(cState->cursorStack->at( cState->myC->stackInd-1 )->tileSprite);
 					for(uint32_t mGrid : *(gState->board->at(cState->sourceBSlot)->attachedUnit->validMoves)) {

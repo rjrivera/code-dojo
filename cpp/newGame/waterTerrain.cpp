@@ -15,6 +15,14 @@ waterTerrain::waterTerrain(const sf::Texture * image_, const sf::Texture * hlIma
 	defBonus = 1;
 }
 
+waterTerrain::waterTerrain(const sf::Texture * image_, const sf::Texture * hlImage_, const sf::Texture * terrainInfo_) : baseTerrain(hlImage_) {
+	tileSprite = sf::Sprite();
+	tileSprite.setTexture(*image_);
+	tileSprite.setPosition(0, 0);
+	cost = 20;
+	defBonus = 1;
+}
+
 waterTerrain::~waterTerrain(){
 	std::cout << "waterTerrain destroyed\n";
 
