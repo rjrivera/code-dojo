@@ -133,6 +133,7 @@ void battle(uint32_t attackerInd_, uint32_t defenderInd_, std::vector<baseTerrai
 
 // provide texture container you wish to populate and the texture type you wish to populate it with. 
 // project_constants.h contains definitions to constants referenced here. 
+// foo is the Proof of concept for a content loader that can be generalized into an object class and instantiated once per client. 
 void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	uint32_t numTexts = 0;
 	std::string texturePath = "textures/";
@@ -140,6 +141,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	if (textType_ == "plain" ) numTexts = maxTerrain_const; 
 	else if (textType_ == "unit") numTexts = (maxUnit_const * maxPlayers_const); 
 	else if (textType_ == "unitInfo") numTexts = (maxUnit_const); 
+	else if (textType_ == "terrainInfo") numTexts = maxTerrain_const; 
 	else if (textType_ == "ui") numTexts = (maxUI_const); 
 	else return;
 	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
@@ -160,7 +162,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 
 //MAPGENERATOR
 //PROTOTYPING FUNCTION TODO[ ] update the json to reflect the new const scheme for terrains and remove the + 1 offset in below funct
-void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, const char * mapName) {
+void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, std::vector<sf::Texture*>& terrainInfoTexts_, const char * mapName) {
 //std::vector<baseTerrain *>& board_, std::vector<sf::Texture*>& terrainTexts, const char * mapName) {
 	FILE* fp = fopen(mapName, "rb");
 	char readBuffer[65536];
@@ -196,19 +198,19 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, const 
 		for (int j = 0; j < w.GetInt(); j++) {
 			switch(data[count].GetInt()){
 				case (plainTerrain_const -1) :
-					gState_->board->push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new plainTerrain(terrainTexts[plainTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[plainTerrain_const]));
 					break;
 				case (mountTerrain_const - 1) :
-					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[mountTerrain_const]));
 					break;
 				case (waterTerrain_const - 1):
-					gState_->board->push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new waterTerrain(terrainTexts[waterTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[waterTerrain_const]));
 					break;
 				case (roadTerrain_const - 1) :
-					gState_->board->push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new roadTerrain(terrainTexts[roadTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[roadTerrain_const]));
 					break;
 				case (forestTerrain_const - 1) :
-					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const]));
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[forestTerrain_const]));
 					break;
 			}
 				//TODO[ ] put this logic in the class...it belongs there. 
@@ -360,6 +362,7 @@ int main( int argc, char** argv ) {
 	// ====================
 	///*	std::vector<baseTerrain * >*/ board = std::vector<baseTerrain *>();
 	std::vector< sf::Texture * > terrainTexts 	= std::vector< sf::Texture * >();
+	std::vector< sf::Texture * > terrainInfoTexts 	= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > unitTexts 		= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > unitInfoTexts 	= std::vector< sf::Texture * >();
 	std::vector< sf::Texture * > uiTexts 		= std::vector< sf::Texture * >();
@@ -371,6 +374,7 @@ int main( int argc, char** argv ) {
 	//control unit for board manipulation operations TODO[ ] move to cursor class.
 	int curUI = 0;
 	foo(terrainTexts, "plain");
+	foo(terrainInfoTexts, "terrainInfo");
 	foo(unitTexts, "unit");
 	foo(unitInfoTexts, "unitInfo");
 	foo(uiTexts, "ui");
@@ -381,7 +385,7 @@ int main( int argc, char** argv ) {
 	
 	//bar(board, terrainTexts);
 
-	mapGen(gState, terrainTexts, "map2.json");
+	mapGen(gState, terrainTexts, terrainInfoTexts, "map2.json");
 	std::cout << "current size of the gState board " << gState->board->size() << std::endl;
 	//board = *(gState->board); // testing this is done correctly before further migrating. 
 	// testing posix_time libraries
