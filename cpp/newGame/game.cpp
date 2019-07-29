@@ -595,6 +595,7 @@ int main( int argc, char** argv ) {
 							//if (curUnit != nullptr) cState->curInputState = unitSelected;
 							else { // terrainInfo should be keyed based on the tile information...
 								cState->curInputState = terrainInfo;
+								cState->sourceBSlot = getBSlot(cState->myC->posX, cState->myC->posY);
 								cState->myC->burnCooldown();
 							}
 							
@@ -872,7 +873,8 @@ int main( int argc, char** argv ) {
 				window.draw(cState->myC->tileSprite);
 				
 				if (cState->curInputState == terrainInfo) {
-					window.draw(*plSprite); 
+	//				window.draw(*plSprite); 
+					window.draw(gState->board->at(cState->sourceBSlot)->infoSprite); 
 				}
 				if (cState->curInputState == actionMenu ) {//|| cState->curInputState == atkSelect) {
 					window.draw(cState->cursorStack->at( cState->myC->stackInd-1 )->tileSprite);

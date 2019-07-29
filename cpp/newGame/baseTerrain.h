@@ -10,7 +10,7 @@ class baseTerrain {
 		baseTerrain(const sf::Texture * highlightTexture);
 		~baseTerrain();
 		virtual void print() = 0;
-		sf::Sprite tileSprite, highlightSprite, atkSprite;
+		sf::Sprite tileSprite, highlightSprite, atkSprite, infoSprite;
 		baseUnit * attachedUnit;
 		uint32_t gridX, gridY, unitSize, cost, defBonus;
 		void attachUnit(baseUnit * unit, std::vector< baseTerrain*> * board);
