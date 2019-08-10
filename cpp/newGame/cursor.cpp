@@ -51,7 +51,7 @@ bool cursor::burnCooldown() {
 }
 void cursor::movePosX(uint64_t moveX) {
 	uint64_t newX = moveX + posX;
-	if (movCooldown && newX >= 0 && newX <= 384-16) {  
+	if (movCooldown && newX >= 0 && newX <= (width * tilesize_const) - tilesize_const) {  
 		tileSprite.setPosition(newX, posY);
 		posX += moveX;
 		burnCooldown();
@@ -61,7 +61,7 @@ void cursor::movePosX(uint64_t moveX) {
 
 void cursor::movePosY(uint64_t moveY) {
 	uint64_t newY = moveY + posY;
-	if (movCooldown && newY >= 0 && newY <= 384-16) {  
+	if (movCooldown && newY >= 0 && newY <= (height * tilesize_const) - tilesize_const) {  
 		tileSprite.setPosition(posX, newY);
 		posY = newY;
 		burnCooldown();
