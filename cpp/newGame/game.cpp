@@ -28,7 +28,7 @@
 //#include <boost/date_time/posix_time/posix_time.hpp>
 //#include <boost/date_time/posix_time/posix_time_types.hpp>
 // [] NEXT TODO -- finish the attackSelect mode. 
-#define WIDTH 384
+#define WIDTH 768 // formerly 384
 #define HEIGHT 352
 //recent update - cleaned up userinput and leveraged cursor attached cooldown mechanism to the uinput handling
 //todo - finish PoC on infantry unit 
@@ -212,6 +212,9 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, std::v
 				case (forestTerrain_const - 1) :
 					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[forestTerrain_const]));
 					break;
+				default:
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[forestTerrain_const]));
+					break;
 			}
 				//TODO[ ] put this logic in the class...it belongs there. 
 			gState_->board->at(count)->tileSprite.setPosition(j*tilesize_const, i*tilesize_const);
@@ -220,6 +223,7 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, std::v
 			gState_->board->at(count)->setGridPos(j, i);
 			gState_->board->at(count)->setAtkSprite(terrainTexts[atkTerrain_const]);
 			gState_->board->at(count)->atkSprite.setPosition(j*tilesize_const, i*tilesize_const);
+			std::cout << "built board unit #: " << count << std::endl;
 			count++;
 		}
 	}
