@@ -3,7 +3,7 @@
 #include <iostream>
 
 tank::tank()  	{
-	std::cout << "plainTerrain instatiated\n";
+	std::cout << "tank instatiated\n";
 	
 }
 
@@ -19,8 +19,8 @@ tank::tank(const sf::Texture * image_, uint32_t player_) : baseUnit( player_ ) {
 	mvt = 8;
 	validMoves = new std::vector<uint32_t>();
 	enemyNeighbors = new std::vector<int32_t>();
-	atk = 14;
-	def = 4;
+	atk = 10;
+	def = 5;
 }
 
 tank::~tank(){

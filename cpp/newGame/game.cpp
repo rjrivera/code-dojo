@@ -429,7 +429,7 @@ int main( int argc, char** argv ) {
 	//GRIDSPRITE Poc -- migrate to appropriate location when finished with factory TODO[ ] 
 	//myI->defineGridSprite(movText);
 	//now lets attach this unit to a board slot...
-	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, infantryUnit_const, 1);
+	baseUnit * tUnit = unitBuilder(unitTexts, unitInfoTexts, tankUnit_const, 1);
 	//tUnit->defineGridSprite(movText);
 	//std::cout << "tUnit player num: " << tUnit->player << std::endl;
 	gState->board->at(1)->attachUnit(tUnit, gState->board);	
@@ -738,7 +738,6 @@ int main( int argc, char** argv ) {
 								cState->enemyNeighborsIndex++;
 							}
 							else cState->enemyNeighborsIndex = 0;
-							std::cout << "increment up the enemyNeighborsIndex, index size, count: "<< cState->selectedUnit->enemyNeighbors->size() << ", " << cState->enemyNeighborsIndex << "\n";
 							cState->myC->burnCooldown();
 							
 						}

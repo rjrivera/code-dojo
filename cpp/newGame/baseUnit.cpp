@@ -95,7 +95,6 @@ bool baseUnit::isValMove(uint32_t destX, uint32_t destY){
 	uint32_t destSlot = getBSlot(destX, destY);
 	for (uint32_t mG : *validMoves) {
 		if (destSlot == mG) return true;
-		std::cout << destSlot << std::endl;
 	}
 	
 	return false;

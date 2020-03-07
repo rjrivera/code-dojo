@@ -3,9 +3,11 @@
 #include <string>
 #include <vector> 
 #include <map>
+#include <cmath>
 #include "cursor.h"
 #include "gameState.h"
 #include "baseTerrain.h"
+#include "baseUnit.h"
 #include "ui_hby.h"
 #include "Project_Constants.h"
 
@@ -45,7 +47,6 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 		gState_->incrementPlayer();
 	}
 	cState_->selectedUnit->findEnemyNeighbors(cState_->myC->posX, cState_->myC->posY, gState_->board);
-	std::cout << "TESTING PURPOSES -- neighboring enemy unit count" << cState_->selectedUnit->enemyNeighbors->size() << std::endl;
 	cState_->curInputState = atkSelect;
 	if( cState_->selectedUnit->enemyNeighbors->size() > 0 ) {
 		cState_->myC->movePosXAbs( getScaledPosX((uint32_t)cState_->selectedUnit->enemyNeighbors->at(0)) ); 
@@ -59,16 +60,24 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 //enum actionMenuState {move, atkUI, back, atkB};
 //enum inputState {terrainSelect, gameMenu, terrainInfo, unitInfo, atkSelect, unitSelected, actionMenu, lastEnum};
 
-
 static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
 	cState_->curInputState = terrainSelect;
 	std::cout << "TESTING CMDATK\n";
+	std::cout << "Current Players unit health: " << cState_->selectedUnit->hp << std::endl;
+	std::cout << "Target enemy's Player's health: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp << std::endl;
+	baseUnit * defender = gState_->board->at( cState_->selectedUnit->enemyNeighbors->at( cState_->enemyNeighborsIndex ) )->attachedUnit;
+	baseUnit * attacker = cState_->selectedUnit;
+	baseTerrain * terrain = gState_->board->at( cState_->destBSlot );
 	// place holder for battle initiation. 
-	std::cout << "Current Player: " << cState_->selectedUnit->player << std::endl;
-	std::cout << "Target enemy's Player: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->player << std::endl;
-	gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp -= 2;
-	cState_->selectedUnit->hp -= 1;
+	int atkDamage = ( attacker->atk * (attacker->hp / 10 ) ) - ( defender->def * (defender->hp / 10) ) -  (terrain->defBonus * ( defender->hp / 10 ) );
+	std::cout << "attacker atk, hp, defnder def, hp, terrain bonus: " << attacker->atk << " " << attacker->hp << " " << defender->def << " " << defender->hp << " " << terrain->defBonus << std::endl;
+	std::cout << "calculated atkDamage: " << atkDamage << std::endl;
+	defender->hp -= std::max(0, atkDamage);
+	terrain = gState_->board->at( cState_->sourceBSlot );
+	atkDamage = ( defender->atk * (defender->hp % 10 ) ) - ( attacker->def * (attacker->hp % 10) ) -  (terrain->defBonus * ( attacker->hp % 10 ) );
+	std::cout << "calculated atkDamage: " << atkDamage << std::endl;
+	attacker->hp -= std::max(0, atkDamage);
 	std::cout << "Current Players unit health: " << cState_->selectedUnit->hp << std::endl;
 	std::cout << "Target enemy's Player's health: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp << std::endl;
 	// 

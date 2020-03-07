@@ -21,7 +21,7 @@ infantry::infantry(const sf::Texture * image_, uint32_t player_) : baseUnit(play
 	std::cout << "constructor sees this player value: " << player_ << std::endl;
 	validMoves = new std::vector<uint32_t>();
 	enemyNeighbors = new std::vector<int32_t>();
-	def = 1;
+	def = 4;
 	atk = 10;
 
 }
