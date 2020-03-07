@@ -63,19 +63,23 @@ void baseUnit::findEnemyNeighbors(int32_t posX_, int32_t posY_, std::vector<base
 	int32_t sourceSlot = (int32_t)getBSlot(posX_, posY_);
 	int32_t above = getAboveBSlot(sourceSlot);
 	int32_t below = getBelowBSlot(sourceSlot);
+	// right;
 	if (board->at(sourceSlot + 1)->attachedUnit != nullptr && board->at(sourceSlot + 1)->attachedUnit->player != player) {
 		enemyNeighbors->push_back(sourceSlot + 1);  
 		board->at(sourceSlot + 1)->attachedUnit->enemyNeighbors->push_back(sourceSlot); // update the enemy's enemyNeighbors data structure. 
-		enemyNeighbors->push_back(sourceSlot + 1);  
+
 	}
+	//left
 	if (board->at(sourceSlot - 1)->attachedUnit != nullptr && board->at(sourceSlot - 1)->attachedUnit->player != player) {
 		enemyNeighbors->push_back(sourceSlot - 1);
 		board->at(sourceSlot - 1)->attachedUnit->enemyNeighbors->push_back(sourceSlot); // update the enemy's enemyNeighbors data structure. 
 	}
+	// up
 	if (above >= 0 && board->at(above)->attachedUnit != nullptr && board->at(above)->attachedUnit->player != player) {
 		 enemyNeighbors->push_back(above);   
 		 board->at(above)->attachedUnit->enemyNeighbors->push_back(sourceSlot); // update the enemy's enemyNeighbors data structure. 
 	}
+	// down
 	if (below >= 0 && board->at(below)->attachedUnit != nullptr && board->at(below)->attachedUnit->player != player) {
 		 enemyNeighbors->push_back(below); 
 		 board->at(below)->attachedUnit->enemyNeighbors->push_back(sourceSlot); // update the enemy's enemyNeighbors data structure. 

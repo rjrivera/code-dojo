@@ -738,7 +738,7 @@ int main( int argc, char** argv ) {
 								cState->enemyNeighborsIndex++;
 							}
 							else cState->enemyNeighborsIndex = 0;
-							std::cout << "increment up the enemyNeighborsIndex\n";
+							std::cout << "increment up the enemyNeighborsIndex, index size, count: "<< cState->selectedUnit->enemyNeighbors->size() << ", " << cState->enemyNeighborsIndex << "\n";
 							cState->myC->burnCooldown();
 							
 						}
