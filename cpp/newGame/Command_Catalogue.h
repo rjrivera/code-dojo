@@ -20,6 +20,7 @@ static int cmdMove( gameState * gState_, clientState * cState_ ) {
 		gState_->board->at( cState_->destBSlot )->attachedUnit == nullptr )  {
 		gState_->board->at( cState_->destBSlot )->attachUnit( cState_->selectedUnit, gState_->board);
 		gState_->board->at( cState_->sourceBSlot )->detachUnit();					 
+		gState_->incrementPlayer();
 	}
 	cState_->curInputState = terrainSelect;
 	return 0;
@@ -41,6 +42,7 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 		gState_->board->at( cState_->destBSlot )->attachedUnit == nullptr )  {
 		gState_->board->at( cState_->destBSlot )->attachUnit( cState_->selectedUnit, gState_->board);
 		gState_->board->at( cState_->sourceBSlot )->detachUnit();					 
+		gState_->incrementPlayer();
 	}
 	cState_->selectedUnit->findEnemyNeighbors(cState_->myC->posX, cState_->myC->posY, gState_->board);
 	std::cout << "TESTING PURPOSES -- neighboring enemy unit count" << cState_->selectedUnit->enemyNeighbors->size() << std::endl;

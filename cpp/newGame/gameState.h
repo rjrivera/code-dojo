@@ -10,7 +10,8 @@ class gameState {
 		gameState(uint32_t width_, uint32_t height_);
 		~gameState();
 		std::vector<baseTerrain*> * board;
-		uint32_t width, height, curPlayer;
+		uint32_t width, height, curPlayer, numPlayers;
+		void incrementPlayer();
 };
 
 

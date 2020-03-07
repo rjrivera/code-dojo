@@ -27,6 +27,7 @@
 #include <SFML/Graphics.hpp>
 //#include <boost/date_time/posix_time/posix_time.hpp>
 //#include <boost/date_time/posix_time/posix_time_types.hpp>
+// [ ] manage player turns
 // [] NEXT TODO -- finish the attackSelect mode. 
 #define WIDTH 768 // formerly 384
 #define HEIGHT 352
@@ -372,6 +373,8 @@ int main( int argc, char** argv ) {
 	std::vector< sf::Texture * > uiTexts 		= std::vector< sf::Texture * >();
 	std::vector< std::vector< ui_hby * > * > * uiElements 	= new std::vector< std::vector< ui_hby * > * >();
 	gameState * gState = new gameState();
+	std::cout << "GSTATES CURPLAYER: " << gState->curPlayer << std::endl;
+
 
 	baseUnit * curUnit;
 	bool draw = false;
@@ -586,12 +589,22 @@ int main( int argc, char** argv ) {
 	*/
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
 
-
+							// check if unit occupies that slot...AND if it's the current players unit you can do stuff...
+							// BUT if a non-current players unit, can be reviewed for intelligence purposes...
+							int bSlot = getBSlot( cState->myC->posX, cState->myC->posY);
 							if ( gState->board->at(getBSlot(cState->myC->posX, cState->myC->posY))->attachedUnit != nullptr ) { 
+								std::cout << gState->board->at( bSlot )->attachedUnit->player << " board player " << gState->curPlayer << std::endl;
+								if( gState->board->at( bSlot )->attachedUnit->player == gState->curPlayer ) {
 								cState->myC->burnCooldown();
 								cState->sourceBSlot = getBSlot(cState->myC->posX, cState->myC->posY);
 								curUnit = gState->board->at(cState->sourceBSlot)->attachedUnit;
 								cState->curInputState = unitSelected;
+								}
+								else{
+									cState->curInputState = terrainInfo;
+									cState->sourceBSlot = getBSlot(cState->myC->posX, cState->myC->posY);
+									cState->myC->burnCooldown();
+								}
 							//std::cout << board[cState->sourceBSlot]->attachedUnit->posX << std::endl;
 							//std::cout << cState->myC->posX << std::endl;
 							}
@@ -616,11 +629,14 @@ int main( int argc, char** argv ) {
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 							switch(curActionMenuState) { 
 								case(move) : {
-									
+									// pop cursor stack to revert back to the location it was on the menu...	
 									cState->myC = cState->cursorStack->at(cState->myC->stackInd - 1);
+									// 
 									cState->selectedUnit  = curUnit;
+									// feed the ui to negotiate the actions...given the gState and cState...
+									// introduce a if(...) to react oin bad attempts...or not...uiElements might handle this...
 									uiElements->at(actionMenu)->at(curUI)->uiAction( gState, cState );
-
+									
 									//cmdMove( gState, cState->myC, cState->curInputState, curUnit, cState->destBSlot, cState->sourceBSlot );
 /*
 									cState->myC = cursorStack[cState->myC->stackInd - 1];					
@@ -724,6 +740,7 @@ int main( int argc, char** argv ) {
 							else cState->enemyNeighborsIndex = 0;
 							std::cout << "increment up the enemyNeighborsIndex\n";
 							cState->myC->burnCooldown();
+							
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) ) {
 							if( cState->enemyNeighborsIndex > 0 ) {//<  ) {
@@ -741,6 +758,8 @@ int main( int argc, char** argv ) {
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
 							cmdAtk( gState, cState );
+							// [ ] TODO:introduce an if( cmdAtk(....)) to handle bad command attacks and reattempt( like inf attacking jets.
+							gState->incrementPlayer();
 						}
 						cState->myC->movePosXAbs( getScaledPosX((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
 						cState->myC->movePosYAbs( getScaledPosY((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
