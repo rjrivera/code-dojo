@@ -7,7 +7,7 @@
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
-         "width":44,
+         "width":40,
          "x":0,
          "y":0,
  "nextobjectid":1,
@@ -23,5 +23,5 @@
  "tilewidth":16,
  "type":"map",
  "version":1,
- "width":44
+ "width":40
 }

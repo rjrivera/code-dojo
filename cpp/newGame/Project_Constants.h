@@ -35,6 +35,12 @@ const int ui2_const		= 2;
 const int ui3_const		= 3;
 const int ui4_const		= 4;
 
+//dashboard textures
+const int maxDash_const		= 1;
+const int dash1_const		= 1;
+
+
+
 //const int blueMenu_const	= 1;
 //const int maxUIDepth		= 1;
 // checklist for adding new ujnits

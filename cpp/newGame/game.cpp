@@ -11,6 +11,7 @@
 #include "infantry.cpp"
 #include "tank.cpp"
 #include "plane.cpp"
+#include "dash_hby.cpp"
 #include "plainTerrain.cpp"
 #include "mountTerrain.cpp"
 #include "barracksTerrain.cpp"
@@ -145,6 +146,7 @@ void foo(std::vector<sf::Texture *>& text_container, std::string textType_) {
 	else if (textType_ == "unitInfo") numTexts = (maxUnit_const); 
 	else if (textType_ == "terrainInfo") numTexts = maxTerrain_const; 
 	else if (textType_ == "ui") numTexts = (maxUI_const); 
+	else if (textType_ == "dash") numTexts = (maxDash_const); 
 	else return;
 	text_container.push_back(nullptr); //needed to reconcile 1-based const nameing scheme with accessing of textures via consts.
 	for (int i = 1 ; i <= numTexts; i++) {
@@ -216,14 +218,17 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, std::v
 					break;
 				case (barracksTerrain_const - 1) :
 					gState_->board->push_back(new barracksTerrain(terrainTexts[barracksTerrain_const], terrainTexts[barracksTerrain_const], terrainInfoTexts_[barracksTerrain_const]));
+					gState_->buildings->at(0)->push_back( gState_->board->back() );
 					break;
 				case (barracks1Terrain_const - 1) :
 					gState_->board->push_back(new barracksTerrain(terrainTexts[barracks1Terrain_const], terrainTexts[barracks1Terrain_const], terrainInfoTexts_[barracksTerrain_const]));
 					gState_->board->back()->owner = 1;
+					gState_->buildings->at(1)->push_back( gState_->board->back() );
 					break;
 				case (barracks2Terrain_const - 1) :
 					gState_->board->push_back(new barracksTerrain(terrainTexts[barracks2Terrain_const], terrainTexts[barracks2Terrain_const], terrainInfoTexts_[barracksTerrain_const]));
 					gState_->board->back()->owner = 2;
+					gState_->buildings->at(2)->push_back( gState_->board->back() );
 					break;
 				default:
 					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[mountTerrain_const]));
