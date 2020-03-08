@@ -13,6 +13,7 @@
 #include "plane.cpp"
 #include "plainTerrain.cpp"
 #include "mountTerrain.cpp"
+#include "barracksTerrain.cpp"
 #include "roadTerrain.cpp"
 #include "waterTerrain.cpp"
 #include "moveGrid.cpp"
@@ -213,8 +214,19 @@ void mapGen(gameState * gState_, std::vector<sf::Texture*>& terrainTexts, std::v
 				case (forestTerrain_const - 1) :
 					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[forestTerrain_const]));
 					break;
+				case (barracksTerrain_const - 1) :
+					gState_->board->push_back(new barracksTerrain(terrainTexts[barracksTerrain_const], terrainTexts[barracksTerrain_const], terrainInfoTexts_[barracksTerrain_const]));
+					break;
+				case (barracks1Terrain_const - 1) :
+					gState_->board->push_back(new barracksTerrain(terrainTexts[barracks1Terrain_const], terrainTexts[barracks1Terrain_const], terrainInfoTexts_[barracksTerrain_const]));
+					gState_->board->back()->owner = 1;
+					break;
+				case (barracks2Terrain_const - 1) :
+					gState_->board->push_back(new barracksTerrain(terrainTexts[barracks2Terrain_const], terrainTexts[barracks2Terrain_const], terrainInfoTexts_[barracksTerrain_const]));
+					gState_->board->back()->owner = 2;
+					break;
 				default:
-					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[forestTerrain_const]));
+					gState_->board->push_back(new mountTerrain(terrainTexts[mountTerrain_const], terrainTexts[moveTerrain_const], terrainInfoTexts_[mountTerrain_const]));
 					break;
 			}
 				//TODO[ ] put this logic in the class...it belongs there. 
@@ -756,9 +768,7 @@ int main( int argc, char** argv ) {
 							cState->myC->burnCooldown();
 						}
 						if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) ) {
-							cmdAtk( gState, cState );
-							// [ ] TODO:introduce an if( cmdAtk(....)) to handle bad command attacks and reattempt( like inf attacking jets.
-							gState->incrementPlayer();
+							if( cmdAtk( gState, cState ) ) gState->incrementPlayer();
 						}
 						cState->myC->movePosXAbs( getScaledPosX((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 
 						cState->myC->movePosYAbs( getScaledPosY((uint32_t)cState->selectedUnit->enemyNeighbors->at( cState->enemyNeighborsIndex )) ); 

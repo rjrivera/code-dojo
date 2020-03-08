@@ -6,7 +6,7 @@ baseTerrain::baseTerrain()  	{
 	attachedUnit = nullptr;
 }
 
-baseTerrain::baseTerrain(const sf::Texture * highlightTexture)  	{
+baseTerrain::baseTerrain(const sf::Texture * highlightTexture):owner(-1)	{
 	attachedUnit = nullptr;
 	highlightSprite = sf::Sprite();
 	highlightSprite.setTexture(*highlightTexture);

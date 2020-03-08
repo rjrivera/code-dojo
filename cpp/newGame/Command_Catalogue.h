@@ -63,26 +63,28 @@ static int cmdAtkSelect( gameState * gState_, clientState * cState_ ) {
 static int cmdAtk( gameState * gState_, clientState * cState_ ) {
 	cState_->myC->burnCooldown();
 	cState_->curInputState = terrainSelect;
-	std::cout << "TESTING CMDATK\n";
-	std::cout << "Current Players unit health: " << cState_->selectedUnit->hp << std::endl;
-	std::cout << "Target enemy's Player's health: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp << std::endl;
 	baseUnit * defender = gState_->board->at( cState_->selectedUnit->enemyNeighbors->at( cState_->enemyNeighborsIndex ) )->attachedUnit;
 	baseUnit * attacker = cState_->selectedUnit;
 	baseTerrain * terrain = gState_->board->at( cState_->destBSlot );
 	// place holder for battle initiation. 
 	int atkDamage = ( attacker->atk * (attacker->hp / 10 ) ) - ( defender->def * (defender->hp / 10) ) -  (terrain->defBonus * ( defender->hp / 10 ) );
-	std::cout << "attacker atk, hp, defnder def, hp, terrain bonus: " << attacker->atk << " " << attacker->hp << " " << defender->def << " " << defender->hp << " " << terrain->defBonus << std::endl;
-	std::cout << "calculated atkDamage: " << atkDamage << std::endl;
 	defender->hp -= std::max(0, atkDamage);
+	if( defender->hp <= 0 ) {
+		delete gState_->board->at( cState_->destBSlot )->attachedUnit;
+		gState_->board->at( cState_->destBSlot )->attachedUnit = nullptr;
+		return 1;
+	}
 	terrain = gState_->board->at( cState_->sourceBSlot );
 	atkDamage = ( defender->atk * (defender->hp % 10 ) ) - ( attacker->def * (attacker->hp % 10) ) -  (terrain->defBonus * ( attacker->hp % 10 ) );
-	std::cout << "calculated atkDamage: " << atkDamage << std::endl;
 	attacker->hp -= std::max(0, atkDamage);
-	std::cout << "Current Players unit health: " << cState_->selectedUnit->hp << std::endl;
-	std::cout << "Target enemy's Player's health: " << gState_->board->at(cState_->selectedUnit->enemyNeighbors->at(cState_->enemyNeighborsIndex))->attachedUnit->hp << std::endl;
+	if( attacker->hp <= 0 ) {
+		delete gState_->board->at( cState_->sourceBSlot )->attachedUnit;
+		gState_->board->at( cState_->sourceBSlot )->attachedUnit = nullptr;
+	}
+	
 	// 
 
-	return 0;
+	return 1;
 
 };
 
